@@ -3058,16 +3058,16 @@
         },
         {
             "name": "romanlazko/telegram",
-            "version": "1.0.7",
+            "version": "1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/romanlazko/telegram.git",
-                "reference": "818d67f8ec12f609e8dba1e5b3c3b8f4ca5e1cc5"
+                "reference": "05b1a99e7946774be74155eb421d16341101a18f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/romanlazko/telegram/zipball/818d67f8ec12f609e8dba1e5b3c3b8f4ca5e1cc5",
-                "reference": "818d67f8ec12f609e8dba1e5b3c3b8f4ca5e1cc5",
+                "url": "https://api.github.com/repos/romanlazko/telegram/zipball/05b1a99e7946774be74155eb421d16341101a18f",
+                "reference": "05b1a99e7946774be74155eb421d16341101a18f",
                 "shasum": ""
             },
             "require": {
@@ -3101,9 +3101,9 @@
             "description": "Telegram for Laravel",
             "support": {
                 "issues": "https://github.com/romanlazko/telegram/issues",
-                "source": "https://github.com/romanlazko/telegram/tree/1.0.7"
+                "source": "https://github.com/romanlazko/telegram/tree/1.0.12"
             },
-            "time": "2023-06-24T17:31:14+00:00"
+            "time": "2023-06-28T11:42:36+00:00"
         },
         {
             "name": "symfony/console",
