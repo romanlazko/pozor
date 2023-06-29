@@ -15,16 +15,16 @@ class AnnouncementUserConverter extends Seeder
      */
     public function run(): void
     {
-        $bot = Bot::where('id', '5176671917')->first();
+        // $bot = Bot::where('id', '5176671917')->first();
 
-        $announcements = BaraholkaAnnouncement::all();
+        // $announcements = BaraholkaAnnouncement::all();
 
-        foreach ($announcements as $announcement) {
-            $chat = $bot->chats()->where('chat_id', $announcement->user_id)->first();
+        // foreach ($announcements as $announcement) {
+        //     $chat = $bot->chats()->where('chat_id', $announcement->user_id)->first();
 
-            $announcement->update([
-                'chat' => $chat->id
-            ]);
-        }
+        //     $announcement->update([
+        //         'chat' => $chat->id
+        //     ]);
+        // }
     }
 }
