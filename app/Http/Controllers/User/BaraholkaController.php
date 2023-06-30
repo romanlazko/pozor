@@ -48,16 +48,20 @@ class BaraholkaController extends Controller
                     $query->whereRaw('LOWER(category) LIKE ?', ['%' . $category . '%']);
                 });
             })
-            ->paginate(9);
+            ->paginate(21);
 
             $announcements_collection = $announcements->map(function ($announcement) {
-                $announcement->photos->map(function ($photo) {
+                $announcement->photos->take(9)->map(function ($photo) {
                     return $photo->url = Cache::remember($photo->file_id, 1000, function () use ($photo) {
                         return file_exists(public_path($photo->file_id))
                             ? asset($photo->file_id) 
-                            : $this->telegram::getPhoto(['file_id' => $photo->file_id]);
+                            : file_get_contents($this->telegram::getPhoto(['file_id' => $photo->file_id]));
                     });
                 });
+                return $announcement;
+            })
+            ->map(function ($announcement) {
+                $announcement->chat = $announcement->chat()->first();
                 return $announcement;
             });
 
