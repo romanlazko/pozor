@@ -17,12 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 
 // Route::namespace('User')->group(function () {
-//     Route::get('/', function () {
-//         return view('welcome');
-//     });
+//     
 //     Route::get('/baraholka', BaraholkaController::class)->name('baraholka');
 // });
-
+Route::get('/', function () {
+    return view('welcome');
+});
 Route::get('/baraholka', BaraholkaController::class)->name('baraholka');
 
 Route::get('/dashboard', function () {
