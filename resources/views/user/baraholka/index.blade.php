@@ -59,7 +59,7 @@
                             @if ($announcement->chat->username)
                                 <a class="w-full text-sm font-light text-blue-500 hover:underline" href="https://t.me/{{$announcement->chat->username}}">{{ "@".($announcement->chat->username ?? null) }}</a>
                             @else
-                                <a class="w-full text-sm font-light text-blue-500 hover:underline" href="{{ route('get-contact', $announcement->chat) }}">{{ __('@'.$announcement->chat->first_name.$chat->last_name) }}</a>
+                                <a class="w-full text-sm font-light text-blue-500 hover:underline" href="{{ route('get-contact', $announcement->chat) }}">{{ __('@'.$announcement->chat->first_name.$announcement->chat->last_name) }}</a>
                             @endif
                         @endif  
                     </div>
