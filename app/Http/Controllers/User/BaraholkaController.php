@@ -52,7 +52,7 @@ class BaraholkaController extends Controller
 
             $announcements_collection = $announcements->map(function ($announcement) {
                 $announcement->photos->take(9)->map(function ($photo) {
-                    return $photo->url = Cache::remember($photo->file_id, 1000, function () use ($photo) {
+                    return $photo->url = Cache::remember($photo->file_id, 3600, function () use ($photo) {
                         return file_exists(public_path($photo->file_id))
                             ? asset($photo->file_id) 
                             : file_get_contents($this->telegram::getPhoto(['file_id' => $photo->file_id]));
