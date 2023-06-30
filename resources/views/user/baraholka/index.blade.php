@@ -55,7 +55,7 @@
                             <h3 class="text-lg font-semibold">{{ $announcement->title }}</h3>
                             <p class="text-gray-500">{!! nl2br(e($announcement->caption)) !!}</p>
                             
-                            <p class="text-green-500 font-bold mt-2">{{ $announcement->cost }} CZK</p>
+                            <p class="text-green-500 font-bold mt-2">{{ $announcement->cost ? $announcement->cost ." CZK" : "" }} </p>
                             <x-telegram::a-buttons.primary class="w-full" href="https://t.me/pozor_baraholka_bot?start=announcement={{$announcement->id}}">
                                 {{ __('Contact') }}
                             </x-telegram::a-buttons.primary>
