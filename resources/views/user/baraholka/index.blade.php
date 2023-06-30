@@ -53,15 +53,12 @@
                             <h3 class="text-lg font-semibold">{{ $announcement->title }}</h3>
                             <p class="text-gray-500">{!! nl2br(e($announcement->caption)) !!}</p>
                             
-                            <p class="text-green-500 font-bold mt-2">{{ $announcement->cost }}</p>
+                            <p class="text-green-500 font-bold mt-2">{{ $announcement->cost }} CZK</p>
+                            <x-telegram::a-buttons.primary class="w-full" href="https://t.me/pozor_baraholka_bot?start=announcement={{$announcement->id}}">
+                                {{ __('Contact') }}
+                            </x-telegram::a-buttons.primary>
                         </div>
-                        @if ($announcement->chat) 
-                            @if ($announcement->chat->username)
-                                <a class="w-full text-sm font-light text-blue-500 hover:underline" href="https://t.me/{{$announcement->chat->username}}">{{ "@".($announcement->chat->username ?? null) }}</a>
-                            @else
-                                <a class="w-full text-sm font-light text-blue-500 hover:underline" href="{{ route('get-contact', $announcement->chat) }}">{{ __('@'.$announcement->chat->first_name.$announcement->chat->last_name) }}</a>
-                            @endif
-                        @endif  
+                        
                     </div>
                 @endforeach
             </div>
