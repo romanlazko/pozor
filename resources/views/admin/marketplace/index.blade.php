@@ -27,7 +27,7 @@
         @foreach ($announcements as $announcement)
             <x-white-block class="p-0 h-min">
                 <div class="p-1 flex items-center space-x-2">
-                    <img src="" alt="" class="rounded-full w-8 h-8 aspect-square bg-red-600">
+                    <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-8 h-8 aspect-square bg-red-600">
                     <p class="text-sm font-bold text-blue-700 hover:underline">
                         {{ $announcement->user->name }}
                     </p>
