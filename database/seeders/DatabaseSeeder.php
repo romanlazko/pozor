@@ -13,9 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(MarketplaceCategorySeeder::class);
-        $this->call(MarketplaceAnnouncementSeeder::class);
+        // $this->call(MarketplaceAnnouncementSeeder::class);
         $this->call(RealEstateCategorySeeder::class);
-        $this->call(RealEstateAnnouncementSeeder::class);
+        // $this->call(RealEstateAnnouncementSeeder::class);
 
         // \App\Models\User::factory(10)->create();
 
