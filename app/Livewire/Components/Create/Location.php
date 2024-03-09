@@ -26,11 +26,11 @@ class Location extends Component
 
     public function mount()
     {
-        dump(CurrentLocation::get());
         $this->countries = Geo::getCountries();
-        $this->country = $this->countries->first()?->country;
         
         $this->location = Geo::findName((CurrentLocation::get() ?: null)?->cityName)?->toArray();
+
+        $this->country = $this->location['country'] ?? null;
         $this->search = $this->location['name'] ?? null;
     }
 

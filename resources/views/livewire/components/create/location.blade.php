@@ -1,6 +1,9 @@
 <div class="w-full">
     <div class="space-y-2 md:flex md:space-x-2 md:space-y-0">
         <x-form.select wire:model.live="country" class="w-full md:w-1/2" wire:change="$set('search', null)">
+            <option value="">
+                {{ __("-- Select country") }}
+            </option>
             @foreach ($countries as $country)
                 <option value="{{ $country->country }}">
                     {{ $country->name }}
