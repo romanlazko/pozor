@@ -26,6 +26,7 @@ class Location extends Component
 
     public function mount()
     {
+        dump(request()->ip());
         $this->countries = Geo::getCountries();
         $this->country = $this->countries->first()?->country;
         
