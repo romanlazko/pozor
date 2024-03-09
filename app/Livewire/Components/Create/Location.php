@@ -26,7 +26,7 @@ class Location extends Component
 
     public function mount()
     {
-        // dump(CurrentLocation::get());
+        dump(CurrentLocation::get());
         $this->countries = Geo::getCountries();
         $this->country = $this->countries->first()?->country;
         
