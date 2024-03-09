@@ -30,7 +30,7 @@ class Location extends Component
         $this->countries = Geo::getCountries();
         $this->country = $this->countries->first()?->country;
         
-        $this->location = Geo::findName((CurrentLocation::get() ?: null)?->regionName)?->toArray();
+        $this->location = Geo::findName((CurrentLocation::get() ?: null)?->cityName)?->toArray();
         $this->search = $this->location['name'] ?? null;
     }
 
