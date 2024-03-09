@@ -136,7 +136,7 @@
             </div>
             <div class="space-y-6 p-6 py-4 bg-white lg:rounded-xl shadow-xl">
                 <div class="flex space-x-4 items-center">
-                    <img src="" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square bg-red-600">
+                    <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">
                         <span class="block font-bold">{{ $announcement->user->name }}</span>
                         <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user->email }}</a>

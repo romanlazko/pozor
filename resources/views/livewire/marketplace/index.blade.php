@@ -117,7 +117,7 @@
                             {{ $announcement->title }}
                         </p>
                         <p class="text-xs text-gray-500">
-                            {{-- {{ $announcement->location['name'] }} --}}
+                            {{ $announcement->location['name'] }}
                         </p>
                     </div>
                 </a>

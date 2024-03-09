@@ -39,6 +39,8 @@ class ProfileController extends Controller
 
         Avatar::create($request->name)->save($avatarPath);
 
+        
+
         $request->user()->avatar = $avatarPath;
 
         $request->user()->save();

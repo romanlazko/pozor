@@ -8,6 +8,8 @@ use Livewire\Attributes\Reactive;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
+use Stevebauman\Location\Facades\Location as CurrentLocation;
+
 class Location extends Component
 {
     #[Reactive]
@@ -26,6 +28,8 @@ class Location extends Component
     {
         $this->countries = Geo::getCountries();
         $this->country = $this->countries->first()?->country;
+        
+        $this->location = Geo::findName((CurrentLocation::get(request()->ip()) ?: null)?->regionName)?->toArray();
         $this->search = $this->location['name'] ?? null;
     }
 
