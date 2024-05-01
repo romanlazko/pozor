@@ -6,7 +6,7 @@
     }}
 >
     <i class="fa-solid fa-plus"></i>
-    <p class="">
+    <p class="hidden lg:flex">
         {{ $slot }}
     </p>
     

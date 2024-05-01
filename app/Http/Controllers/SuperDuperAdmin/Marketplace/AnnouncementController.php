@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\SuperDuperAdmin\Marketplace;
 
-use App\Enums\Filter;
+use App\Enums\Sort;
 use App\Enums\Status;
-use App\Events\ModerationPassedMarketplaceAnnouncement;
 use App\Http\Controllers\Controller;
 use App\Models\Marketplace\MarketplaceAnnouncement;
 use Illuminate\Http\Request;
@@ -16,13 +15,18 @@ class AnnouncementController extends Controller
      */
     public function index(Request $request)
     {
-        $announcements = MarketplaceAnnouncement::search($request->search ?? null)
-            ->where('status', $request->status ?? Status::await_moderation)
-            ->filter($request->filter ?? Filter::newest->name)
+        $announcements = MarketplaceAnnouncement::where('status', $request->status ?? Status::await_moderation)
+            ->search($request)
+            // ->filter($request->filter ?? Sort::newest->name)
             ->paginate(100);
 
+        foreach (Status::cases() as $value) {
+            $announcements_count[$value->name] = MarketplaceAnnouncement::where('status', $value)->count();
+        }
+
         return view('admin.marketplace.index', compact(
-            'announcements'
+            'announcements',
+            'announcements_count'
         ));
     }
 

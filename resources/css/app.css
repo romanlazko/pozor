@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fi-modal-content {
+    background-color: #e5e7eb;
+    padding: 6px;
+}
+
+.fi-section-content {
+    padding: 22px 16px;
+}
+
+.fi-section-header {
+    padding: 16px;
+}

@@ -13,18 +13,28 @@
 	</div>
 
     <nav class="space-y-3 px-2">
-		@hasrole('super-duper-admin')
+		{{-- @hasrole('super-duper-admin')
 			<x-responsive-nav-link href="{{ route('admin.marketplace.announcement.index') }}">
 				{{ __('Marketplace') }}
 			</x-responsive-nav-link>
-		@endhasrole
+		@endhasrole --}}
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.telegram_bot.index') }}">
+			<x-responsive-nav-link href="{{ route('admin.telegram_bot.index') }}" >
 				{{ __('telegram') }}
 			</x-responsive-nav-link>
 		@endhasrole
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('marketplace.index') }}">
+			<x-responsive-nav-link href="{{ route('admin.categories') }}" :active="request()->routeIs('admin.categories')">
+				{{ __('Category') }}
+			</x-responsive-nav-link>
+		@endhasrole
+		@hasrole('super-duper-admin')
+			<x-responsive-nav-link href="{{ route('admin.attributes') }}" :active="request()->routeIs('admin.attributes')">
+				{{ __('Attribute') }}
+			</x-responsive-nav-link>
+		@endhasrole
+		@hasrole('super-duper-admin')
+			<x-responsive-nav-link href="{{ route('announcement.index') }}">
 				{{ __('Back to user') }}
 			</x-responsive-nav-link>
 		@endhasrole

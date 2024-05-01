@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id', 'id');
     }
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class);
+    }
 }

@@ -77,6 +77,23 @@ enum Status: int
             self::rejected => 'red',
             self::sold => 'gray',
             self::failed => 'red',
+            default => 'gray',
+        };
+    }
+
+    public function filamentColor()
+    {
+        return match ($this) {
+            self::await_moderation => 'warning',
+            self::moderation_not_passed => 'danger',
+            self::moderation_passed => 'success',
+            self::await_publication => 'primary',
+            self::publishing_failed => 'purple',
+            self::published => 'success',
+            self::rejected => 'danger',
+            self::sold => 'success',
+            self::failed => 'danger',
+            default => 'info',
         };
     }
 

@@ -1,27 +1,27 @@
 <x-user-layout>
     <!-- Session Status -->
-    <div class="w-full h-dvh overflow-y-auto">
+    <div class="w-full overflow-y-auto">
         <x-auth-session-status class="mb-4" :status="session('status')" />
         <form class="bg-white p-4 sm:p-6 max-w-md m-auto my-2 md:my-12 rounded-none sm:rounded-lg" method="POST" action="{{ route('login') }}">
             @csrf
 
             <!-- Email Address -->
             <div>
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <x-form.label for="email" :value="__('Email')" />
+                <x-form.input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-form.error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <!-- Password -->
             <div class="mt-4">
-                <x-input-label for="password" :value="__('Password')" />
+                <x-form.label for="password" :value="__('Password')" />
 
-                <x-text-input id="password" class="block mt-1 w-full"
+                <x-form.input id="password" class="block mt-1 w-full"
                                 type="password"
                                 name="password"
                                 required autocomplete="current-password" />
 
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <x-form.error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
             <!-- Remember Me -->
@@ -39,9 +39,9 @@
                     </a>
                 @endif
 
-                <x-primary-button class="ms-3">
+                <x-buttons.primary class="ms-3">
                     {{ __('Log in') }}
-                </x-primary-button>
+                </x-buttons.primary>
             </div>
         </form>
     </div>

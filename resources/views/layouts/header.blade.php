@@ -1,15 +1,15 @@
 <header class="flex items-center justify-between px-2 md:px-4 py-1 bg-white border-b border-gray-300 space-x-3">
-	<div class="flex items-center w-full">
-		<button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
-			<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</button>
-		@if (isset($navigation))
-			<div class="ml-2 lg:ml-0 flex items-center justify-between w-full space-x-2">
-				{{ $navigation }}
-			</div>
-		@endif
+	<div class="flex-1 items-center justify-start hidden lg:flex">
+		<a href="{{ route('announcement.index') }}">
+			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+		</a>
+		
+	</div>
+
+	<div class="flex items-center">
+		<x-a-buttons.create href="{{ route('profile.announcement.create') }}" wire:navigate class="">
+			{{ __("Create announcement") }}
+		</x-a-buttons.create>
 	</div>
 	
 	
@@ -26,6 +26,11 @@
 				<a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">
 					<div class="whitespace-nowrap">
 						<div class="font-medium text-base">{{ __("Profile") }}</div>
+					</div>
+				</a>
+				<a href="{{ route('profile.announcement.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">
+					<div class="whitespace-nowrap">
+						<div class="font-medium text-base">{{ __("Announcements") }}</div>
 					</div>
 				</a>
 				<form method="POST" action="{{ route('logout') }}">

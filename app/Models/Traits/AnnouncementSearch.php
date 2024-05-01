@@ -3,38 +3,62 @@
 namespace App\Models\Traits;
 
 use App\Enums\Filter;
+use App\Enums\Sort;
+use App\Enums\Status;
 use App\Jobs\PublishAnnouncementJob;
+use App\Models\Marketplace\MarketplaceCategory;
 use Exception;
+use Igaster\LaravelCities\Geo;
+use Illuminate\Database\Eloquent\Builder;
 
 trait AnnouncementSearch
 {
-    public function scopeSearch($query, $search, $search_in_caption = false)
+    public function scopeFilter(Builder $query, $request)
+    {
+        $query
+            ->search($request->search, $request->search_in_caption)
+            ->sort($request->sort ?? Sort::newest->name)
+            ->priceRange($request->priceMin, $request->priceMax)
+            ->condition($request->condition)
+            // ->category($request->category)
+            ->location($request->location, $request->radius);
+    }
+
+    public function scopeIsPublished(Builder $query)
+    {
+        return $query->where('status', Status::published);
+    }
+    
+    public function scopeSearch(Builder $query, $search, $search_in_caption = false)
     {
         if ($search) {
-            return $query->where(function ($query) use ($search, $search_in_caption) {
-                $query->where('title', 'like', '%' . $search . '%')
-                    ->when($search_in_caption, function ($query) use ($search) {
-                        $query->orWhere('caption', 'like', '%' . $search . '%');
-                    });
+            $search = '%' . mb_strtolower($search) . '%';
+
+            return $query->where(function (Builder $query) use ($search, $search_in_caption) {
+                $query->whereRaw('LOWER(title) LIKE ?', [$search])
+                    ->when($search_in_caption, function (Builder $query) use ($search) {
+                        $query->orWhereRaw('LOWER(caption) LIKE ?', [$search]);
+                    })
+                    ->orWhere('keys', 'like', strtolower(str_replace([' ', '.', ':', ';'], '', $search)));
             });
         }
         return $query;
     }
 
-    public function scopePriceRange($query, ?string $minPrice, ?string $maxPrice)
+    public function scopePriceRange(Builder $query, ?string $minPrice, ?string $maxPrice)
     {
-        return $query->when($minPrice && $maxPrice, function ($query) use ($minPrice, $maxPrice) {
-            return $query->whereBetween('price', [$minPrice, $maxPrice]);
-        })
-        ->when($minPrice && !$maxPrice, function ($query) use ($minPrice) {
-            return $query->where('price', '>=', $minPrice);
-        })
-        ->when(!$minPrice && $maxPrice, function ($query) use ($maxPrice) {
-            return $query->where('price', '<=', $maxPrice);
-        });
+        return $query->when($minPrice && $maxPrice, function (Builder $query) use ($minPrice, $maxPrice) {
+                return $query->whereBetween('price', [$minPrice, $maxPrice]);
+            })
+            ->when($minPrice && !$maxPrice, function (Builder $query) use ($minPrice) {
+                return $query->where('price', '>=', $minPrice);
+            })
+            ->when(!$minPrice && $maxPrice, function (Builder $query) use ($maxPrice) {
+                return $query->where('price', '<=', $maxPrice);
+            });
     }
 
-    public function scopeCondition($query, array|null $condition)
+    public function scopeCondition(Builder $query, array|null $condition)
     {
         if ($condition) {
             if (!empty($condition)) {
@@ -44,77 +68,61 @@ trait AnnouncementSearch
         return $query;
     }
 
-    public function scopeCategory($query, int|null $category)
+    // public function scopeCategory(Builder $query, null $category)
+    // {
+    //     return $query->when($category, function (Builder $query) use ($category) {
+    //         return $query->whereIn('category_id', $category?->getChildren()->pluck('id'));
+    //     });
+    // }
+
+    public function scopeType(Builder $query, string|null $type)
     {
-        if ($category) {
-            return $query->where('category_id', $category);
+        if ($type AND !empty($type)) {
+            return $query->where('type', $type);
         }
+
         return $query;
     }
 
-    public function scopeSubCategories($query, array|string|null $subcategories)
+    public function scopeConfiguration(Builder $query, array|null $configurations)
     {
-        if ($subcategories) {
-            if (is_array($subcategories) AND !empty($subcategories)) {
-                return $query->whereIn('subcategory_id', $subcategories);
-            }
-            else if (!is_array($subcategories) AND !is_null($subcategories)) {
-                return $query->where('subcategory_id', $subcategories);
-            }
+        if ($configurations AND !empty($configurations)) {
+            return $query->whereIn('configuration_id', $configurations);
         }
+
         return $query;
     }
 
-    public function scopeType($query, string|null $type)
+    public function scopeSquareMetersRange(Builder $query, ?string $minSquareMeters, ?string $maxSquareMeters)
     {
-        if ($type) {
-            if (!empty($type)) {
-                return $query->where('type', $type);
-            }
-        }
-        return $query;
+        return $query->when($minSquareMeters && $maxSquareMeters, function (Builder $query) use ($minSquareMeters, $maxSquareMeters) {
+                return $query->whereBetween('square_meters', [$minSquareMeters, $maxSquareMeters]);
+            })
+            ->when($minSquareMeters && !$maxSquareMeters, function (Builder $query) use ($minSquareMeters) {
+                return $query->where('square_meters', '>=', $minSquareMeters);
+            })
+            ->when(!$minSquareMeters && $maxSquareMeters, function (Builder $query) use ($maxSquareMeters) {
+                return $query->where('square_meters', '<=', $maxSquareMeters);
+            });
     }
 
-    public function scopeConfiguration($query, array|null $configurations)
+    public function scopeFloorRange(Builder $query, ?string $minFlore, ?string $maxFlore)
     {
-        if ($configurations) {
-            if (!empty($configurations)) {
-                return $query->whereIn('configuration_id', $configurations);
-            }
-        }
-        return $query;
+        return $query->when($minFlore && $maxFlore, function (Builder $query) use ($minFlore, $maxFlore) {
+                return $query->whereBetween('floor', [$minFlore, $maxFlore]);
+            })
+            ->when($minFlore && !$maxFlore, function (Builder $query) use ($minFlore) {
+                return $query->where('floor', '>=', $minFlore);
+            })
+            ->when(!$minFlore && $maxFlore, function (Builder $query) use ($maxFlore) {
+                return $query->where('floor', '<=', $maxFlore);
+            });
     }
 
-    public function scopeSquareMetersRange($query, ?string $minSquareMeters, ?string $maxSquareMeters)
+    public function scopeAdditionalSpaces(Builder $query, array|null $additional_spaces)
     {
-        return $query->when($minSquareMeters && $maxSquareMeters, function ($query) use ($minSquareMeters, $maxSquareMeters) {
-            return $query->whereBetween('square_meters', [$minSquareMeters, $maxSquareMeters]);
-        })
-        ->when($minSquareMeters && !$maxSquareMeters, function ($query) use ($minSquareMeters) {
-            return $query->where('square_meters', '>=', $minSquareMeters);
-        })
-        ->when(!$minSquareMeters && $maxSquareMeters, function ($query) use ($maxSquareMeters) {
-            return $query->where('square_meters', '<=', $maxSquareMeters);
-        });
-    }
-
-    public function scopeFloorRange($query, ?string $minFlore, ?string $maxFlore)
-    {
-        return $query->when($minFlore && $maxFlore, function ($query) use ($minFlore, $maxFlore) {
-            return $query->whereBetween('floor', [$minFlore, $maxFlore]);
-        })
-        ->when($minFlore && !$maxFlore, function ($query) use ($minFlore) {
-            return $query->where('floor', '>=', $minFlore);
-        })
-        ->when(!$minFlore && $maxFlore, function ($query) use ($maxFlore) {
-            return $query->where('floor', '<=', $maxFlore);
-        });
-    }
-
-    public function scopeAdditionalSpaces($query, array|null $additional_spaces)
-    {
-        return $query->when($additional_spaces && count($additional_spaces) > 0, function ($query) use ($additional_spaces) {
-            return $query->where(function ($query) use ($additional_spaces) {
+        return $query->when($additional_spaces && count($additional_spaces) > 0, function (Builder $query) use ($additional_spaces) {
+            return $query->where(function (Builder $query) use ($additional_spaces) {
                 foreach ($additional_spaces as $space) {
                     $query->orWhereJsonContains('additional_spaces', intval($space));
                 }
@@ -122,37 +130,36 @@ trait AnnouncementSearch
         });
     }
 
-    public function scopeFilter($query, ?string $filter)
+    public function scopeSort(Builder $query, ?string $sort)
     {
-        return $query->when($filter === Filter::mostExpensive->name, function ($query) {
-            $query->orderBy('price', 'desc');
-        })
-        ->when($filter === Filter::cheapest->name, function ($query) {
-            $query->orderBy('price', 'asc');
-        })
-        ->when($filter === Filter::newest->name, function ($query) {
-            $query->orderBy('created_at', 'desc');
-        })
-        ->when($filter === Filter::oldest->name, function ($query) {
-            $query->orderBy('created_at', 'asc');
-        });
+        return $query->when($sort === Sort::mostExpensive->name, function (Builder $query) {
+                $query->orderBy('price', 'desc');
+            })
+            ->when($sort === Sort::cheapest->name, function (Builder $query) {
+                $query->orderBy('price', 'asc');
+            })
+            ->when($sort === Sort::newest->name, function (Builder $query) {
+                $query->orderBy('created_at', 'desc');
+            })
+            ->when($sort === Sort::oldest->name, function (Builder $query) {
+                $query->orderBy('created_at', 'asc');
+            });
     }
 
-    public function scopeLocation($query, ?array $location, ?int $radius)
+    public function scopeLocation(Builder $query, ?int $location, ?int $radius)
     {
-        return $query->when($location, function ($query) use ($location, $radius) {
+        $location = Geo::find($location)?->toArray();
+        return $query->when($location, function (Builder $query) use ($location, $radius) {
             return $radius
                 ? $query->radius($location['lat'], $location['long'], $radius)
                 : $query->whereJsonContains('location->name', $location['name']);
         });
     }
 
-    public function scopeEquipment($query, ?array $equipment)
+    public function scopeEquipment(Builder $query, ?array $equipment)
     {
-        if ($equipment) {
-            if (!empty($equipment)) {
-                return $query->whereIn('equipment', $equipment);
-            }
+        if ($equipment AND !empty($equipment)) {
+            return $query->whereIn('equipment', $equipment);
         }
         return $query;
     }

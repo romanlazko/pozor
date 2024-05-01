@@ -117,12 +117,22 @@ trait AnnouncementTrait
     public function discount($new_price)
     {
         if ($new_price) {
-            $result = $this->update([
-                'price' => $new_price
+            return $this->update([
+                'current_price' => $new_price,
+                'old_price' => $this->current_price,
             ]);
-
-            return $result;
         }
+
+        return false;
+    }
+
+    public function indicateAvailability($moderator = 'system')
+    {
+        if ($this->status == Status::sold) {
+            return $this->moderate($moderator);
+        }
+
+        return false;
     }
 
     public function statusInfo($status, $moderator = 'system', $error = null)

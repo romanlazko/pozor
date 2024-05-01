@@ -4,6 +4,7 @@ namespace App\Livewire\Components\Create;
 
 use Livewire\Attributes\Modelable;
 use Livewire\Attributes\Reactive;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -11,11 +12,9 @@ class Photo extends Component
 {
     use WithFileUploads;
  
-    #[Reactive]
-    public $error;
-    
+    // #[Validate(['photos.*' => 'image|max:1024'])]
     #[Modelable]
-    public $photos;
+    public $photos = [];
 
     public function render()
     {

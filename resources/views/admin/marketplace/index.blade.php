@@ -6,27 +6,49 @@
             </svg>
         </button>
         <div class="flex items-center" x-data>
-            <h2 class="text-xl font-bold">
-                Marketplace
-            </h2>
-            <form id="statusForm" action="{{ route('admin.marketplace.announcement.index') }}" >
-                <select name="status" onchange="document.getElementById('statusForm').submit()" class="w-min border-none shadow-none focus:ring-0 text-indigo-700 text-lg fotn-light">
-                    @foreach (App\Enums\Status::cases() as $status)
-                        <option @selected(request('status', App\Enums\Status::await_moderation->value) == $status->value) value="{{ $status->value }}">{{ $status->trans() }}</option>
+            <div class="w-full">
+                <div class="flex space-x-2 overflow-x-auto">
+                    @foreach ($announcements_count as $status => $count)
+                        @if ($count > 0)
+                            <x-badge @class([
+                                "bg-red-100 text-red-700 border-red-700" => ($status == 'moderation_not_passed' OR $status == 'failed' OR $status == 'publishing_failed'),
+                                'border-orange-700 bg-orange-100 text-orange-700' =>  ($status == 'await_moderation'),
+                                'border-green-700 bg-green-100 text-green-700' =>  ($status == 'moderation_passed' OR $status == 'published')
+                            ])>
+                                <p>{{$status}} {{ $count}}</p>
+                            </x-badge>
+                        @endif
                     @endforeach
-                </select>
-                <select name="filter" onchange="document.getElementById('statusForm').submit()" class="w-min border-none shadow-none focus:ring-0 text-indigo-700 text-lg fotn-light">
-                    @foreach (App\Enums\Filter::cases() as $filter)
-                        <option @selected(request('filter') == $filter->name) value="{{ $filter->name }}">{{ $filter->value }}</option>
-                    @endforeach
-                </select>
-            </form>
+                </div>
+                <div class="w-full flex items-center">
+                    <h2 class="text-xl font-bold">
+                        Marketplace
+                    </h2>
+                    <form id="statusForm" action="{{ route('admin.marketplace.announcement.index') }}" >
+                        <select name="status" onchange="document.getElementById('statusForm').submit()" class="w-min border-none shadow-none focus:ring-0 text-indigo-700 text-lg fotn-light">
+                            @foreach (App\Enums\Status::cases() as $status)
+                                <option @selected(request('status', App\Enums\Status::await_moderation->value) == $status->value) value="{{ $status->value }}">{{ $status->trans() }}</option>
+                            @endforeach
+                        </select>
+                        <select name="sort" onchange="document.getElementById('statusForm').submit()" class="w-min border-none shadow-none focus:ring-0 text-indigo-700 text-lg fotn-light">
+                            @foreach (App\Enums\Sort::cases() as $filter)
+                                <option @selected(request('filter') == $filter->name) value="{{ $filter->name }}">{{ $filter->value }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            </div>
+            
+            
         </div>
     </x-slot>
+
+    
+
     <div class="p-2 md:p-4 grid grid-cols-1 md:grid-cols-3 gap-3 gap-y-12">
         @foreach ($announcements as $announcement)
             <x-white-block class="p-0 h-min">
-                <div class="p-1 flex items-center space-x-2">
+                <div class="p-2 md:p-2 flex items-center space-x-2">
                     <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-8 h-8 aspect-square bg-red-600">
                     <p class="text-sm font-bold text-blue-700 hover:underline">
                         {{ $announcement->user->name }}
@@ -43,12 +65,12 @@
                     </div>
                 @endif
 
-                <div class="space-y-3 p-3">
+                <div class="space-y-3 p-2 md:p-2">
                     <div class="flex items-center justify-between">
                         <x-badge @class([
                             'border-orange-500 bg-orange-200 text-orange-700' => $announcement->status->isAwaitModeration(),
                             'border-green-500 bg-green-200 text-green-700' => $announcement->status->isPublished(),
-                            'border-red-500 bg-red-200 text-red-700' => $announcement->status->isModerationNotPassed(),
+                            'border-red-700 bg-red-200 text-red-700' => $announcement->status->isModerationNotPassed(),
                         ])>
                             {{ $announcement->status->trans() }}
                         </x-badge>
@@ -94,6 +116,12 @@
                             <x-a-buttons.primary :href="route('admin.marketplace.announcement.publish', $announcement)">
                                 {{ __("Publish") }}
                             </x-a-buttons.primary>
+                        @endif
+
+                        @if ($announcement->status == App\Enums\Status::publishing_failed) 
+                        <x-a-buttons.primary :href="route('admin.marketplace.announcement.publish', $announcement)">
+                            {{ __("Publish") }}
+                        </x-a-buttons.primary>
                         @endif
 
                         @if ($announcement->status == App\Enums\Status::await_publication) 

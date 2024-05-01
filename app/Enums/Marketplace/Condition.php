@@ -4,9 +4,9 @@ namespace App\Enums\Marketplace;
 
 enum Condition: int
 {
-    case good = 1;
-    case bad = 2;
-    case used = 3;
+    case new = 1;
+    case used = 2;
+    
 
     public function trans($lang = null)
     {

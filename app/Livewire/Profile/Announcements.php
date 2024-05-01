@@ -2,54 +2,179 @@
 
 namespace App\Livewire\Profile;
 
-use App\Models\Marketplace\MarketplaceAnnouncement;
-use App\Models\RealEstate\RealEstateAnnouncement;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Enums\Status;
+use App\Models\Attribute;
+use App\Models\Category;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Grid as LayoutGrid;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Table;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\Features\SupportPagination\WithoutUrlPagination;
-use Livewire\WithPagination;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Title;
 
-#[Layout('layouts.user')]
-
-class Announcements extends Component
+class Announcements extends Component implements HasForms, HasTable
 {
-    use WithPagination, WithoutUrlPagination;
+    use InteractsWithTable;
+    use InteractsWithForms;
+    
+    #[Layout('layouts.profile')]
 
-    public $filter = 'all';
+    #[Title('Announcements')]
+    
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(auth()->user()->announcements()->getQuery())
+            ->columns([
+                
+                Stack::make([
+                    TextColumn::make('status')
+                        ->label('Status')
+                        ->getStateUsing(fn ($record) => $record->status->name)
+                        ->color(fn ($record) => $record->status->filamentColor())
+                        ->extraAttributes(['class' => 'py-1'])
+                        ->badge(),
+                    ImageColumn::make('attachments')
+                        ->defaultImageUrl(fn ($record) => $record->getFirstMedia('announcements')?->getUrl())
+                        ->extraImgAttributes(['class' => 'rounded-xl border-2 border-white hover:border-indigo-600'])
+                        ->height(200)
+                        ->url(fn ($record) => route('announcement.show', $record))
+                        ->extraAttributes(['class' => 'py-2']),
+                    TextColumn::make('original_title')
+                        ->description(fn ($record) => $record->current_price . ' ' . $record->currency->name)
+                        ->wrap()
+                        ->extraAttributes(['class' => 'py-2'])
+                        ->weight(FontWeight::Bold),
+                    TextColumn::make('original_description')
+                        ->limit(100)
+                        ->wrap(),
 
+                ])
+                ->hiddenFrom('sm'),
+
+                Split::make([
+                    ImageColumn::make('attachments')
+                        ->defaultImageUrl(fn ($record) => $record->getFirstMedia('announcements')?->getUrl())
+                        ->extraImgAttributes(['class' => 'rounded-xl border-2 border-white hover:border-indigo-600 w-12'])
+                        ->height(50)
+                        ->circular()
+                        ->url(fn ($record) => route('announcement.show', $record))
+                        ->extraAttributes(['class' => 'my-auto'])
+                        ->grow(false),
+                    TextColumn::make('original_title')
+                        ->description(fn ($record) => Str::limit($record->original_description, 50))
+                        ->weight(FontWeight::Bold),
+                    TextColumn::make('price')
+                        ->getStateUsing(fn ($record) => $record->current_price . ' ' . $record->currency->name)
+                        ->wrap(),
+                    TextColumn::make('status')
+                        ->label('Status')
+                        ->getStateUsing(fn ($record) => $record->status->name)
+                        ->color(fn ($record) => $record->status->filamentColor())
+                        ->badge(),
+                ])
+                ->visibleFrom('sm')
+                ->from('md')
+            ])
+            ->actions([
+                ActionGroup::make([
+                    Action::make('sold')
+                        ->label('Mark as "Sold"')
+                        ->form([
+                            Section::make()
+                                ->schema([
+                                    ToggleButtons::make('sold')
+                                        ->label(__('Where did you sell it?'))
+                                        ->options([
+                                            '1' => 'I sold it on this site',
+                                            '2' => 'I sold it on another site',
+                                            '3' => 'I do not want to answer',
+                                        ])
+                                        ->required()
+                                ])
+                        ])
+                        ->slideOver()
+                        ->modalWidth('sm')
+                        ->closeModalByClickingAway(false)
+                        ->icon('heroicon-m-archive-box-x-mark')
+                        ->color('success')
+                        ->action(function ($record, array $data) {
+                            $record->sold();
+                        })
+                        ->visible(fn ($record) => $record->status == Status::published),
+                    Action::make('available')
+                        ->label('Mark as "Available"')
+                        ->icon('heroicon-m-archive-box-arrow-down')
+                        ->color('info')
+                        ->action(function ($record) {
+                            $record->published();
+                        })
+                        ->visible(fn ($record) => $record->status == Status::sold),
+                    EditAction::make()
+                        ->form([
+                            Grid::make(2)
+                                ->schema([
+                                    SpatieMediaLibraryFileUpload::make('attachments')
+                                        ->collection('announcements')
+                                        ->hiddenLabel()
+                                        ->multiple()
+                                        ->columnSpan(1),
+                                    Section::make()
+                                        ->schema([
+                                            TextInput::make('title.original')
+                                                ->label('Title')
+                                                ->required(),
+                                            Textarea::make('description.original')
+                                                ->label('Description')
+                                                ->autosize()
+                                                ->rows(6)
+                                                ->required(),
+                                        ])
+                                        ->columnSpan(1)
+                                ])
+                            
+                        ])
+                        ->modalDescription('Are you sure you\'d like to edit this post? We\'ll have to moderate it again.')
+                        ->after(fn ($record) => $record->moderate())
+                        ->slideOver()
+                        ->closeModalByClickingAway(false)
+                        ->visible(fn ($record) => $record->status != Status::sold),
+                    DeleteAction::make()
+                ])
+                ->button()
+            ]);
+    }
     public function render()
     {
-        $marketplaceAnnouncements = auth()->user()->marketplaceAnnouncements;
-        $realEstateAnnouncements = auth()->user()->realEstateAnnouncements;
-
-        $allAnnouncements = $marketplaceAnnouncements->concat($realEstateAnnouncements)
-            ->sortByDesc('created_at')
-            ->filter(function ($announcement) {
-                if ($this->filter != 'all') {
-                    if ($this->filter == 'marketplace') {
-                        return $announcement instanceof MarketplaceAnnouncement;
-                    }
-                    if ($this->filter == 'real_estate') {
-                        return $announcement instanceof RealEstateAnnouncement;
-                    }
-                }
-                return $announcement;
-            });
-
-        $perPage = 10;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentItems = $allAnnouncements->slice(($currentPage - 1) * $perPage, $perPage);
-
-        $paginator = new LengthAwarePaginator($currentItems, $allAnnouncements->count(), $perPage, $currentPage);
-
-        return view('livewire.profile.announcements', [
-            'announcements' => $paginator,
-        ]);
+        return view('livewire.profile.announcement')->title('My Announcements');
     }
-
-    // public function resetPage()
-    // {
-    //     $this->resetPage();
-    // }
 }

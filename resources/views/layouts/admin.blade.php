@@ -11,12 +11,12 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://kit.fontawesome.com/f4c6764ec6.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+        <script async src="https://www.google.com/recaptcha/api.js"></script>
 
-        @stack('library')
-
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
+        @filamentStyles
+        
+        @vite(['resources/css/app.css'])
     </head>
     
     <body>
@@ -55,5 +55,8 @@
             <x-notifications.small class="bg-red-400 z-50" :title="session('description')"/>
         @endif
     </body>
+    @livewireScripts
+    @filamentScripts
+    @vite(['resources/js/app.js'])
     @stack('scripts')
 </html>

@@ -30,6 +30,7 @@ class MarketplaceAnnouncement extends Model
         'condition' => Condition::class,
         'status' => Status::class,
         'currency' => Currency::class,
+        'keys' => 'array',
     ];
 
     public function getSlugOptions() : SlugOptions

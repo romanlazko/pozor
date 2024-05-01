@@ -29,17 +29,29 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->user()->fill([
+            ...$request->validated(),
+            'avatar' => 'storage/avatars/' . uniqid(). $request->name . ".png"
+        ]);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
+        // if ($request->user()->isDirty('avatar')) {
+        //     if (File::exists($request->user()->avatar)) {
+        //         File::delete($request->user()->avatar);
+        //     }
+            
+        // }
+
+        // if (File::exists($request->user()->)) {
+
         $avatarPath = 'storage/avatars/' . uniqid().$request->name . ".png";
 
         Avatar::create($request->name)->save($avatarPath);
 
-        
+
 
         $request->user()->avatar = $avatarPath;
 
@@ -67,5 +79,17 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function dashboard()
+    {
+        return view('profile.dashboard');
+    }
+
+    public function announcements()
+    {
+        $announcements = auth()->user()->announcements()->with('currency')->paginate(30);
+
+        return view('profile.announcement', compact('announcements'));
     }
 }

@@ -29,6 +29,25 @@ class MarketplaceCategorySeeder extends Seeder
                             'en' => 'Smartphones',
                             'cz' => 'Chytre Telefony'
                         ],
+                        'subcategories' => [
+                            [
+                                'name' => 'Apple',
+                                'alternames' => [
+                                    'ru' => 'Apple',
+                                    'en' => 'Apple',
+                                    'cz' => 'Apple'
+                                ],
+                            ],
+                            [
+                                'name' => 'Accesoaries',
+                                'alternames' => [
+                                    'ru' => 'Аксессуары',
+                                    'en' => 'Accesoaries',
+                                    'cz' => 'Prislusenstvi'
+                                ],
+                            ],
+                            
+                        ]
                     ],
                     [
                         'name' => 'Notebooks',
@@ -153,19 +172,55 @@ class MarketplaceCategorySeeder extends Seeder
                 ],
                 'subcategories' => [
                     [
-                        'name' => 'Sofas',
+                        'name' => 'For home',
                         'alternames' => [
-                            'ru' => 'Диваны',
-                            'en' => 'Sofas',
-                            'cz' => 'Pohovky'
+                            'ru' => 'Для дома',
+                            'en' => 'For home',
+                            'cz' => 'Pro dum'
+                        ],
+                        'subcategories' => [
+                            [
+                                'name' => 'Sofas',
+                                'alternames' => [
+                                    'ru' => 'Диваны',
+                                    'en' => 'Sofas',
+                                    'cz' => 'Pohovky'
+                                ],
+                            ],
+                            [
+                                'name' => 'Dining Tables',
+                                'alternames' => [
+                                    'ru' => 'Обеденные Столы',
+                                    'en' => 'Dining Tables',
+                                    'cz' => 'Jídelní Stoly'
+                                ],
+                            ],
                         ],
                     ],
                     [
-                        'name' => 'Dining Tables',
+                        'name' => 'For Garden',
                         'alternames' => [
-                            'ru' => 'Обеденные Столы',
-                            'en' => 'Dining Tables',
-                            'cz' => 'Jídelní Stoly'
+                            'ru' => 'Для сада',
+                            'en' => 'For Garden',
+                            'cz' => 'Pro zahradu'
+                        ],
+                        'subcategories' => [
+                            [
+                                'name' => 'Sofas',
+                                'alternames' => [
+                                    'ru' => 'Диваны',
+                                    'en' => 'Sofas',
+                                    'cz' => 'Pohovky'
+                                ],
+                            ],
+                            [
+                                'name' => 'Dining Tables',
+                                'alternames' => [
+                                    'ru' => 'Обеденные Столы',
+                                    'en' => 'Dining Tables',
+                                    'cz' => 'Jídelní Stoly'
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -302,17 +357,20 @@ class MarketplaceCategorySeeder extends Seeder
             ],
         ];
 
+        $this->seedCategories($categories);
+    }
+    
+    private function seedCategories(array $categories, int $parentId = null)
+    {
         foreach ($categories as $categoryData) {
             $category = MarketplaceCategory::create([
                 'name' => $categoryData['name'],
                 'alternames' => $categoryData['alternames'],
+                'parent_id' => $parentId,
             ]);
 
-            foreach ($categoryData['subcategories'] as $subcategoryData) {
-                $category->subcategories()->create([
-                    'name' => $subcategoryData['name'],
-                    'alternames' => $subcategoryData['alternames'],
-                ]);
+            if (isset($categoryData['subcategories'])) {
+                $this->seedCategories($categoryData['subcategories'], $category->id);
             }
         }
     }

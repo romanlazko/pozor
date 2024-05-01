@@ -2,8 +2,7 @@
 
 return [
     'marketplace' => [
-        'good' => 'Good',
-        'bad' => 'Bad',
+        'new' => 'New',
         'used' => 'Used', 
     ]
 ];

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\Status;
+use App\Facades\Deepl;
 use App\Models\Marketplace\MarketplaceAnnouncement;
 use App\Models\RealEstate\RealEstateAnnouncement;
 use Exception;
@@ -29,6 +30,20 @@ class PublishAnnouncementJob implements ShouldQueue
     public function handle(): void
     {
         if ($this->announcement->status->isAwaitPublication() AND $this->publishOnTelegram($this->announcement)) {
+            $this->announcement->update([
+                'title' => [
+                    'original' => $this->announcement->original_title,
+                    'en' => Deepl::translateText($this->announcement->original_title, null, 'en-US')->text,
+                    'ru' => Deepl::translateText($this->announcement->original_title, null, 'RU')->text,
+                    'cz' => Deepl::translateText($this->announcement->original_title, null, 'CS')->text,
+                ],
+                'description' => [
+                    'original' => $this->announcement->original_description,
+                    'en' => Deepl::translateText($this->announcement->original_description, null, 'en-US')->text,
+                    'ru' => Deepl::translateText($this->announcement->original_description, null, 'RU')->text,
+                    'cz' => Deepl::translateText($this->announcement->original_description, null, 'CS')->text,
+                ],
+            ]);
             $this->announcement->published();
         }
     }

@@ -1,23 +1,24 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\RealEstateController;
-use App\Http\Controllers\SuperDuperAdmin\Marketplace\AnnouncementController;
+use App\Http\Controllers\SuperDuperAdmin\AttributeIndexController;
+use App\Http\Controllers\SuperDuperAdmin\CategoryIndexController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramAdvertisementController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramChatController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramController;
-use App\Livewire\Marketplace\Create as MarketplaceCreate;
-use App\Livewire\Marketplace\Index as MarketplaceIndex;
-use App\Livewire\Marketplace\Show as MarketplaceShow;
+use App\Http\Controllers\WelcomeController;
+use App\Livewire\Admin\Attributes;
+use App\Livewire\Admin\Categories;
+use App\Livewire\Announcement\Create;
+use App\Livewire\Announcement\CreateClothingAnnouncement;
+use App\Livewire\Announcement\CreateElectronicAnnouncement;
+use App\Livewire\Announcement\CreateRealEstateAnnouncement;
 use App\Livewire\Profile\Announcements;
-use App\Livewire\Profile\Create\Marketplace;
-use App\Livewire\Profile\Create;
-use App\Livewire\Profile\Create\RealEstate;
 use App\Livewire\Profile\Dashboard;
 use App\Livewire\Profile\Edit;
-use App\Livewire\RealEstate\Create as RealEstateCreate;
-use App\Livewire\RealEstate\Index as RealEstateIndex;
-use App\Livewire\RealEstate\Show as RealEstateShow;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use NlpTools\Classifiers\MultinomialNBClassifier;
@@ -39,13 +40,24 @@ use Stevebauman\Location\Facades\Location;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome' );
+// Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+// Route::get('/category/{category:slug?}', [WelcomeController::class, 'search'])->name('search_by_category');
+// Route::post('/search', [WelcomeController::class, 'search'])->name('search');
+Route::get('/', fn () => redirect()->route('announcement.index'));
+
+Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/search/{category:slug}', 'search')->name('search');
+    Route::get('/show/{announcement:slug}', 'show')->name('show');
+    // Route::get('/create', 'create')->middleware('auth')->name('create');
+    // Route::get('/edit/{announcement}', 'edit')->middleware('auth')->name('edit');
+    // Route::patch('/update/{announcement}', 'update')->middleware('auth')->name('update');
+    // Route::delete('/delete/{announcement}', 'delete')->middleware('auth')->name('delete');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->name('admin.')->prefix('admin')->group(function () {
     Route::resource('telegram_bot', TelegramController::class);
@@ -53,44 +65,57 @@ Route::middleware('auth')->name('admin.')->prefix('admin')->group(function () {
     Route::resource('telegram_bot.chat', TelegramChatController::class);
     Route::resource('telegram_bot.advertisement', TelegramAdvertisementController::class);
 
-    Route::name('marketplace.')->prefix('marketplace')->group(function () {
-        
-        Route::get('announcement/{announcement}/cancel_moderation', [AnnouncementController::class, 'cancel_moderation'])->name('announcement.cancel_moderation');
-        Route::get('announcement/{announcement}/retry', [AnnouncementController::class, 'retry'])->name('announcement.retry');
-        Route::get('announcement/{announcement}/moderate', [AnnouncementController::class, 'moderate'])->name('announcement.moderate');
-        Route::get('announcement/{announcement}/approve', [AnnouncementController::class, 'approve'])->name('announcement.approve');
-        Route::get('announcement/{announcement}/stop_publication', [AnnouncementController::class, 'stop_publication'])->name('announcement.stop_publication');
-        Route::get('announcement/{announcement}/publish', [AnnouncementController::class, 'publish'])->name('announcement.publish');
-        Route::get('announcement/{announcement}/reject', [AnnouncementController::class, 'reject'])->name('announcement.reject');
-        Route::resource('announcement', AnnouncementController::class);
-    });
+    Route::get('category/{category?}', Categories::class)->name('categories');
+
+    Route::get('attribute', Attributes::class)->name('attributes');
 });
 
 Route::middleware('auth')->name('profile.')->prefix('profile')->group(function () {
-    Route::get('edit', Edit::class)->name('edit');
+    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
     Route::patch('/update', [ProfileController::class, 'update'])->name('update');
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
-    Route::get('announcements', Announcements::class)->name('announcements');
-    Route::get('dashboard', Dashboard::class)->name('dashboard');
-    
-    Route::prefix('create')->group(function () {
-        Route::get('/', Create::class)->name('create');
-        Route::get('/marketplace', MarketplaceCreate::class)->name('marketplace.create');
-        Route::get('/real-estate', RealEstateCreate::class)->name('real-estate.create');
-    });
+
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
+    Route::get('/announcement', Announcements::class)->name('announcement.index');
+    Route::get('/announcement/create', Create::class)->name('announcement.create');
 });
 
-Route::name('marketplace.')->prefix('marketplace')->group(function () {
-    Route::get('/', MarketplaceIndex::class)->name('index');
-    Route::get('/show/{announcement:slug}', MarketplaceShow::class)->name('show');
-    
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('create', Create::class)->name('announcement.create');
+//     // Route::get('/announcement/create', function () {
+//     //     return view('announcement.create');
+//     // })->name('announcement.create');
+// });
 
-Route::name('real-estate.')->prefix('real-estate')->group(function () {
-    Route::get('/', RealEstateIndex::class)->name('index');
-    Route::get('/show/{announcement:slug}', RealEstateShow::class)->name('show');
+// Route::middleware('auth')->prefix('create')->group(function () {
+//     Route::get('/', Create::class)->name('create');
+
+//     // Route::get('/marketplace', MarketplaceCreate::class)->name('marketplace.create');
+//     // Route::get('/real-estate', RealEstateCreate::class)->name('real-estate.create');
+// });
+
+// Route::middleware('auth')->prefix('create')->name('create.')->group(function () {
+//     Route::get('electronic', CreateElectronicAnnouncement::class)->name('electronic');
+//     Route::get('real-estate', CreateRealEstateAnnouncement::class)->name('real-estate');
+//     Route::get('clothing', CreateClothingAnnouncement::class)->name('clothing');
     
-});
+//     // Route::get('/marketplace', MarketplaceCreate::class)->name('marketplace.create');
+//     // Route::get('/real-estate', RealEstateCreate::class)->name('real-estate.create');
+// });
+
+// Route::resource('marketplace', MarketplaceController::class)->parameters([
+//     'marketplace' => 'marketplaceAnnouncement:slug',
+// ]);
+// Route::resource('real-estate', RealEstateController::class)->parameters([
+//     'real-estate' => 'realEstateAnnouncement:slug',
+// ]);
+    // Route::get('/show/{announcement:slug}', MarketplaceShow::class)->name('show');
+
+// Route::name('real-estate.')->prefix('real-estate')->group(function () {
+//     Route::get('/', RealEstateIndex::class)->name('index');
+//     Route::get('/show/{announcement:slug}', RealEstateShow::class)->name('show');
+    
+// });
 
 
 

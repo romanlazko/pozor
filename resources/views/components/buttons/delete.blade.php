@@ -13,8 +13,8 @@
         
         onclick="return confirm('{{ __('Are you shure?')}}')"
     >
-        <i class="fa-solid fa-trash sm:mr-1"></i>
-        <p class="hidden sm:block">
+        <i class="fa-solid fa-trash mr-1"></i>
+        <p>
             {{ $slot }}
         </p>
     </button>

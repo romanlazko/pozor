@@ -191,17 +191,41 @@ class RealEstateCategorySeeder extends Seeder
             ],
         ];
 
+        // foreach ($categories as $categoryData) {
+        //     $category = RealEstateCategory::create([
+        //         'name' => $categoryData['name'],
+        //         'alternames' => $categoryData['alternames'],
+        //     ]);
+
+        //     foreach ($categoryData['subcategories'] ?? [] as $subcategoryData) {
+        //         $category->subcategories()->create([
+        //             'name' => $subcategoryData['name'],
+        //             'alternames' => $subcategoryData['alternames'],
+        //         ]);
+        //     }
+
+        //     foreach ($categoryData['configurations'] ?? [] as $configurationData) {
+        //         $category->configurations()->create([
+        //             'name' => $configurationData['name'],
+        //             'alternames' => $configurationData['alternames'],
+        //         ]);
+        //     }
+        // }
+
+        $this->seedCategories($categories);
+    }
+    
+    private function seedCategories(array $categories, int $parentId = null)
+    {
         foreach ($categories as $categoryData) {
             $category = RealEstateCategory::create([
                 'name' => $categoryData['name'],
                 'alternames' => $categoryData['alternames'],
+                'parent_id' => $parentId,
             ]);
 
-            foreach ($categoryData['subcategories'] ?? [] as $subcategoryData) {
-                $category->subcategories()->create([
-                    'name' => $subcategoryData['name'],
-                    'alternames' => $subcategoryData['alternames'],
-                ]);
+            if (isset($categoryData['subcategories'])) {
+                $this->seedCategories($categoryData['subcategories'], $category->id);
             }
 
             foreach ($categoryData['configurations'] ?? [] as $configurationData) {

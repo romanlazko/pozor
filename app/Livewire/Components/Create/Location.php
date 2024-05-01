@@ -28,7 +28,7 @@ class Location extends Component
     {
         $this->countries = Geo::getCountries();
         
-        $this->location = Geo::findName((CurrentLocation::get() ?: null)?->cityName)?->toArray();
+        $this->location = (Geo::findName((CurrentLocation::get() ?: null)?->cityName) ?? Geo::find(request()->location)?->toArray());
 
         $this->country = $this->location['country'] ?? null;
         $this->search = $this->location['name'] ?? null;
@@ -36,7 +36,9 @@ class Location extends Component
 
     public function render()
     {
-        $cities = Geo::search($this->search)->where('country', $this->country)->limit(30)->get();
+        $search = '%' . mb_strtolower($this->search) . '%';
+
+        $cities = Geo::where('country', $this->country)->whereRaw('LOWER(alternames) LIKE ?', [$search])->limit(10)->get();
 
         if (($this->location['name'] ?? '') != $this->search OR ($this->location['country'] ?? '') != $this->country) {
             $this->reset('location');
@@ -47,9 +49,9 @@ class Location extends Component
         ));
     }
 
-    public function setLocation($name)
+    public function setLocation($id)
     {
-        $this->location = Geo::findName($name)->toArray();
-        $this->search = $name;
+        $this->location = Geo::find($id)->toArray();
+        $this->search = $this->location['name'];
     }
 }

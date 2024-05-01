@@ -3,13 +3,12 @@
 namespace App\Livewire\Components;
 
 use App\Jobs\SendMessageJob;
-use App\Models\Marketplace\MarketplaceAnnouncement;
-use App\Models\RealEstate\RealEstateAnnouncement;
+use App\Models\Announcement;
 use Livewire\Component;
 
 class SendMessage extends Component
 {
-    public MarketplaceAnnouncement|RealEstateAnnouncement $announcement; 
+    public Announcement $announcement; 
     public $message;
 
     public function render()
