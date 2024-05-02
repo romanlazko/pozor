@@ -341,7 +341,7 @@ class Announcements extends Component implements HasForms, HasTable
                         DeleteAction::make(),
                     ])
                     ->size(ActionSize::ExtraSmall)
-                    ->dropdownPlacement('bottom')
+                    ->dropdownPlacement('right-start')
                     ->button()
             ])
             ->filters([
