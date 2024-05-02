@@ -6,8 +6,13 @@
 		
 	</div>
 
-	<div class="flex items-center">
-		<x-a-buttons.create href="{{ route('profile.announcement.create') }}" wire:navigate class="">
+	<div class="flex items-center space-x-2">
+		@guest
+			<a href="{{ route('register') }}" class="hover:text-indigo-700">Register</a>
+			<a href="{{ route('login') }}" class="hover:text-indigo-700">Login</a>
+		@endguest
+		
+		<x-a-buttons.create href="{{ route('profile.announcement.create') }}" class="">
 			{{ __("Create announcement") }}
 		</x-a-buttons.create>
 	</div>

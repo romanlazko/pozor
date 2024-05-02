@@ -32,9 +32,6 @@
                 <div class="flex overflow-hidden grow mx-auto w-[100vw] h-full">
                     <x-sidebar>
                         <div class="p-4 space-y-3">
-                            <x-responsive-nav-link wire:navigate :href="route('profile.dashboard')" :active="request()->routeIs('profile.dashboard')">
-                                {{ __('Dashboard') }}
-                            </x-responsive-nav-link>
                             <x-responsive-nav-link wire:navigate :href="route('profile.announcement.index')" :active="request()->routeIs('profile.announcement.*')">
                                 {{ __('My Announcements') }}
                             </x-responsive-nav-link>
