@@ -85,7 +85,7 @@ class Announcements extends Component implements HasForms, HasTable
                                 ->label('User')
                                 ->description(fn (Announcement $announcement) => $announcement->user->email)
                         ])
-                        ->from('sm')
+                        // ->from('xs')
                         // ->url(fn (Announcement $announcement) => route('admin.users.edit', $announcement->user->id)),
                             
                     ]),
