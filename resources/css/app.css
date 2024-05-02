@@ -14,3 +14,11 @@
 .fi-section-header {
     padding: 16px;
 }
+
+.fi-ta-content-grid {
+    padding: 16px 4px;
+}
+
+.fi-ta-record .block {
+    padding: 8px;
+}

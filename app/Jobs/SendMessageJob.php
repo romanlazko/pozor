@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Marketplace\MarketplaceAnnouncement;
-use App\Models\RealEstate\RealEstateAnnouncement;
+use App\Models\Announcement;
+use App\Models\User;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,12 +17,15 @@ class SendMessageJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $announcement;
+    private $recipient;
     /**
      * Create a new job instance.
      */
-    public function __construct(private MarketplaceAnnouncement|RealEstateAnnouncement $announcement, private string $message)
+    public function __construct(private int $announcement_id, private string $message, private string $recipient_id)
     {
-        
+        $this->recipient = User::find($this->recipient_id);
+        $this->announcement = Announcement::find($this->announcement_id);
     }
 
     /**
@@ -30,30 +33,36 @@ class SendMessageJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // if ($chat_id = $this->announcement->user->chat?->chat_id) {
-            new Bot('5981959980:AAHtBsJcUuXBfuR6FVgFfNh31r2jQwlF8io');
-
-            BotApi::sendMessageWithMedia([
-                'text'                      => $this->prepareMessage(),
-                'chat_id'                   => '544883527',
-                'parse_mode'                => 'HTML',
-                'disable_web_page_preview'  => 'true',
-            ]);
-        // }
+        $this->sendMessageToTelegram(); 
+        $this->sendMessageToEmail();
     }
 
-    private function prepareMessage()
+    public function sendMessageToTelegram()
     {
-        $text = [];
+        $bot = new Bot('5981959980:AAHtBsJcUuXBfuR6FVgFfNh31r2jQwlF8io');
 
-        $text[] = "You have a message about you announcement:";
+        $text = implode("\n", [
+            "*You have a new message about the announcement:*"."\n",
+            "{$this->announcement->title}"."\n",
+            "{$this->message}"
+        ]);
 
-        $text[] = "{$this->announcement->id}";
+        $bot::sendMessage([
+            'text'                      => $text,
+            'chat_id'                   => '544883527',
+            'parse_mode'                => 'HTML',
+            'disable_web_page_preview'  => 'true',
+            'parse_mode'                => 'Markdown',
+        ]);
+    }
 
-        $text[] = get_class($this->announcement);
+    public function sendMessageToEmail()
+    {
+        // $this->recipient->notify(new \App\Notifications\TelegramAnnouncement($this->announcement, $this->message));
+    }
 
-        $text[] = "Message: {$this->message}";
-
-        return implode("\n", $text);
+    public function failed(Exception $exception)
+    {
+        
     }
 }

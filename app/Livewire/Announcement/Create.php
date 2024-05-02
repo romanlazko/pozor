@@ -52,7 +52,7 @@ class Create extends Component implements HasForms
 
     public function mount()
     {
-        $this->parent_categories = Category::where('parent_id', null)->get()->pluck('name', 'id');
+        $this->parent_categories = Category::where('parent_id', null)->get()->pluck('translated_name', 'id');
         $this->form->fill([
             'geo_id' => null,
             'features' => []
@@ -120,12 +120,9 @@ class Create extends Component implements HasForms
                     
                 ])
                 ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                    <x-filament::button
-                        type="submit"
-                        size="sm"
-                    >
-                        Submit
-                    </x-filament::button>
+                    <x-filament.submit>
+                        {{ __('Submit') }}
+                    </x-filament.submit> 
                 BLADE)))
                 ->contained(false)
                 ->skippable()
@@ -261,8 +258,8 @@ class Create extends Component implements HasForms
             ->keyBy('id')
             ->map(fn (Category $category) => collect([
                 'id' => $category->id,
-                'name' => $category->name,
-                'children' => $category->children->pluck('name', 'id'),
+                'name' => $category->translated_name,
+                'children' => $category->children->pluck('translated_name', 'id'),
             ]));
 
         $this->category_attributes = Attribute::with('attribute_options', 'section')

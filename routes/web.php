@@ -10,6 +10,8 @@ use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramAdvertisementControlle
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramChatController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramController;
 use App\Http\Controllers\WelcomeController;
+use App\Livewire\Admin\AnnouncementAudits;
+use App\Livewire\Admin\Announcements as AdminAnnouncements;
 use App\Livewire\Admin\Attributes;
 use App\Livewire\Admin\Categories;
 use App\Livewire\Announcement\Create;
@@ -28,6 +30,7 @@ use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
+use App\Http\Controllers\MessagesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +71,8 @@ Route::middleware('auth')->name('admin.')->prefix('admin')->group(function () {
     Route::get('category/{category?}', Categories::class)->name('categories');
 
     Route::get('attribute', Attributes::class)->name('attributes');
+    Route::get('announcement', AdminAnnouncements::class)->name('announcement');
+    Route::get('announcement/audit/{announcement}', AnnouncementAudits::class)->name('announcement.audit');
 });
 
 Route::middleware('auth')->name('profile.')->prefix('profile')->group(function () {
@@ -78,6 +83,14 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/announcement', Announcements::class)->name('announcement.index');
     Route::get('/announcement/create', Create::class)->name('announcement.create');
+});
+
+Route::controller(MessagesController::class)->name('message.')->prefix('message')->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/', 'store')->name('store');
+    Route::get('{thread}', 'show')->name('show');
+    Route::put('{thread}', 'update')->name('update');
+    // Route::resource('message', MessagesController::class);
 });
 
 // Route::middleware('auth')->group(function () {

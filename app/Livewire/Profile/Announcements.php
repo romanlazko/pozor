@@ -3,38 +3,25 @@
 namespace App\Livewire\Profile;
 
 use App\Enums\Status;
-use App\Models\Attribute;
-use App\Models\Category;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Get;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\Layout\Grid as LayoutGrid;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -69,12 +56,12 @@ class Announcements extends Component implements HasForms, HasTable
                         ->height(200)
                         ->url(fn ($record) => route('announcement.show', $record))
                         ->extraAttributes(['class' => 'py-2']),
-                    TextColumn::make('original_title')
+                    TextColumn::make('title')
                         ->description(fn ($record) => $record->current_price . ' ' . $record->currency->name)
                         ->wrap()
                         ->extraAttributes(['class' => 'py-2'])
                         ->weight(FontWeight::Bold),
-                    TextColumn::make('original_description')
+                    TextColumn::make('description')
                         ->limit(100)
                         ->wrap(),
 
@@ -90,8 +77,8 @@ class Announcements extends Component implements HasForms, HasTable
                         ->url(fn ($record) => route('announcement.show', $record))
                         ->extraAttributes(['class' => 'my-auto'])
                         ->grow(false),
-                    TextColumn::make('original_title')
-                        ->description(fn ($record) => Str::limit($record->original_description, 50))
+                    TextColumn::make('title')
+                        ->description(fn ($record) => Str::limit($record->description, 50))
                         ->weight(FontWeight::Bold),
                     TextColumn::make('price')
                         ->getStateUsing(fn ($record) => $record->current_price . ' ' . $record->currency->name)
@@ -150,10 +137,10 @@ class Announcements extends Component implements HasForms, HasTable
                                         ->columnSpan(1),
                                     Section::make()
                                         ->schema([
-                                            TextInput::make('title.original')
+                                            TextInput::make('title')
                                                 ->label('Title')
                                                 ->required(),
-                                            Textarea::make('description.original')
+                                            Textarea::make('description')
                                                 ->label('Description')
                                                 ->autosize()
                                                 ->rows(6)

@@ -8,7 +8,7 @@
             this.current = (this.current + 1) % this.photos.length;
         },
     }"
-    class="bg-white rounded shadow-md"
+    class="bg-white rounded-lg shadow-md overflow-hidden"
 >
     <div class="relative bg-gray-200 overflow-hidden">
         <div class="absolute z-0 inset-0 bg-cover bg-center filter blur-2xl border-none h-full w-full"

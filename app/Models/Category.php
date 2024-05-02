@@ -40,7 +40,7 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id', 'id')->with('parent');
     }
 
-    public function getNameAttribute()
+    public function getTranslatedNameAttribute()
     {
         return $this->alternames[app()->getLocale()] ?? $this->attributes['name'];
     }

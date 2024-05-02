@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Akuechler\Geoly;
-use App\Enums\Currency;
 use App\Enums\Status;
-use App\Facades\Deepl;
-use App\Models\Attribute as ModelsAttribute;
+use App\Models\Attribute;
 use App\Models\Traits\AnnouncementTrait;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditingAuditable;
+use OwenIt\Auditing\Contracts\Auditable;
 use Romanlazko\Telegram\Models\TelegramChat;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -18,48 +17,47 @@ use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-class Announcement extends Model implements HasMedia
+class Announcement extends Model implements HasMedia, Auditable
 {
-    use HasSlug; use SoftDeletes; use Geoly; use AnnouncementTrait; use HasJsonRelationships; use InteractsWithMedia;
+    use HasSlug; use SoftDeletes; use Geoly; use AnnouncementTrait; use HasJsonRelationships; use InteractsWithMedia; use AuditingAuditable;
 
     protected $guarded = [];
 
     protected $casts = [
-        'title' => 'array',
-        'description' => 'array',
-        'status_info' => 'array',
+        // 'title' => 'array',
+        // 'description' => 'array',
+        'translated_title' => 'array',
+        'description_description' => 'array',
         'location' => 'array',
         'status' => Status::class,
-        'features' => 'json',
     ];
 
-    // protected static function booted(): void
-    // {
-    //     static::creating(function (Announcement $announcement) {
-    //         $announcement->title = [
-    //             'original' => $announcement->title,
-    //         ];
-    //         $announcement->description = [
-    //             'original' => $announcement->description,
-    //         ];
-    //     });
+    protected static function booted(): void
+    {
+        // static::creating(function (Announcement $announcement) {
+        //     $announcement->title = [
+        //         'original' => $announcement->title,
+        //     ];
+        //     $announcement->description = [
+        //         'original' => $announcement->description,
+        //     ];
+        // });
 
-    //     static::updating(function (Announcement $announcement) {
-    //         $announcement->title = [
-    //             'original' => $announcement->title,
-    //         ];
-    //         $announcement->description = [
-    //             'original' => $announcement->description,
-    //         ];
-    //     });
-    // }
+        static::updating(function (Announcement $announcement) {
+            if ($announcement->isDirty('title')) {
+                $announcement->translated_title = null;
+            }
+
+            if ($announcement->isDirty('description')) {
+                $announcement->translated_description = null;
+            }
+        });
+    }
 
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom(function () {
-                return $this->original_title;
-            })
+            ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
 
@@ -80,22 +78,22 @@ class Announcement extends Model implements HasMedia
 
     public function getTranslatedTitleAttribute()
     {
-        return json_decode($this->attributes['title'], true)[app()->getLocale()] ?? $this->original_title;
+        return json_decode($this->attributes['translated_title'], true)[app()->getLocale()] ?? null;
     }
 
     public function getOriginalTitleAttribute()
     {
-        return json_decode($this->attributes['title'], true)['original'] ?? null;
+        return $this->title;
     }
 
     public function getTranslatedDescriptionAttribute()
     {
-        return json_decode($this->attributes['description'], true)[app()->getLocale()] ?? $this->original_description;
+        return json_decode($this->attributes['translated_description'], true)[app()->getLocale()] ?? null;
     }
 
     public function getOriginalDescriptionAttribute()
     {
-        return json_decode($this->attributes['description'], true)['original'] ?? null;
+        return $this->description;
     }
 
     public function currency()
@@ -105,7 +103,7 @@ class Announcement extends Model implements HasMedia
 
     public function attributes()
     {
-        return $this->belongsToMany(ModelsAttribute::class)->using(AnnouncementAttribute::class)->withPivot('value');
+        return $this->belongsToMany(Attribute::class)->using(AnnouncementAttribute::class)->withPivot('value');
     }
 
     public function scopeCategories($query, Category|null $category)
@@ -120,7 +118,7 @@ class Announcement extends Model implements HasMedia
     {
         return $query->when($category and $attributes, fn ($query) =>
             $query->where(function ($query) use ($attributes, $category) {
-                $category_attributes = ModelsAttribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $category->getParentsAndSelf()->pluck('id')->toArray()))->get();
+                $category_attributes = Attribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $category->getParentsAndSelf()->pluck('id')->toArray()))->get();
 
                 foreach ($category_attributes as $attribute) {
                     if ($attribute->is_feature AND $attribute->searchable AND isset($attributes[$attribute->name]) AND !empty($attributes[$attribute->name])) {
@@ -156,5 +154,10 @@ class Announcement extends Model implements HasMedia
     public function scopeSearch($query, $search = null)
     {
         $query->when($search, fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ['%' . mb_strtolower($search) . '%']));
+    }
+
+    public function scopeIsPublished()
+    {
+        return $this->where('status', Status::published);
     }
 }

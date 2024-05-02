@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class SendMessage extends Component
 {
-    public Announcement $announcement; 
+    public $announcement_id; 
     public $message;
 
     public function render()
@@ -18,7 +18,7 @@ class SendMessage extends Component
 
     public function sendMessage()
     {
-        SendMessageJob::dispatch($this->announcement, $this->message);
+        SendMessageJob::dispatch($this->announcement_id, $this->message);
 
         $this->reset('message');
     }

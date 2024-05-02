@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Marketplace\MarketplaceAnnouncement;
+use App\Models\Messanger\Thread;
 use App\Models\RealEstate\RealEstateAnnouncement;
 use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,16 +54,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function marketplaceAnnouncements()
-    {
-        return $this->hasMany(MarketplaceAnnouncement::class);
-    }
-
-    public function realEstateAnnouncements()
-    {
-        return $this->hasMany(RealEstateAnnouncement::class);
-    }
-
     public function chat()
     {
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id', 'id');
@@ -71,5 +62,10 @@ class User extends Authenticatable
     public function announcements()
     {
         return $this->hasMany(Announcement::class);
+    }
+
+    public function threads()
+    {
+        return $this->belongsToMany(Thread::class);
     }
 }

@@ -4,111 +4,150 @@ namespace App\Models\Traits;
 
 use App\Enums\Status;
 use App\Jobs\PublishAnnouncementJob;
+use App\Jobs\TranslateAnnouncement;
 use Exception;
 
 trait AnnouncementTrait
 {
-    public function moderate($moderator = 'system')
+    public function moderate()
     {
         $result = $this->update([
             'status' => Status::await_moderation,
-            'status_info' => $this->statusInfo('await_moderation', $moderator),
         ]);
 
         if ($result) {
-            // ModerateAnnouncementByClarifiJob::dispatch($this);
+            // ModerateAnnouncementByClarifiJob::dispatch($this)->delay(now()->addMinutes(5));
         }
 
         return $result;
     }
 
-    public function moderationNotPassed($moderator = 'system')
+    public function moderationFailed(string $reason = null)
+    {
+        $result =  $this->update([
+            'status' => Status::moderation_failed,
+        ]);
+
+        return $result;
+    }
+
+    public function moderationNotPassed(string $reason = null)
     {
         $result =  $this->update([
             'status' => Status::moderation_not_passed,
-            'status_info' => $this->statusInfo('moderation_not_passed', $moderator),
         ]);
 
-        // ModerationNotPassedMarketplaceAnnouncement::dispatch($this);
+        // ModerationNotPassedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
 
         return $result;
     }
 
-    public function moderationPassed($moderator = 'system')
+    public function reject(string $reason = null)
     {
-        $result = $this->update([
-            'status' => Status::moderation_passed,
-            'status_info' => $this->statusInfo('moderation_passed', $moderator),
+        $result =  $this->update([
+            'status' => Status::rejected,
         ]);
 
-        $this->publish($moderator);
+        // RejectedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
 
         return $result;
     }
 
-    public function publish($moderator = 'system')
+    public function approve()
+    {
+        $result = $this->approved();
+
+        if ($result) {
+            $this->translate();
+        }
+
+        return $result;
+    }
+
+    public function approved()
     {
         $result = $this->update([
-            'status' => Status::await_publication,
-            'status_info' => $this->statusInfo('await_publication', $moderator),
+            'status' => Status::approved,
+        ]);
+
+        return $result;
+    }
+    
+    public function translate()
+    {
+        $result = $this->update([
+            'status' => Status::await_translation,
         ]);
 
         if ($result) {
-            PublishAnnouncementJob::dispatch($this)->delay(now()->addMinutes(5));
+            TranslateAnnouncement::dispatch($this->id);
+            // ->delay(now()->addMinutes(5))
+        }
+
+        return $result;
+    }
+
+    public function translationFailed(Exception $e = null)
+    {
+        $result = $this->update([
+            'status' => Status::translation_failed,
+        ]);
+
+        return $result;
+    }
+
+    public function translated()
+    {
+        $result = $this->update([
+            'status' => Status::translated,
+        ]);
+
+        if ($result) {
+            $this->publish();
+        }
+
+        return $result;
+    }
+
+    public function publish()
+    {
+        $result = $this->update([
+            'status' => Status::await_publication,
+        ]);
+
+        if ($result) {
+            PublishAnnouncementJob::dispatch($this);
+            // ->delay(now()->addMinutes(5))
         }
         
         return $result;
     }
 
-    public function publishingFailed(Exception $e, $moderator = 'system')
+    public function publishingFailed(Exception $e = null)
     {
         $result =  $this->update([
             'status' => Status::publishing_failed,
-            'status_info' => $this->statusInfo('publishing_failed', $moderator, $e->getMessage()),
         ]);
 
         return $result;
     }
 
-    public function published($moderator = 'system')
+    public function published()
     {
         $result =  $this->update([
             'status' => Status::published,
-            'status_info' => $this->statusInfo('published', $moderator),
+            'should_be_published_in_telegram' => false,
         ]);
 
-        // PublishedMarketplaceAnnouncement::dispatch($this);
+        // PublishedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
         
         return $result;
     }
 
-    public function reject($moderator = 'system')
-    {
-        $result =  $this->update([
-            'status' => Status::rejected,
-            'status_info' => $this->statusInfo('rejected', $moderator),
-        ]);
-
-        // RejectedMarketplaceAnnouncement::dispatch($this);
-
-        return $result;
-    }
-
-    public function fail(Exception $e, $moderator = 'system')
-    {
-        $result = $this->update([
-            'status' => Status::failed,
-            'status_info' => $this->statusInfo('failed', $moderator, $e),
-        ]);
-
-        return $result;
-    }
-
-    public function sold($moderator = 'system')
+    public function sold()
     {
         $result =  $this->update([
             'status' => Status::sold,
-            'status_info' => $this->statusInfo('sold', $moderator),
         ]);
 
         return $result;
@@ -126,27 +165,12 @@ trait AnnouncementTrait
         return false;
     }
 
-    public function indicateAvailability($moderator = 'system')
+    public function indicateAvailability()
     {
         if ($this->status == Status::sold) {
-            return $this->moderate($moderator);
+            return $this->publish();
         }
 
         return false;
-    }
-
-    public function statusInfo($status, $moderator = 'system', $error = null)
-    {
-        $status_info = json_decode($this->attributes['status_info'], true) ?? [];
-
-        array_push($status_info, [
-            'user' => $moderator,
-            'change_status_from' => $this->attributes['status'],
-            'change_status_to' => $status,
-            'error' => $error,
-            'datetime' => now()->format('Y-m-d H:s:i'),
-        ]);
-
-        return $status_info;
     }
 }

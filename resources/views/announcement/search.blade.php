@@ -49,7 +49,7 @@
         <div class="w-full overflow-auto flex space-x-1">
             @foreach ($category->children as $child)
                 <a href="{{ route('announcement.search', $child->slug) }}" class="p-1.5 xl:p-2.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600">
-                    {{ $child->name }}
+                    {{ $child->translated_name }}
                 </a>
             @endforeach
         </div>

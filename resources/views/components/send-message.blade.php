@@ -11,6 +11,13 @@
             </div>
         </div>
 
-        <livewire:components.send-message :announcement="$announcement"/>
+        {{-- <livewire:components.send-message :announcement_id="$announcement->id"/> --}}
+
+        <form action="{{ route('message.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="announcement_id" value="{{ $announcement->id }}">
+            <x-form.textarea name="message" placeholder="Write a message" required rows="6"/>
+            <x-buttons.primary>Send</x-buttons.primary>
+        </form>
     </div>
 </x-white-block>

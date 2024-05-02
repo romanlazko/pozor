@@ -24,6 +24,11 @@
 			</x-responsive-nav-link>
 		@endhasrole
 		@hasrole('super-duper-admin')
+			<x-responsive-nav-link href="{{ route('admin.announcement') }}" :active="request()->routeIs('admin.announcement')">
+				{{ __('Announcements') }}
+			</x-responsive-nav-link>
+		@endhasrole
+		@hasrole('super-duper-admin')
 			<x-responsive-nav-link href="{{ route('admin.categories') }}" :active="request()->routeIs('admin.categories')">
 				{{ __('Category') }}
 			</x-responsive-nav-link>

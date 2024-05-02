@@ -6,18 +6,26 @@ enum Status: int
 {
     case created = 1;
     case await_moderation = 2;
-    case moderation_not_passed = 3;
-    case moderation_passed = 4;
-    case await_publication = 5;
-    case publishing_failed = 6;
-    case published = 7;
-    case rejected = 8;
-    case sold = 9;
-    case failed = 10;
+    case moderation_failed = 3;
+    case moderation_not_passed = 4;
+    case rejected = 5;
+    case approved = 6;
+    case await_translation = 7;
+    case translation_failed = 8;
+    case translated = 9;
+    case await_publication = 10;
+    case publishing_failed = 11;
+    case published = 12;
+    case sold = 13;
 
     public function isCreated(): bool
     {
         return $this === static::created;
+    }
+
+    public function isOnModeration(): bool
+    {
+        return $this === static::await_moderation || $this === static::moderation_failed || $this === static::moderation_not_passed;
     }
 
     public function isAwaitModeration(): bool
@@ -30,9 +38,39 @@ enum Status: int
         return $this === static::moderation_not_passed;
     }
 
-    public function isModerationPassed(): bool
+    public function isModerationFailed(): bool
     {
-        return $this === static::moderation_passed;
+        return $this === static::moderation_failed;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this === static::rejected;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this === static::approved;
+    }
+
+    public function isOnTranslation(): bool
+    {
+        return $this === static::await_translation || $this === static::translation_failed;
+    }
+
+    public function isAwaitTranslation(): bool
+    {
+        return $this === static::await_translation;
+    }
+
+    public function isTranslationFailed(): bool
+    {
+        return $this === static::translation_failed;
+    }
+
+    public function isTranslated(): bool
+    {
+        return $this === static::translated;
     }
 
     public function isAwaitPublication(): bool
@@ -50,33 +88,27 @@ enum Status: int
         return $this === static::published;
     }
 
-    public function isRejected(): bool
-    {
-        return $this === static::rejected;
-    }
-
     public function isSold(): bool
     {
         return $this === static::sold;
     }
 
-    public function isFailed(): bool
-    {
-        return $this === static::failed;
-    }
-
     public function color()
     {
         return match ($this) {
+            self::created => 'blue',
             self::await_moderation => 'orange',
             self::moderation_not_passed => 'red',
-            self::moderation_passed => 'green',
-            self::await_publication => 'blue',
-            self::publishing_failed => 'purple',
-            self::published => 'green',
+            self::moderation_failed => 'red',
             self::rejected => 'red',
-            self::sold => 'gray',
-            self::failed => 'red',
+            self::approved => 'green',
+            self::await_translation => 'orange',
+            self::translation_failed => 'red',
+            self::translated => 'green',
+            self::await_publication => 'orange',
+            self::publishing_failed => 'red',
+            self::published => 'green',
+            self::sold => 'green',
             default => 'gray',
         };
     }
@@ -84,16 +116,20 @@ enum Status: int
     public function filamentColor()
     {
         return match ($this) {
+            self::created => 'info',
             self::await_moderation => 'warning',
             self::moderation_not_passed => 'danger',
-            self::moderation_passed => 'success',
-            self::await_publication => 'primary',
-            self::publishing_failed => 'purple',
-            self::published => 'success',
+            self::moderation_failed => 'danger',
             self::rejected => 'danger',
-            self::sold => 'success',
-            self::failed => 'danger',
-            default => 'info',
+            self::approved => 'success',
+            self::await_translation => 'warning',
+            self::translation_failed => 'danger',
+            self::translated => 'success',
+            self::await_publication => 'warning',
+            self::publishing_failed => 'danger',
+            self::published => 'success',
+            self::sold => 'info',
+            default => 'gray',
         };
     }
 

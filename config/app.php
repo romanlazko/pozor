@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'ru',
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -159,8 +159,9 @@ return [
         /*
          * Package Service Providers...
          */
-        Cmgmyr\Messenger\MessengerServiceProvider::class,
         Laravolt\Avatar\ServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
+        Orangehill\Iseed\IseedServiceProvider::class,
         /*
          * Application Service Providers...
          */

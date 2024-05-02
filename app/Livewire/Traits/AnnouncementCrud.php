@@ -14,8 +14,8 @@ trait AnnouncementCrud
         $location = Geo::find($data->geo_id)?->toArray() ?? [];
 
         $announcement = auth()->user()->announcements()->create([
-            'title'             => ['original' => $data->title],
-            'description'       => ['original' => $data->description],
+            'title'             => $data->title,
+            'description'       => $data->description,
             'current_price'     => $data->current_price,
             'currency_id'       => $data->currency_id,
             'geo_id'            => $data->geo_id,
@@ -24,11 +24,6 @@ trait AnnouncementCrud
         
             'should_be_published_in_telegram' => true,
             'status'            => Status::created,
-            'status_info'       => [[
-                'user' => auth()->user()->id,
-                'status' => 'created',
-                'datetime' => now()->format('Y-m-d H:s:i'),
-            ]],
         ]);
 
         $announcement->categories()->sync($data->categories);
@@ -52,8 +47,8 @@ trait AnnouncementCrud
         $announcement = auth()->user()->announcements()->find($data->id);
 
         $announcement->update([
-            'title'             => ['original' => $data->title],
-            'description'       => ['original' => $data->description],
+            'title'             => $data->title,
+            'description'       => $data->description,
             'current_price'     => $data->current_price,
             'currency_id'       => $data->currency_id,
             'geo_id'            => $data->geo_id,
@@ -62,11 +57,6 @@ trait AnnouncementCrud
         
             'should_be_published_in_telegram' => true,
             'status'            => Status::created,
-            'status_info'       => [[
-                'user' => auth()->user()->id,
-                'status' => 'created',
-                'datetime' => now()->format('Y-m-d H:s:i'),
-            ]],
         ]);
 
         $announcement->categories()->sync($data->categories);

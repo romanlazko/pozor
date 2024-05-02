@@ -12,10 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(MarketplaceCategorySeeder::class);
-        // $this->call(MarketplaceAnnouncementSeeder::class);
-        $this->call(RealEstateCategorySeeder::class);
-        // $this->call(RealEstateAnnouncementSeeder::class);
 
         // \App\Models\User::factory(10)->create();
 
@@ -23,5 +19,11 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        
+        $this->call(CategoriesTableSeeder::class);
+        $this->call(AttributesTableSeeder::class);
+        $this->call(AttributeCategoryTableSeeder::class);
+        $this->call(AttributeOptionsTableSeeder::class);
+        $this->call(AttributeSectionsTableSeeder::class);
     }
 }

@@ -41,7 +41,7 @@
                     @endif
                     
                     
-                    <div class="flex flex-1 flex-col overflow-hidden">
+                    <div class="flex flex-1 flex-col overflow-hidden ">
                         
                         @if (isset($header))
                             <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 justify-between" x-data="{ headerOpen: false }">
@@ -49,7 +49,7 @@
                             </div>
                         @endif
                         
-                        <main id="main-block"  class="w-full overflow-y-auto" wire:scroll>
+                        <main id="main-block"  class="w-full overflow-y-auto max-w-[1800px] mx-auto" wire:scroll>
                             {{ $slot }}
                         </main>
                 

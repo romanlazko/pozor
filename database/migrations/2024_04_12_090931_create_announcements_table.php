@@ -17,13 +17,16 @@ return new class extends Migration
 
             $table->bigInteger('user_id')->nullable();
             
-            $table->json('title')->nullable();
+            $table->string('title')->nullable();
+            $table->json('translated_title')->nullable();
+            
             $table->string('slug')->nullable();
 
-            $table->json('description')->nullable();
-            
-            $table->float('current_price')->nullable();
-            $table->float('old_price')->nullable();
+            $table->text('description')->nullable();
+            $table->json('translated_description')->nullable();
+
+            $table->integer('current_price')->nullable();
+            $table->integer('old_price')->nullable();
             $table->string('currency_id')->nullable();
 
             $table->unsignedBigInteger('category_id')->nullable();
@@ -36,7 +39,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('views')->default('0');
 
-            $table->json('status_info')->nullable();
             $table->integer('status')->nullable();
 
             $table->timestamps();

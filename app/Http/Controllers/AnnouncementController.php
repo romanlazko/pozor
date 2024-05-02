@@ -13,8 +13,9 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::whereNull('parent_id')->where('is_active', true)->whereHas('announcements')->get();
-        $announcements = Announcement::with('attributes', 'currency')
+        $categories = Category::whereNull('parent_id')->where('is_active', true)->whereHas('announcements', fn ($query) => $query->isPublished())->get();
+        $announcements = Announcement::with('attributes', 'currency', 'media')
+            ->isPublished()
             ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories->pluck('id')->toArray()))
             ->paginate(50);
 
@@ -27,10 +28,11 @@ class AnnouncementController extends Controller
 
         $category->load('children');
 
-        $announcements = Announcement::with('attributes', 'currency')
+        $announcements = Announcement::with('attributes', 'currency', 'media')
+            ->isPublished()
             ->categories($category)
             ->features($category, $data['attributes'] ?? null)
-            ->price($data['price'] ?? null)
+            ->price($data['current_price'] ?? null)
             ->search($data['search'] ?? null)
             ->paginate(30)->withQueryString();
 
@@ -39,7 +41,12 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
+        if (!$announcement->status->isPublished() AND $announcement->user->id != auth()->id()) {
+            abort(404);
+        }
+        
         $announcements = Announcement::with('attributes', 'currency')
+            ->isPublished()
             ->whereHas('categories', function ($query) use ($announcement) {
                 return $query->where('category_id', $announcement->categories->last()->id);
             })
@@ -47,6 +54,7 @@ class AnnouncementController extends Controller
             ->limit(12)
             ->get()
             ->whereNotIn('id', $announcement->id);
+
         return view('announcement.show', compact('announcement', 'announcements'));
     }
 
@@ -55,29 +63,29 @@ class AnnouncementController extends Controller
         return view('announcement.create');
     }
 
-    public function edit(Announcement $announcement)
-    {
-        return view('announcement.edit', compact('announcement'));
-    }
+    // public function edit(Announcement $announcement)
+    // {
+    //     return view('announcement.edit', compact('announcement'));
+    // }
 
-    public function update(Request $request, Announcement $announcement)
-    {
-        if ($request->has('discount')) {
-            $announcement->discount($request->new_price);
-        }
+    // public function update(Request $request, Announcement $announcement)
+    // {
+    //     if ($request->has('discount')) {
+    //         $announcement->discount($request->new_price);
+    //     }
 
-        if ($request->has('indicate_availability')) {
-            $announcement->indicateAvailability(auth()->id());
-        }
+    //     if ($request->has('indicate_availability')) {
+    //         $announcement->indicateAvailability(auth()->id());
+    //     }
 
-        if ($request->has('sold')) {
-            $announcement->sold(auth()->id());
-        }
+    //     if ($request->has('sold')) {
+    //         $announcement->sold(auth()->id());
+    //     }
 
 
 
-        return back();
-    }
+    //     return back();
+    // }
 
     public function delete(Announcement $announcement)
     {

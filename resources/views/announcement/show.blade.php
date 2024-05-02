@@ -28,10 +28,10 @@
         </div>
     </x-slot>
 
-    <div class="lg:flex w-full max-w-6xl m-auto space-x-6 py-6">
+    <div class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
         <div class="w-full lg:w-2/3 space-y-6">
             <x-slider :medias="$announcement->getMedia('announcements')"/>
-            <div class="space-y-6 p-6 bg-white rounded shadow-md">
+            <div class="space-y-6 p-6 bg-white rounded-lg shadow-md">
                 <div class="space-y-1 ">
                     <p class="font-extrabold text-indigo-600 text-2xl">
                         {{ $announcement->current_price }} {{ $announcement->currency->name }} 
@@ -77,7 +77,7 @@
             {{-- <div class="w-full bg-red-400 sticky top-3 h-[300px] lg:rounded-xl ">
                 <!-- Content of the sticky element -->
             </div> --}}
-            <div class="space-y-6 sticky top-0 bg-white p-6 shadow-md rounded">
+            <div class="space-y-6 sticky top-0 bg-white p-6 shadow-md rounded-lg">
                 <div class="flex space-x-4 items-center">
                     <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">
@@ -97,10 +97,10 @@
         </div>
     </div>
 
-    <div class="lg:flex w-full max-w-6xl m-auto space-x-6 py-6">
+    <div class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0 py-6">
         <div class="w-full lg:w-2/3 space-y-6">
             @if ($announcements?->isNotEmpty())
-                <div class="space-y-6 bg-white p-6 shadow-md rounded">
+                <div class="space-y-6 bg-white p-6 shadow-md rounded-lg">
                     <h2 class="text-2xl font-bold">
                         Similar announcements
                     </h2>
@@ -113,23 +113,7 @@
             @endif
         </div>
         <div class="w-full lg:w-1/3 space-y-6">
-            <div class="space-y-6 sticky top-0 bg-white p-6 shadow-md rounded">
-                <div class="flex space-x-4 items-center">
-                    <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
-                    <div class="w-full">
-                        <span class="block font-bold">{{ $announcement->user->name }}</span>
-                        <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user->email }}</a>
-                        <span class="block text-gray-500 text-xs">{{ __("Registered") }} {{ $announcement->user->created_at->diffForHumans() }}</span>
-                    </div>
-                </div>
-                <div class="w-full lg:flex lg:space-x-3 lg:space-y-0 space-y-3 items-center">
-                    <x-a-buttons.primary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
-                        <i class="fa-solid fa-comment mr-1"></i>
-                        Send message
-                    </x-a-buttons.primary>
-                    <livewire:components.show-contact :user_id="$announcement->user->id"/>
-                </div>
-            </div>
+            
         </div>
     </div>
 

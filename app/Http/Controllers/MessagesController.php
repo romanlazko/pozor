@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendMessageJob;
+use App\Models\Announcement;
+use App\Models\Messanger\Thread;
 use App\Models\User;
+use App\Notifications\MessageSent;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Message;
-use Cmgmyr\Messenger\Models\Participant;
-use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class MessagesController extends Controller
@@ -21,14 +22,7 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        // All threads, ignore deleted/archived participants
-        $threads = Thread::getAllLatest()->get();
-
-        // All threads that user is participating in
-        // $threads = Thread::forUser(Auth::id())->latest('updated_at')->get();
-
-        // All threads that user is participating in, with new messages
-        // $threads = Thread::forUserWithNewMessages(Auth::id())->latest('updated_at')->get();
+        $threads = auth()->user()->threads->load('announcement', 'messages', 'announcement.media');
 
         return view('messenger.index', compact('threads'));
     }
@@ -39,38 +33,11 @@ class MessagesController extends Controller
      * @param $id
      * @return mixed
      */
-    public function show($id)
+    public function show(Thread $thread)
     {
-        try {
-            $thread = Thread::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            Session::flash('error_message', 'The thread with ID: ' . $id . ' was not found.');
+        $messages = $thread->messages->load('user');
 
-            return redirect()->route('messages');
-        }
-
-        // show current user in list if not a current participant
-        // $users = User::whereNotIn('id', $thread->participantsUserIds())->get();
-
-        // don't show the current user in list
-        $userId = Auth::id();
-        $users = User::whereNotIn('id', $thread->participantsUserIds($userId))->get();
-
-        $thread->markAsRead($userId);
-
-        return view('messenger.show', compact('thread', 'users'));
-    }
-
-    /**
-     * Creates a new message thread.
-     *
-     * @return mixed
-     */
-    public function create()
-    {
-        $users = User::where('id', '!=', Auth::id())->get();
-
-        return view('messenger.create', compact('users'));
+        return view('messenger.show', compact('thread', 'messages'));
     }
 
     /**
@@ -78,34 +45,25 @@ class MessagesController extends Controller
      *
      * @return mixed
      */
-    public function store()
+    public function store(Request $request)
     {
-        $input = Request::all();
+        $announcement = Announcement::findOrFail($request->announcement_id);
 
-        $thread = Thread::create([
-            'subject' => $input['subject'],
-        ]);
-
-        // Message
-        Message::create([
-            'thread_id' => $thread->id,
-            'user_id' => Auth::id(),
-            'body' => $input['message'],
-        ]);
-
-        // Sender
-        Participant::create([
-            'thread_id' => $thread->id,
-            'user_id' => Auth::id(),
-            'last_read' => new Carbon(),
-        ]);
-
-        // Recipients
-        if (Request::has('recipients')) {
-            $thread->addParticipant($input['recipients']);
+        if ($announcement->user->id == auth()->id()) {
+            return redirect()->back();
         }
 
-        return redirect()->route('messages');
+        $thread = auth()->user()->threads()->where('announcement_id', $announcement->id)->first();
+
+        if (!$thread) {
+            $thread = auth()->user()->threads()->create([
+                'announcement_id' => $announcement->id,
+            ]);
+
+            $thread->users()->attach([$announcement->user->id]);
+        }
+
+        return $this->update($thread, $request);
     }
 
     /**
@@ -114,38 +72,17 @@ class MessagesController extends Controller
      * @param $id
      * @return mixed
      */
-    public function update($id)
+    public function update(Thread $thread, Request $request)
     {
-        try {
-            $thread = Thread::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            Session::flash('error_message', 'The thread with ID: ' . $id . ' was not found.');
-
-            return redirect()->route('messages');
-        }
-
-        $thread->activateAllParticipants();
-
-        // Message
-        Message::create([
-            'thread_id' => $thread->id,
-            'user_id' => Auth::id(),
-            'body' => Request::input('message'),
+        $thread->messages()->create([
+            'user_id' => auth()->id(),
+            'message' => $request->message,
         ]);
 
-        // Add replier as a participant
-        $participant = Participant::firstOrCreate([
-            'thread_id' => $thread->id,
-            'user_id' => Auth::id(),
-        ]);
-        $participant->last_read = new Carbon();
-        $participant->save();
+        // $recipient = $thread->users()->where('user_id', '!=', auth()->id())->first();
 
-        // Recipients
-        if (Request::has('recipients')) {
-            $thread->addParticipant(Request::input('recipients'));
-        }
+        // $thread->messages->last()->user->notify(new MessageSent($thread));
 
-        return redirect()->route('messages.show', $id);
+        return redirect()->back();
     }
 }

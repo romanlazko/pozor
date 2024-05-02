@@ -4,8 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\Status;
 use App\Facades\Deepl;
-use App\Models\Marketplace\MarketplaceAnnouncement;
-use App\Models\RealEstate\RealEstateAnnouncement;
+use App\Models\Announcement;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +21,7 @@ class PublishAnnouncementJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private MarketplaceAnnouncement|RealEstateAnnouncement $announcement)
+    public function __construct(private Announcement $announcement)
     {
         //
     }
@@ -30,25 +29,11 @@ class PublishAnnouncementJob implements ShouldQueue
     public function handle(): void
     {
         if ($this->announcement->status->isAwaitPublication() AND $this->publishOnTelegram($this->announcement)) {
-            $this->announcement->update([
-                'title' => [
-                    'original' => $this->announcement->original_title,
-                    'en' => Deepl::translateText($this->announcement->original_title, null, 'en-US')->text,
-                    'ru' => Deepl::translateText($this->announcement->original_title, null, 'RU')->text,
-                    'cz' => Deepl::translateText($this->announcement->original_title, null, 'CS')->text,
-                ],
-                'description' => [
-                    'original' => $this->announcement->original_description,
-                    'en' => Deepl::translateText($this->announcement->original_description, null, 'en-US')->text,
-                    'ru' => Deepl::translateText($this->announcement->original_description, null, 'RU')->text,
-                    'cz' => Deepl::translateText($this->announcement->original_description, null, 'CS')->text,
-                ],
-            ]);
             $this->announcement->published();
         }
     }
 
-    private function publishOnTelegram(MarketplaceAnnouncement|RealEstateAnnouncement $announcement)
+    private function publishOnTelegram(Announcement $announcement)
     {
         if ($announcement->should_be_published_in_telegram) {
             try {
