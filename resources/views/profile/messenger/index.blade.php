@@ -9,7 +9,7 @@
         @forelse ($threads ?? [] as $thread)
             <a href="{{ route('profile.message.show', $thread->id) }}" class="flex items-center space-x-2">
                 <div class="w-12 h-12 rounded-full overflow-hidden bg-red-300">
-                    <img src="{{ $thread->announcement->getFirstMediaUrl('announcements') }}" alt="" class="object-cover h-12  ">
+                    <img src="{{ $thread?->announcement?->getFirstMediaUrl('announcements') }}" alt="" class="object-cover h-12  ">
                 </div>
                 <div>
                     <p class="font-bold">{{ $thread?->announcement?->translated_title }}</p>
