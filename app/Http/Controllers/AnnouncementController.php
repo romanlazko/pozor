@@ -8,27 +8,24 @@ use App\Models\Attribute;
 use App\Models\Category;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Http\Request;
+use Session;
 
 class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::whereNull('parent_id')->where('is_active', true)->whereHas('announcements', fn ($query) => $query->isPublished())->get();
-        $announcements = Announcement::with('attributes', 'currency', 'media')
-            ->isPublished()
-            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories->pluck('id')->toArray()))
-            ->paginate(50);
+        $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
 
-        return view('announcement.index', compact('announcements', 'categories'));
-    }
+        $category = Category::where('slug', $request->category)->first();
 
-    public function search(Category $category, Request $request)
-    {
-        $data = $request->search ? unserialize(decrypt(urldecode($request->search))) : null;
+        $categories = Category::where(['parent_id' => $category?->id ?? null])
+            ->with('media')
+            ->where('is_active', true)
+            ->withCount('announcements')
+            ->get()
+            ->filter(fn ($category) => $category->announcements_count > 0);
 
-        $category->load('children');
-
-        $announcements = Announcement::with('attributes', 'currency', 'media')
+        $announcements = Announcement::with('media', 'attributes', 'currency')
             ->isPublished()
             ->categories($category)
             ->features($category, $data['attributes'] ?? null)
@@ -36,7 +33,7 @@ class AnnouncementController extends Controller
             ->search($data['search'] ?? null)
             ->paginate(30)->withQueryString();
 
-        return view('announcement.search', compact('announcements', 'data', 'category'));
+        return view('announcement.index', compact('announcements', 'categories', 'category', 'data'));
     }
 
     public function show(Announcement $announcement)
@@ -45,7 +42,7 @@ class AnnouncementController extends Controller
             abort(404);
         }
         
-        $announcements = Announcement::with('attributes', 'currency')
+        $announcements = Announcement::with('attributes', 'currency', 'media')
             ->isPublished()
             ->whereHas('categories', function ($query) use ($announcement) {
                 return $query->where('category_id', $announcement->categories->last()->id);

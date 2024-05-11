@@ -55,7 +55,7 @@ class Create extends Component implements HasForms
         $this->parent_categories = Category::where('parent_id', null)->get()->pluck('translated_name', 'id');
         $this->form->fill([
             'geo_id' => null,
-            'features' => []
+            'attributes' => []
         ]);
     }
 

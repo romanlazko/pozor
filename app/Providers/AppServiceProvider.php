@@ -17,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('deepl', function () {
             return new Translator(env('DEEPL_API_KEY'));
         });
+
+        if ($this->app->isLocal()) {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
 
     /**

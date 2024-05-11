@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendMessageJob;
 use App\Models\Announcement;
 use App\Models\Messanger\Thread;
-use App\Models\User;
-use App\Notifications\MessageSent;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class MessagesController extends Controller
 {
@@ -22,9 +16,12 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        $threads = auth()->user()->threads->load('announcement', 'messages', 'announcement.media');
+        $threads = auth()->user()->threads->load('announcement', 'messages', 'announcement.media')
+            ->loadCount(['messages as uread_messages_count' => function ($query) {
+                $query->where('read_at', null)->where('user_id', '!=', auth()->id());
+            }]);
 
-        return view('messenger.index', compact('threads'));
+        return view('profile.messenger.index', compact('threads'));
     }
 
     /**
@@ -37,7 +34,11 @@ class MessagesController extends Controller
     {
         $messages = $thread->messages->load('user');
 
-        return view('messenger.show', compact('thread', 'messages'));
+        $messages->where('user_id', '!=', auth()->id())->each( function ($message) {
+            $message->update(['read_at' => now()]);
+        });
+
+        return view('profile.messenger.show', compact('thread', 'messages'));
     }
 
     /**
@@ -78,10 +79,6 @@ class MessagesController extends Controller
             'user_id' => auth()->id(),
             'message' => $request->message,
         ]);
-
-        // $recipient = $thread->users()->where('user_id', '!=', auth()->id())->first();
-
-        // $thread->messages->last()->user->notify(new MessageSent($thread));
 
         return redirect()->back();
     }

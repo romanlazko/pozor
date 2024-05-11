@@ -62,7 +62,7 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->name('admin.')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
     Route::resource('telegram_bot', TelegramController::class);
         
     Route::resource('telegram_bot.chat', TelegramChatController::class);
@@ -83,15 +83,16 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/announcement', Announcements::class)->name('announcement.index');
     Route::get('/announcement/create', Create::class)->name('announcement.create');
+
+
+    Route::controller(MessagesController::class)->prefix('messages')->name('message.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::get('{thread}', 'show')->name('show');
+        Route::put('{thread}', 'update')->name('update');
+    });
 });
 
-Route::controller(MessagesController::class)->name('message.')->prefix('message')->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::post('/', 'store')->name('store');
-    Route::get('{thread}', 'show')->name('show');
-    Route::put('{thread}', 'update')->name('update');
-    // Route::resource('message', MessagesController::class);
-});
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('create', Create::class)->name('announcement.create');

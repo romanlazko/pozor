@@ -79,7 +79,7 @@
             </div> --}}
             <div class="space-y-6 sticky top-0 bg-white p-6 shadow-md rounded-lg">
                 <div class="flex space-x-4 items-center">
-                    <img src="{{ asset($announcement->user->avatar) }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
+                    <img src="{{ $announcement->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">
                         <span class="block font-bold">{{ $announcement->user->name }}</span>
                         <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user->email }}</a>

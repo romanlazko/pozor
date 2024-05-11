@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
-    use HasFactory; use HasSlug; use SoftDeletes;
+    use HasFactory; use HasSlug; use SoftDeletes; use InteractsWithMedia;
 
     protected $guarded = [];
 
@@ -25,6 +28,19 @@ class Category extends Model
             ->saveSlugsTo('slug');
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('categories')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media) {
+                $this
+                    ->addMediaConversion('thumb')
+                    ->keepOriginalImageFormat()
+                    ->width(200);
+            });
+    }
+
     public function announcements()
     {
         return $this->belongsToMany(Announcement::class);
@@ -32,12 +48,12 @@ class Category extends Model
 
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id', 'id')->with('children');
+        return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'parent_id', 'id')->with('parent');
+        return $this->belongsTo(Category::class, 'parent_id', 'id');
     }
 
     public function getTranslatedNameAttribute()

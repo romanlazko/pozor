@@ -13,13 +13,14 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Romanlazko\Telegram\Models\TelegramChat;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Announcement extends Model implements HasMedia, Auditable
 {
-    use HasSlug; use SoftDeletes; use Geoly; use AnnouncementTrait; use HasJsonRelationships; use InteractsWithMedia; use AuditingAuditable;
+    use HasSlug; use SoftDeletes; use Geoly; use InteractsWithMedia; use AuditingAuditable; use AnnouncementTrait;
 
     protected $guarded = [];
 
@@ -59,6 +60,21 @@ class Announcement extends Model implements HasMedia, Auditable
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('responsive-images')
+            ->greyscale()
+            ->quality(50)
+            ->withResponsiveImages();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('announcements')
+            ->withResponsiveImages();
     }
 
     public function chat()
@@ -126,7 +142,7 @@ class Announcement extends Model implements HasMedia, Auditable
                             if ($attribute->search_type == 'between') {
                                 $max = !empty($attributes[$attribute->name]['max']) ? $attributes[$attribute->name]['max'] : PHP_INT_MAX;
                                 $min = !empty($attributes[$attribute->name]['min']) ? $attributes[$attribute->name]['min'] : 0;
-                                $query->whereBetween('value->original', [$min, $max]);
+                                $query->where('value->original', '>=', $min)->where('value->original', '<=', $max);
                             }
                             else if ($attribute->search_type == 'checkboxlist') {
                                 $query->whereIn('value->original', $attributes[$attribute->name]);
@@ -153,11 +169,11 @@ class Announcement extends Model implements HasMedia, Auditable
 
     public function scopeSearch($query, $search = null)
     {
-        $query->when($search, fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ['%' . mb_strtolower($search) . '%']));
+        $query->when($search, fn ($query) => $query->whereRaw('LOWER(translated_title) LIKE ?', ['%' . mb_strtolower($search) . '%']));
     }
 
-    public function scopeIsPublished()
+    public function scopeIsPublished($query)
     {
-        return $this->where('status', Status::published);
+        return $query->where('status', Status::published);
     }
 }

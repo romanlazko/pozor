@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Romanlazko\Telegram\App\Bot;
 
-class MessageSent extends Notification
+class NewMessage extends Notification
 {
     use Queueable;
 
@@ -32,48 +32,40 @@ class MessageSent extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [TelegramChannel::class, 'mail'];
+        return [TelegramChannel::class];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
-    }
+    // public function toMail(object $notifiable): MailMessage
+    // {
+    //     return (new MailMessage)
+    //                 ->line('The introduction to the notification.')
+    //                 ->action('Notification Action', url('/'))
+    //                 ->line('Thank you for using our application!');
+    // }
 
     public function toTelegram(object $notifiable)
     {
+        if (!$notifiable->telegram_chat) {
+            return;
+        }
+
         $bot = new Bot('5981959980:AAHtBsJcUuXBfuR6FVgFfNh31r2jQwlF8io');
 
         $text = implode("\n", [
-            "*You have a new message about the announcement:*"."\n",
-            "{$this->announcement->title}"."\n",
+            "🆕You have a new message about the announcement:🆕"."\n",
+            "*{$this->announcement->title}*"."\n",
             "{$this->message}"
         ]);
 
         $bot::sendMessage([
             'text'                      => $text,
-            'chat_id'                   => $notifiable->chat_id,
+            'chat_id'                   => $notifiable->telegram_chat->chat_id,
             'parse_mode'                => 'HTML',
             'disable_web_page_preview'  => 'true',
             'parse_mode'                => 'Markdown',
         ]);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
     }
 }

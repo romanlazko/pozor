@@ -4,21 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Models\Marketplace\MarketplaceAnnouncement;
 use App\Models\Messanger\Thread;
-use App\Models\RealEstate\RealEstateAnnouncement;
-use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Romanlazko\Telegram\Models\TelegramChat;
 use Romanlazko\Telegram\Traits\HasBots;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, HasBots, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasBots, HasRoles; use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +54,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media) {
+                $this
+                    ->addMediaConversion('thumb')
+                    ->keepOriginalImageFormat()
+                    ->width(100)
+                    ->height(100);
+            });
+    }
+
     public function chat()
     {
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id', 'id');
@@ -67,5 +80,17 @@ class User extends Authenticatable
     public function threads()
     {
         return $this->belongsToMany(Thread::class);
+    }
+
+    public function getUnreadMessagesCountAttribute()
+    {
+        return $this->threads()
+            ->withCount(['messages' => function ($query) {
+                $query->where('read_at', null)
+                    ->where('user_id', '!=', auth()->id());
+            }])
+            ->get()
+            ->pluck('messages_count')
+            ->sum();
     }
 }

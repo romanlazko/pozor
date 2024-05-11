@@ -1,5 +1,5 @@
 <div x-data="{
-        photos: {{ $medias->map(fn($media) => $media->getUrl())->toJson() }},
+        photos: {{ $medias->map(fn($media) => $media->getSrcset())->toJson() }},
         current: 0,
         prev() {
             this.current = (this.current - 1 + this.photos.length) % this.photos.length;
@@ -23,7 +23,7 @@
                     </button>
                 </div>
 
-                <img x-bind:src="photos[current]" alt="" class="object-contain w-full h-full">
+                <img x-bind:srcset="photos[current]" alt="" class="object-contain w-full h-full">
                 
                 <div class="absolute z-50 right-0 content-center h-full flex items-center px-1">
                     <button x-on:click="next" class="m-auto whitespace-nowrap items-center cursor-pointer grid bg-gray-50 hover:bg-gray-200 aspect-square w-8 h-8 rounded-full content-center">
@@ -37,7 +37,7 @@
 
     <div class="flex m-auto w-full justify-center overflow-hidden z-30 py-2 px-3">
         <template x-for="(photo, index) in photos" :key="index">
-            <img x-bind:src="photo" class="bg-gray-200 w-16 h-16 border-2 rounded-lg object-cover mx-2 hover:border-indigo-400"
+            <img x-bind:srcset="photos[current]" class="bg-gray-200 w-16 h-16 border-2 rounded-lg object-cover mx-2 hover:border-indigo-400"
                 :class="{ 'border-indigo-700': index === current, 'border-transparent': index !== current }"
                 x-on:click="current = index"
             >

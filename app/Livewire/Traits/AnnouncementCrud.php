@@ -88,7 +88,7 @@ trait AnnouncementCrud
         $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))->get();
 
         foreach ($availableAttributes as $availableAttribute) {
-            if (isset($attributes[$availableAttribute->name]) && $availableAttribute->is_feature) {
+            if (isset($attributes[$availableAttribute->name]) && !empty($attributes[$availableAttribute->name]) && $availableAttribute->is_feature) {
                 $sync[$availableAttribute->id] = ['value' => ['original' => $attributes[$availableAttribute->name]]];
             }
         }

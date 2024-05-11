@@ -22,3 +22,8 @@
 .fi-ta-record .block {
     padding: 8px;
 }
+
+.announcement-card img{/* Здесь высота устанавливается как 100% от ширины, создавая квадрат */
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}

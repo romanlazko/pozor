@@ -6,6 +6,8 @@ use App\Forms\Components\Between;
 use App\Forms\Components\Label;
 use App\Models\Attribute;
 use App\Models\Category;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -20,12 +22,13 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Guava\FilamentClusters\Forms\Cluster;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
-
-use function PHPUnit\Framework\once;
 
 class Index extends Component implements HasForms
 {
@@ -40,10 +43,11 @@ class Index extends Component implements HasForms
 
     public $category;
 
-    public function mount($search, $category)
+    public function mount($search = null , $category = null)
     {
         $this->category = $category;
         $this->setCategories();
+
         $this->form->fill($search);
     }
 
@@ -51,6 +55,19 @@ class Index extends Component implements HasForms
     {
         return $form
             ->schema([
+                Actions::make([
+                    Action::make('reset')
+                        ->icon('heroicon-m-x-mark')
+                        ->action(function () {
+                            $this->data = [];
+                            $this->search();
+                        })
+                        ->label(__('Reset filters')),
+                ]),
+                // Grid::make()
+                //     ->schema(function () {
+                //         return $this->schema;
+                //     })
                 Grid::make()
                     ->schema(function () {
                         $schema = [];
@@ -76,7 +93,11 @@ class Index extends Component implements HasForms
 
     public function search()
     {
-        return $this->redirectRoute('announcement.search', ['category' => $this->category?->slug, 'search' => urlencode(encrypt(serialize($this->data)))]);
+        $data = urlencode(encrypt(serialize($this->data))); 
+
+        Session::put('announcement_search', $data);
+
+        return $this->redirectRoute('announcement.index', ['category' => $this->category?->slug]);
     }
 
     public function getField($attribute)
@@ -126,7 +147,6 @@ class Index extends Component implements HasForms
                         ->options($attribute->attribute_options?->pluck('name', 'id'))
                         ->columns($attribute->column_span)
                         ->columnSpanFull()
-                        ->live()
                         ->hidden(fn (Get $get) => $this->isVisible($get, $attribute)),
             'tags' => TagsInput::make('tags')
                         ->suggestions([
@@ -169,7 +189,6 @@ class Index extends Component implements HasForms
 
         foreach ($attributes as $attribute) {
             if ($field = $this->getField($attribute)) {
-                // $this->data = data_set($this->data, $attribute->featured_name, data_get($this->data, $attribute->featured_name) ?? []);
                 $fields[] = $field;
             }
         }
@@ -191,9 +210,13 @@ class Index extends Component implements HasForms
     {
         $categoryIds = $this->category?->getParentsAndSelf()->pluck('id')->toArray();
 
-        $this->category_attributes = Attribute::with('attribute_options', 'section')
-            ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? []))
-            ->get();
+        $this->category_attributes = 
+            $this->category 
+            ? Attribute::with('attribute_options', 'section')
+                ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? []))
+                ->get()
+            
+            : Attribute::with('attribute_options', 'section')->whereHas('section', fn (Builder $query) => $query->whereIn('slug', ['required_information', 'location', 'prices']))->get();
 
         $this->countries = Geo::getCountries()->pluck('name', 'country');
     }

@@ -35,8 +35,13 @@
                             <x-responsive-nav-link wire:navigate :href="route('profile.announcement.index')" :active="request()->routeIs('profile.announcement.*')">
                                 {{ __('My Announcements') }}
                             </x-responsive-nav-link>
-                            <x-responsive-nav-link wire:navigate :href="route('message.index')" :active="request()->routeIs('message.*')">
-                                {{ __('Messages') }}
+                            <x-responsive-nav-link wire:navigate :href="route('profile.message.index')" :active="request()->routeIs('profile.message.*')" class="flex items-center space-x-3">
+                                <p>
+                                    {{ __('Messages') }} 
+                                </p>
+                                @if (auth()->user()->unreadMessagesCount > 0)
+                                    <p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
+                                @endif
                             </x-responsive-nav-link>
                             <x-responsive-nav-link wire:navigate :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                                 {{ __('Profile') }}

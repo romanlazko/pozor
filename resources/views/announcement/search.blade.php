@@ -46,15 +46,24 @@
     </x-slot>
 
     <div class="p-2 space-y-3">
-        <div class="w-full overflow-auto flex space-x-1">
-            @foreach ($category->children as $child)
-                <a href="{{ route('announcement.search', $child->slug) }}" class="p-1.5 xl:p-2.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600">
-                    {{ $child->translated_name }}
+        <div class="w-full overflow-auto space-x-1 whitespace-nowrap">
+            @foreach ($categories as $child)
+                <a href="{{ route('announcement.search', $child->slug) }}" class="m-0.5 bg-gray-200 rounded-lg border-2 text-black text-sm hover:border-indigo-700 overflow-hidden inline-block h-24">
+                    <div class="flex-col h-full flex pt-2 pl-2">
+                        <div class="flex flex-1 pr-2">
+                            {{ $child->translated_name }}
+                        </div>
+                        <div class="w-full">
+                            <div class="w-24 float-right">
+                                <img src="{{ $child->getFirstMediaUrl('categories') }}" alt="" class="hover:scale-105 float-right">
+                            </div>
+                        </div>
+                    </div>
                 </a>
             @endforeach
         </div>
 
-        <div id="start-of-page" class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2" >
+        <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2" >
             @foreach ($announcements as $index => $announcement)
                 <x-announcement-card :announcement="$announcement" />
             @endforeach
