@@ -16,7 +16,7 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        $threads = auth()->user()->threads->load('announcement', 'messages', 'announcement.media')
+        $threads = auth()->user()->threads?->load('announcement', 'messages', 'announcement.media')
             ->loadCount(['messages as uread_messages_count' => function ($query) {
                 $query->where('read_at', null)->where('user_id', '!=', auth()->id());
             }]);
