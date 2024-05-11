@@ -9,7 +9,7 @@
 	<div class="flex items-center space-x-2">
 		<a href="{{ route('profile.message.index') }}" class="text-gray-500 hover:text-indigo-700 flex items-center space-x-1">
 			<i class="fa-solid fa-comment"></i>
-			@if (auth()->user()->unreadMessagesCount > 0)
+			@if (auth()->user()?->unreadMessagesCount > 0)
 				<p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
 			@endif
 		</a>
