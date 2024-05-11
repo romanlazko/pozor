@@ -12,10 +12,10 @@
                     <img src="{{ $thread->announcement->getFirstMediaUrl('announcements') }}" alt="" class="object-cover h-12  ">
                 </div>
                 <div>
-                    <p class="font-bold">{{ $thread->announcement->translated_title }}</p>
+                    <p class="font-bold">{{ $thread?->announcement?->translated_title }}</p>
                     <p class="text-sm text-gray-500">{{ $thread?->messages?->last()?->message }}</p>
-                    @if ($thread->uread_messages_count > 0)
-                        <p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ $thread->uread_messages_count }}</p>
+                    @if ($thread?->uread_messages_count > 0)
+                        <p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ $thread?->uread_messages_count }}</p>
                     @endif
                 </div>
             </a>
