@@ -9,9 +9,38 @@
         </p>
     </header>
 
-    @if (!Auth::user()->telegram_chat)
-        <a href="https://t.me/posorbottestbot?start=connect.{{ auth()->user()->id }}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
+    @php
+        $url = URL::temporarySignedRoute(
+            'verification.telegram',
+            now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => auth()->user()->getKey(),
+                'telegram_chat_id' => 1,
+                'hash' => sha1(auth()->user()->getEmailForVerification()),
+            ]
+        )
+    @endphp
+
+    @if (!auth()->user()->chat)
+        <a href="{{$url}}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
     @else
-        
+        <div class="flex items-center">
+            <div class="flex-col items-center my-auto">
+                <img src="{{ auth()->user()->chat->photo ?? null }}" alt="Avatar" class="mr-4 w-12 h-12 min-w-[48px] rounded-full">
+            </div>
+            <div class="flex-col justify-center">
+                <div class="">
+                    {{-- <a href="{{ route('admin.telegram_bot.chat.show', [$telegram_bot, $chat]) }}" class="w-full text-sm font-light text-gray-500 mb-1 hover:underline">
+                        {{ auth()->user()->chat->chat_id ?? null }}
+                    </a> --}}
+                    <div class="w-full text-md font-medium text-gray-900">
+                        {{ auth()->user()->chat->first_name ?? null }} {{ auth()->user()->chat->last_name ?? null }}
+                    </div>
+                    <a class="w-full text-sm font-light text-blue-500 hover:underline" href="{{ auth()->user()->chat->contact }}" target="_blank">
+                        {{ "@".(auth()->user()->chat->username ?? auth()->user()->chat->first_name.auth()->user()->chat->last_name) }}
+                    </a>
+                </div>
+            </div>
+        </div>
     @endif
 </section>

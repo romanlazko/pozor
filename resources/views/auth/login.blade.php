@@ -4,7 +4,8 @@
         <x-auth-session-status class="mb-4" :status="session('status')" />
         <form class="bg-white p-4 sm:p-6 max-w-md m-auto my-2 md:my-12 rounded-none sm:rounded-lg" method="POST" action="{{ route('login') }}">
             @csrf
-
+            <x-honey/>
+            <x-honey-recaptcha/> 
             <!-- Email Address -->
             <div>
                 <x-form.label for="email" :value="__('Email')" />

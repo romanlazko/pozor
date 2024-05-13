@@ -14,6 +14,8 @@ class CommandsList extends DefaultCommandsList
             AdminCommands\GetReferalCommand::class,
         ],
         'user'      => [
+
+            UserCommands\ConnectCommand::class,
             UserCommands\Profile::class,
 
             UserCommands\Email::class,
