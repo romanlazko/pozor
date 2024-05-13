@@ -14,7 +14,7 @@
                 <div>
                     <p class="font-bold">{{ $thread?->announcement?->translated_title }}</p>
                     <div class="flex items-center space-x-1">
-                        <div class="w-5 h-5 rounded-full overflow-hidden bg-red-300">
+                        <div class="w-5 h-5 rounded-full overflow-hidden bg-white border">
                             <img src="{{ $thread?->messages?->where('user_id', '!=', auth()->user()->id)->last()?->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="object-cover ">
                         </div>
                         <p class="text-xs">{{ $thread?->messages?->where('user_id', '!=', auth()->user()->id)->last()?->user->name }}</p>
