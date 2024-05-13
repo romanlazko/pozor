@@ -68,6 +68,7 @@ class Index extends Component implements HasForms
                             Action::make('reset')
                                 ->icon('heroicon-m-x-mark')
                                 ->action(function () {
+                                    Session::forget('announcement_search');
                                     $this->data = [
                                         'sort' => 'newest',
                                     ];
