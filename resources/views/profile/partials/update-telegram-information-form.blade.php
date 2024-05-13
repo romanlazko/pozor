@@ -10,7 +10,7 @@
     </header>
 
     @if (! auth()->user()->chat)
-        <a href="hhtps://t.me/pozorbottestbot?start=connect-{{ auth()->user()->id }}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
+        <a href="https://t.me/pozorbottestbot?start=connect-{{ auth()->user()->id }}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
     @else
         <div class="flex items-center">
             <div class="flex-col items-center my-auto">
