@@ -30,4 +30,14 @@ class Thread extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function getLastMessageAttribute()
+    {
+        return $this->messages()->latest()->first();
+    }
+
+    public function getRecipientAttribute()
+    {
+        return $this->users->where('id', '!=', auth()->user()->id)->first();
+    }
 }

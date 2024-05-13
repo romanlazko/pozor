@@ -15,6 +15,8 @@ class ShowContact extends Component
 
     public $phone;
 
+    public $error;
+
     public function render()
     {
         $user = User::find($this->user_id);
@@ -27,9 +29,12 @@ class ShowContact extends Component
 
     public function submit()
     {
-        if (!$this->recaptchaPasses()) {
-            return;
+        try {
+            if ($this->recaptchaPasses()) {
+                $this->phone = User::find($this->user_id)->phone;
+            }
+        } catch (\Exception $e) {
+            $this->error = $e->getMessage();
         }
-        $this->phone = User::find($this->user_id)->phone;
     }
 }

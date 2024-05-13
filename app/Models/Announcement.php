@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Akuechler\Geoly;
+use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Attribute;
 use App\Models\Traits\AnnouncementTrait;
@@ -167,9 +168,16 @@ class Announcement extends Model implements HasMedia, Auditable
         });
     }
 
-    public function scopeSearch($query, $search = null)
+    public function scopeSearch($query, $search = null, $search_in_description = false)
     {
-        $query->when($search, fn ($query) => $query->whereRaw('LOWER(translated_title) LIKE ?', ['%' . mb_strtolower($search) . '%']));
+        $query->when($search, fn ($query) => 
+            $query->whereRaw('LOWER(translated_title) LIKE ?', ['%' . mb_strtolower($search) . '%'])
+                ->when($search_in_description, fn ($query) => $query->orWhereRaw('LOWER(translated_description) LIKE ?', ['%' . mb_strtolower($search) . '%'])));
+    }
+
+    public function scopeSort($query, Sort $sort = null)
+    {
+        return $query->when($sort, fn ($query) => $query->orderBy($sort->orderBy(), $sort->type()));
     }
 
     public function scopeIsPublished($query)

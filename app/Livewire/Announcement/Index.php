@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Announcement;
 
+use App\Enums\Sort;
 use App\Forms\Components\Between;
 use App\Forms\Components\Label;
 use App\Models\Attribute;
 use App\Models\Category;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -35,6 +37,7 @@ class Index extends Component implements HasForms
     use InteractsWithForms;
 
     public $data = [
+        'sort' => 'newest',
     ];
 
     protected $countries;
@@ -55,19 +58,26 @@ class Index extends Component implements HasForms
     {
         return $form
             ->schema([
-                Actions::make([
-                    Action::make('reset')
-                        ->icon('heroicon-m-x-mark')
-                        ->action(function () {
-                            $this->data = [];
-                            $this->search();
-                        })
-                        ->label(__('Reset filters')),
-                ]),
-                // Grid::make()
-                //     ->schema(function () {
-                //         return $this->schema;
-                //     })
+                Grid::make(2)
+                    ->schema([
+                        Select::make('sort')
+                            ->hiddenLabel()
+                            ->options(Sort::class)
+                            ->native(false),  
+                        Actions::make([
+                            Action::make('reset')
+                                ->icon('heroicon-m-x-mark')
+                                ->action(function () {
+                                    $this->data = [
+                                        'sort' => 'newest',
+                                    ];
+                                    $this->search();
+                                })
+                                ->label(__('Reset filters')),
+                        
+                        ])->fullWidth(),
+                        
+                    ]),
                 Grid::make()
                     ->schema(function () {
                         $schema = [];
@@ -124,9 +134,14 @@ class Index extends Component implements HasForms
                 ->columnSpanFull()
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute)),
 
-            'search' => TextInput::make('search')
-                ->label('Search')
-                ->columnSpanFull(),
+            'search' => Grid::make(1)
+                ->schema([
+                    
+                    TextInput::make('search')
+                        ->label('Search')
+                        ->columnSpanFull(),
+                    Checkbox::make('search_in_description'),
+                ]),
 
             'between' => Cluster::make([
                             TextInput::make($attribute->featured_name.'.min')

@@ -86,12 +86,13 @@
                         <span class="block text-gray-500 text-xs">{{ __("Registered") }} {{ $announcement->user->created_at->diffForHumans() }}</span>
                     </div>
                 </div>
-                <div class="w-full lg:flex lg:space-x-3 lg:space-y-0 space-y-3 items-center">
+                <div class="w-full flex space-x-3 items-center justify-between">
                     <x-a-buttons.primary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
-                        <i class="fa-solid fa-comment mr-1"></i>
-                        Send message
+                        {{ __("Message") }}
                     </x-a-buttons.primary>
-                    <livewire:components.show-contact :user_id="$announcement->user->id"/>
+                    <x-a-buttons.secondary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
+                        {{ __("Call") }}
+                    </x-a-buttons.secondary>
                 </div>
             </div>
         </div>
@@ -119,6 +120,9 @@
 
     <x-modal name="send-message">
         <x-send-message :announcement="$announcement"/>
+    </x-modal>
+    <x-modal name="show-contact">
+        <livewire:components.show-contact :user_id="$announcement->user->id"/>
     </x-modal>
 </x-user-layout>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Announcement;
 use App\Models\Attribute;
@@ -28,9 +29,10 @@ class AnnouncementController extends Controller
         $announcements = Announcement::with('media', 'attributes', 'currency')
             ->isPublished()
             ->categories($category)
+            ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
             ->features($category, $data['attributes'] ?? null)
             ->price($data['current_price'] ?? null)
-            ->search($data['search'] ?? null)
+            ->search($data['search'] ?? null, $data['search_in_description'] ?? false)
             ->paginate(30)->withQueryString();
 
         return view('announcement.index', compact('announcements', 'categories', 'category', 'data'));

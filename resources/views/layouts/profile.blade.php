@@ -65,31 +65,36 @@
                         </div>
                     </x-sidebar>
                     
-                    <div class="flex flex-1 flex-col overflow-hidden">
+                    <div class="flex flex-1 flex-col overflow-hidden" >
                         
                         @if (isset($header))
-                            <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 justify-between" x-data="{ headerOpen: false }">
+                            <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2" x-data="{ headerOpen: false }">
                                 <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
                                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                                {{ $header }}
+                                <div class="flex items-center justify-between">
+                                    {{ $header }}
+                                </div>
                             </div>
+                            
                         @else 
-                            <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 justify-between" x-data="{ headerOpen: false }">
+                            <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2" x-data="{ headerOpen: false }">
                                 <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
                                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                                    {{ $title ?? __('Profile') }}
-                                </h2>
+                                <div class="flex items-center justify-between">
+                                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                                        {{ $title ?? __('Profile') }}
+                                    </h2>
+                                </div>
                             </div>
                         @endif
                         
-                        <main id="main-block"  class="w-full overflow-y-auto p-2 sm:p-4 space-y-4 h-full">
+                        <main id="main-block" class="w-full overflow-y-auto p-2 sm:p-4 space-y-4 h-full" >
                             {{ $slot }}
                         </main>
 

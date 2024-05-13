@@ -3,13 +3,14 @@
 namespace App\Notifications;
 
 use App\Channels\TelegramChannel;
+use App\Facades\Bot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Romanlazko\Telegram\App\Bot;
+use Romanlazko\Telegram\App\BotApi;
 
-class NewMessage extends Notification
+class NewMessage extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -19,7 +20,7 @@ class NewMessage extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($thread)
+    public function __construct(public $thread)
     {
         $this->announcement = $thread->announcement;
         $this->message = $thread->messages->last()->message;
@@ -32,40 +33,41 @@ class NewMessage extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [TelegramChannel::class];
+        return [TelegramChannel::class, 'mail'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    // public function toMail(object $notifiable): MailMessage
-    // {
-    //     return (new MailMessage)
-    //                 ->line('The introduction to the notification.')
-    //                 ->action('Notification Action', url('/'))
-    //                 ->line('Thank you for using our application!');
-    // }
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+                    ->line("🆕You have a new message about the announcement:🆕")
+                    ->line("**{$this->announcement->title}**")
+                    ->line($this->message)
+                    ->action('View', route('profile.message.show', $this->thread->id))
+                    ->line('Thank you for using our application!');
+    }
 
     public function toTelegram(object $notifiable)
     {
-        if (!$notifiable->telegram_chat) {
+        if (!$notifiable->chat) {
             return;
         }
-
-        $bot = new Bot('5981959980:AAHtBsJcUuXBfuR6FVgFfNh31r2jQwlF8io');
 
         $text = implode("\n", [
             "🆕You have a new message about the announcement:🆕"."\n",
             "*{$this->announcement->title}*"."\n",
-            "{$this->message}"
+            "{$this->message}"."\n",
+            "[Go to chat](" . route('profile.message.show', $this->thread->id). ")"
         ]);
 
-        $bot::sendMessage([
+        return [
             'text'                      => $text,
-            'chat_id'                   => $notifiable->telegram_chat->chat_id,
+            'chat_id'                   => $notifiable->chat->chat_id,
             'parse_mode'                => 'HTML',
             'disable_web_page_preview'  => 'true',
             'parse_mode'                => 'Markdown',
-        ]);
+        ];
     }
 }

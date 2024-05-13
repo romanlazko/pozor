@@ -2,14 +2,13 @@
 
 namespace App\Channels;
 
+use App\Facades\Bot;
 use Illuminate\Notifications\Notification;
 
 class TelegramChannel 
 {
     public function send(object $notifiable, Notification $notification): void
     {
-        $message = $notification->toTelegram($notifiable);
- 
-        // Send notification to the $notifiable instance...
+        $message = Bot::sendMessage($notification->toTelegram($notifiable));
     }
 }

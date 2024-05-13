@@ -6,6 +6,8 @@ use DeepL\Translator;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\ServiceProvider;
+use Romanlazko\Telegram\App\Bot;
+use Romanlazko\Telegram\Models\TelegramBot;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind('deepl', function () {
             return new Translator(env('DEEPL_API_KEY'));
+        });
+
+        $this->app->bind('bot', function () {
+            return new Bot(env('TELEGRAM_BOT_TOKEN', TelegramBot::first()->token));
         });
 
         if ($this->app->isLocal()) {

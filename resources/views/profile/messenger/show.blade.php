@@ -2,23 +2,22 @@
 
     <x-slot name="header">
         <div class="flex items-center space-x-2 py-2">
-            <div class="w-12 h-12 rounded-full overflow-hidden bg-white">
-                <img src="{{ $thread->announcement->getFirstMediaUrl('announcements') }}" alt="" class="object-cover h-12  ">
+            <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white border aspect-square">
+                <img src="{{ $thread->announcement->getFirstMediaUrl('announcements') }}" alt="" class="object-cover">
             </div>
             
             <p class="font-bold">{{ $thread->announcement->translated_title }}</p>
         </div>
     </x-slot>
 
-    <div class="grid grid-cols-1 gap-2">
+    <div class="grid grid-cols-1 gap-2" x-init="document.getElementById('main-block').scrollTo(0, document.getElementById('main-block').scrollHeight)">
         @foreach ($messages as $message)
             <div class="w-full">
-                
                 <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>
                     
                     <div @class(['p-2 shadow-sm rounded-lg space-y-2', 'bg-blue-100' => auth()->user()->id == $message->user_id, 'bg-white' => auth()->user()->id != $message->user_id])>
                         <div class="h-6 flex items-center space-x-2">
-                            <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="w-6 rounded-full">
+                            <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="min-w-6 min-h-6 w-6 h-6 rounded-full">
                             <p class="text-xs text-gray-500">{{ $message->user->name }}</p>
                         </div>
                         
@@ -42,9 +41,10 @@
             @method('put')
             <div class="flex items-end space-x-2">
                 <textarea name="message" placeholder="Write your message here..." class="w-full hover:border-indigo-600 border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm p-2"></textarea>
-                <x-buttons.primary type="submit">Send</x-buttons.primary>
+                <x-buttons.primary type="submit">
+                    {{ __('Send') }}
+                </x-buttons.primary>
             </div>
-            
         </form>
     </x-slot>
 </x-profile-layout>

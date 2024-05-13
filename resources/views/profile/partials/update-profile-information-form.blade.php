@@ -19,9 +19,9 @@
 
         <div>
             <x-form.label :value="__('Avatar')" />
-            <label for="avatar" class="block text-sm font-medium text-gray-700 flex items-center space-x-3">
-                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="w-14 h-14 rounded-full object-cover border" alt="">
-                <input type="file" name="avatar" id="avatar">
+            <label for="avatar" class="block text-sm font-medium text-gray-700 sm:flex items-center sm:space-x-3">
+                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="w-14 h-14 min-w-14 min-h-14 rounded-full object-cover border" alt="">
+                <input type="file" name="avatar" id="avatar" class="hidden sm:block">
             </label>
             <x-form.error class="mt-2" :messages="$errors->get('avatar')" />
         </div>

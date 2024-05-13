@@ -16,7 +16,7 @@ class MessagesController extends Controller
      */
     public function index()
     {
-        $threads = auth()->user()->threads?->load('announcement', 'messages', 'announcement.media', 'messages.user')
+        $threads = auth()->user()->threads?->load('announcement:id,translated_title', 'announcement.media', 'users:name,id', 'users.media')
             ->loadCount(['messages as uread_messages_count' => function ($query) {
                 $query->where('read_at', null)->where('user_id', '!=', auth()->id());
             }]);
@@ -32,11 +32,9 @@ class MessagesController extends Controller
      */
     public function show(Thread $thread)
     {
-        $messages = $thread->messages->load('user');
-
-        $messages->where('user_id', '!=', auth()->id())->each( function ($message) {
-            $message->update(['read_at' => now()]);
-        });
+        $thread->load('announcement:id,translated_title', 'announcement.media');
+        $thread->messages()->where('user_id', '!=', auth()->id())->whereNull('read_at')->update(['read_at' => now()]);
+        $messages = $thread->messages->load('user:id,name', 'user.media');
 
         return view('profile.messenger.show', compact('thread', 'messages'));
     }
@@ -51,7 +49,10 @@ class MessagesController extends Controller
         $announcement = Announcement::findOrFail($request->announcement_id);
 
         if ($announcement->user->id == auth()->id()) {
-            return redirect()->back();
+            return redirect()->back()->with([
+                'ok' => false,
+                'description' => 'You can\'t send message to yourself',
+            ]);
         }
 
         $thread = auth()->user()->threads()->where('announcement_id', $announcement->id)->first();
@@ -80,6 +81,11 @@ class MessagesController extends Controller
             'message' => $request->message,
         ]);
 
-        return redirect()->back();
+        $thread->recipient->notify(new NewMessage($thread));
+
+        return redirect()->back()->with([
+            'ok' => true,
+            'description' => 'Message sent',
+        ]);;
     }
 }
