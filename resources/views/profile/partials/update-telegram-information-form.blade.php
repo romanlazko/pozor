@@ -9,20 +9,8 @@
         </p>
     </header>
 
-    @php
-        $url = URL::temporarySignedRoute(
-            'verification.telegram',
-            now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => auth()->user()->getKey(),
-                'telegram_chat_id' => 1,
-                'hash' => sha1(auth()->user()->getEmailForVerification()),
-            ]
-        )
-    @endphp
-
-    @if (!auth()->user()->chat)
-        <a href="{{$url}}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
+    @if (! auth()->user()->chat)
+        <a href="hhtps://t.me/pozorbottestbot?start=connect-{{ auth()->user()->id }}" class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</a>
     @else
         <div class="flex items-center">
             <div class="flex-col items-center my-auto">

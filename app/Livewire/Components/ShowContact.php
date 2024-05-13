@@ -5,9 +5,12 @@ namespace App\Livewire\Components;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
+use Lukeraymonddowning\Honey\Traits\WithRecaptcha;
 
 class ShowContact extends Component
 {
+    use WithRecaptcha;
+    
     public $user_id;
 
     public $phone;
@@ -22,8 +25,11 @@ class ShowContact extends Component
         return view('livewire.components.empty');
     }
 
-    public function showContacts()
+    public function submit()
     {
+        if (!$this->recaptchaPasses()) {
+            return;
+        }
         $this->phone = User::find($this->user_id)->phone;
     }
 }

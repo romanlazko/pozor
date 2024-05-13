@@ -24,10 +24,6 @@ class ConnectCommand extends Command
     {
         preg_match(self::$pattern, $updates->getMessage()?->getCommand(), $matches);
 
-        // if (!isset($matches[3])) {
-        //     return $this->bot->executeCommand('/start');
-        // }
-
         $telegram_chat = DB::getChat($updates->getChat()->getId());
 
         $user = User::find($matches[3]);
@@ -38,7 +34,5 @@ class ConnectCommand extends Command
             'chat_id' => $updates->getChat()->getId(),
             'text' => "На ваш эмейл было отправлено письмо для подтверждения связи с ботом. Пожалуйста, подтвердите связь с ботом, нажав на кнопку в письме.",
         ]);
-
-        // return $this->bot->executeCommand('/start');
     }
 }

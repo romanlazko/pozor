@@ -11,8 +11,6 @@
             </div>
         </div>
 
-        {{-- <livewire:components.send-message :announcement_id="$announcement->id"/> --}}
-
         <form action="{{ route('profile.message.store') }}" method="POST">
             @csrf
             <input type="hidden" name="announcement_id" value="{{ $announcement->id }}">

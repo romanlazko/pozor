@@ -40,8 +40,11 @@
         <form action="{{ route('profile.message.update', $thread->id) }}" method="post" class="w-full p-2">
             @csrf
             @method('put')
-            <textarea name="message" placeholder="Write your message here..." class="w-full hover:border-indigo-600 border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm p-2"></textarea>
-            <x-buttons.primary type="submit">Send</x-buttons.primary>
+            <div class="flex items-end space-x-2">
+                <textarea name="message" placeholder="Write your message here..." class="w-full hover:border-indigo-600 border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm p-2"></textarea>
+                <x-buttons.primary type="submit">Send</x-buttons.primary>
+            </div>
+            
         </form>
     </x-slot>
 </x-profile-layout>

@@ -87,7 +87,7 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
 
     Route::controller(MessagesController::class)->prefix('messages')->name('message.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');
+        Route::post('/', 'store')->middleware('honey-recaptcha')->name('store');
         Route::get('{thread}', 'show')->name('show');
         Route::put('{thread}', 'update')->name('update');
     });
