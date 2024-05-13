@@ -19,6 +19,9 @@ class VerifyTelegramController extends Controller
             'telegram_chat_id' => $request->telegram_chat_id,
         ]);
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::HOME)->with([
+            'ok' => true,
+            'description' => "Telegram account verified"
+        ]);
     }
 }
