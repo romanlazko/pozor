@@ -30,6 +30,7 @@ use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 
@@ -46,7 +47,7 @@ class Create extends Component implements HasForms
 
     protected $countries;
 
-    public $category_attributes = null;
+    protected $category_attributes = null;
 
     public $categories = null;
 
@@ -172,12 +173,14 @@ class Create extends Component implements HasForms
                 ->columnStart(['default' => '1', 'sm' => $attribute->column_start])
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
+
             'toggle' => Toggle::make($attribute->featured_name)
                 ->label($attribute->label)
                 ->columnSpan(['default' => 'full', 'sm' => $attribute->column_span])
                 ->columnStart(['default' => '1', 'sm' => $attribute->column_start])
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
+
             'toggle_buttons' => ToggleButtons::make($attribute->featured_name)
                 ->label($attribute->label)
                 ->options($attribute->attribute_options->pluck('name', 'id'))
@@ -187,12 +190,14 @@ class Create extends Component implements HasForms
                 ->columnStart(['default' => '1', 'sm' => $attribute->column_start])
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
+
             'text_input' => TextInput::make($attribute->featured_name)
                 ->label($attribute->label)
                 ->columnSpan(['default' => 'full', 'sm' => $attribute->column_span])
                 ->columnStart(['default' => '1', 'sm' => $attribute->column_start])
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
+
             'text_area' => Textarea::make($attribute->featured_name)
                 ->label($attribute->label)
                 ->autosize()
@@ -201,6 +206,7 @@ class Create extends Component implements HasForms
                 ->columnStart(['default' => '1', 'sm' => $attribute->column_start])
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
+
             'location' => Grid::make(2)->schema([
                     Select::make('country')
                         ->label('Country')
@@ -253,6 +259,7 @@ class Create extends Component implements HasForms
     public function setCategories(array $categoryIds): void
     {
         $this->categories = Category::whereIn('id', $categoryIds)
+            ->select('id', 'name', 'alternames')
             ->with('children')
             ->get()
             ->keyBy('id')
@@ -262,13 +269,16 @@ class Create extends Component implements HasForms
                 'children' => $category->children->pluck('translated_name', 'id'),
             ]));
 
-        $this->category_attributes = Attribute::with('attribute_options', 'section')
-            ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds))
-            ->get()
-            ->each(fn (Attribute $attribute) => $attribute->opt = $attribute->attribute_options);
-
-        $this->countries = Geo::getCountries()->pluck('name', 'country');
+        $this->category_attributes = 
+        // Cache::remember($this->categories->pluck('id')->implode('_') . '_create_attributes', 30, function () use ($categoryIds) {
+            Attribute::select('id', 'name', 'alterlabels', 'searchable', 'create_type', 'is_feature', 'label', 'visible', 'column_span', 'column_start', 'order_number', 'attribute_section_id', 'required')
+                ->with('attribute_options:name,attribute_id,id', 'section:id,order_number,name,alternames')
+                ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds))
+                ->get();
+        // });
+        $this->countries = Cache::remember('countries', 3600, fn () => Geo::getCountries()->pluck('name', 'country'));
     }
+    
 
     public function updatedInteractsWithForms($statePath): void
     {

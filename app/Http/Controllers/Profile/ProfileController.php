@@ -41,7 +41,26 @@ class ProfileController extends Controller
         
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with([
+            'ok' => true, 
+            'description' => 'Your profile has been updated!'
+        ]);
+    }
+
+    public function updateLang(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'lang' => 'required'
+        ]);
+        
+        $request->user()->update([
+            'lang' => $request->lang
+        ]);
+
+        return Redirect::route('profile.edit')->with([
+            'ok' => true, 
+            'description' => 'Your profile language has been updated!'
+        ]);
     }
 
     /**

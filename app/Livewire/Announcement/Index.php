@@ -29,6 +29,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Guava\FilamentClusters\Forms\Cluster;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
@@ -37,7 +38,6 @@ class Index extends Component implements HasForms
     use InteractsWithForms;
 
     public $data = [
-        'sort' => 'newest',
     ];
 
     protected $countries;
@@ -58,27 +58,20 @@ class Index extends Component implements HasForms
     {
         return $form
             ->schema([
-                Grid::make(2)
-                    ->schema([
-                        Select::make('sort')
-                            ->hiddenLabel()
-                            ->options(Sort::class)
-                            ->native(false),  
-                        Actions::make([
-                            Action::make('reset')
-                                ->icon('heroicon-m-x-mark')
-                                ->action(function () {
-                                    Session::forget('announcement_search');
-                                    $this->data = [
-                                        'sort' => 'newest',
-                                    ];
-                                    $this->search();
-                                })
-                                ->label(__('Reset filters')),
-                        
-                        ])->fullWidth(),
-                        
-                    ]),
+                Select::make('sort')
+                    ->label('Sorting')
+                    ->options(Sort::class)
+                    ->selectablePlaceholder(false)
+                    ->hintAction(
+                        Action::make('reset')
+                            ->icon('heroicon-m-x-mark')
+                            ->action(function () {
+                                $this->data = [
+                                ];
+                                $this->search();
+                            })
+                            ->label(__('Reset filters'))
+                    ),
                 Grid::make()
                     ->schema(function () {
                         $schema = [];
@@ -137,7 +130,6 @@ class Index extends Component implements HasForms
 
             'search' => Grid::make(1)
                 ->schema([
-                    
                     TextInput::make('search')
                         ->label('Search')
                         ->columnSpanFull(),
@@ -224,17 +216,26 @@ class Index extends Component implements HasForms
 
     public function setCategories(): void
     {
-        $categoryIds = $this->category?->getParentsAndSelf()->pluck('id')->toArray();
+        $this->category_attributes = Cache::remember(($this->category?->slug ?? 'default') . '_index_attributes', 3600, function () {
+            return Attribute::select('id', 'name', 'searchable', 'search_type', 'is_feature', 'label', 'visible', 'column_span', 'order_number', 'attribute_section_id')
+                ->with('attribute_options:name,attribute_id,id', 'section:id,order_number')
+                ->when($this->category, function ($query) {
+                    $categoryIds = $this->category
+                        ->getParentsAndSelf()
+                        ->pluck('id')
+                        ->toArray();
+                    
+                    $query->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? [])->select('categories.id'));
+                })
+                
+                ->when(!$this->category, function ($query) { 
+                    $query->whereHas('section', fn (Builder $query) => $query->whereIn('slug', ['required_information', 'location', 'prices'])->select('attribute_sections.id'));
+                })
+                
+                ->get();
+        });
 
-        $this->category_attributes = 
-            $this->category 
-            ? Attribute::with('attribute_options', 'section')
-                ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? []))
-                ->get()
-            
-            : Attribute::with('attribute_options', 'section')->whereHas('section', fn (Builder $query) => $query->whereIn('slug', ['required_information', 'location', 'prices']))->get();
-
-        $this->countries = Geo::getCountries()->pluck('name', 'country');
+        $this->countries = Cache::remember('countries', 3600, fn () => Geo::getCountries()->pluck('name', 'country'));
     }
 
     public function updatedInteractsWithForms($statePath): void

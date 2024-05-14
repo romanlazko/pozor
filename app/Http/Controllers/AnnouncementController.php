@@ -17,16 +17,17 @@ class AnnouncementController extends Controller
     {
         $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
 
-        $category = Category::where('slug', $request->category)->first();
+        $category = Category::where('slug', $request->category)->select('id', 'name', 'alternames', 'slug', 'parent_id')->first();
 
         $categories = Category::where(['parent_id' => $category?->id ?? null])
+            ->select('id', 'name', 'alternames', 'slug')
             ->with('media')
             ->where('is_active', true)
             ->withCount('announcements')
             ->get()
             ->filter(fn ($category) => $category->announcements_count > 0);
 
-        $announcements = Announcement::with('media', 'attributes', 'currency')
+        $announcements = Announcement::with('media', 'attributes:id', 'currency:id,name')
             ->isPublished()
             ->categories($category)
             ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))

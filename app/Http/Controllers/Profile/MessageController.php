@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Profile;
 
+use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Messanger\Thread;
 use App\Notifications\NewMessage;
 use Illuminate\Http\Request;
 
-class MessagesController extends Controller
+class MessageController extends Controller
 {
     /**
      * Show all of the message threads to the user.
@@ -21,7 +22,7 @@ class MessagesController extends Controller
                 $query->where('read_at', null)->where('user_id', '!=', auth()->id());
             }]);
 
-        return view('profile.messenger.index', compact('threads'));
+        return view('profile.message.index', compact('threads'));
     }
 
     /**
@@ -36,7 +37,7 @@ class MessagesController extends Controller
         $thread->messages()->where('user_id', '!=', auth()->id())->whereNull('read_at')->update(['read_at' => now()]);
         $messages = $thread->messages->load('user:id,name', 'user.media');
 
-        return view('profile.messenger.show', compact('thread', 'messages'));
+        return view('profile.message.show', compact('thread', 'messages'));
     }
 
     /**

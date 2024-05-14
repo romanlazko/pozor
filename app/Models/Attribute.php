@@ -47,4 +47,9 @@ class Attribute extends Model
     {
         return $this->is_feature ? 'attributes.' . $this->name : $this->name;
     }
+
+    public function getStringAttribute()
+    {
+        return $this->label . ': ' . $this->getFormatedValueAttribute();
+    }
 }

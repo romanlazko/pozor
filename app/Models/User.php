@@ -32,6 +32,7 @@ class User extends Authenticatable implements HasMedia
         'password',
         'phone',
         'telegram_chat_id',
+        'lang',
     ];
 
     /**

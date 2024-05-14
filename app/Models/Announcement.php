@@ -9,6 +9,7 @@ use App\Models\Attribute;
 use App\Models\Traits\AnnouncementTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Auditable as AuditingAuditable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Romanlazko\Telegram\Models\TelegramChat;
@@ -127,7 +128,7 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         return $query->when($category, fn ($query) => 
             $query->whereHas('categories', fn ($query) 
-                => $query->where('category_id', $category->id)
+                => $query->where('category_id', $category->id)->select('categories.id')
         ));
     }
 
@@ -135,7 +136,20 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         return $query->when($category and $attributes, fn ($query) =>
             $query->where(function ($query) use ($attributes, $category) {
-                $category_attributes = Attribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $category->getParentsAndSelf()->pluck('id')->toArray()))->get();
+
+                $category_attributes = Cache::remember($category->slug.'_search_attributes', 3600, function () use ($category) {
+                     return Attribute::select('id', 'name', 'searchable', 'search_type', 'is_feature')
+                        ->whereHas('categories', function ($query) use ($category) {
+                            $categoryIds = $category
+                                ->getParentsAndSelf()
+                                ->pluck('id')
+                                ->toArray();
+
+                            $query->whereIn('category_id', $categoryIds)->select('categories.id');
+                        })
+                        ->get();
+                });
+                
 
                 foreach ($category_attributes as $attribute) {
                     if ($attribute->is_feature AND $attribute->searchable AND isset($attributes[$attribute->name]) AND !empty($attributes[$attribute->name])) {
@@ -143,13 +157,13 @@ class Announcement extends Model implements HasMedia, Auditable
                             if ($attribute->search_type == 'between') {
                                 $max = !empty($attributes[$attribute->name]['max']) ? $attributes[$attribute->name]['max'] : PHP_INT_MAX;
                                 $min = !empty($attributes[$attribute->name]['min']) ? $attributes[$attribute->name]['min'] : 0;
-                                $query->where('value->original', '>=', $min)->where('value->original', '<=', $max);
+                                $query->where('value->original', '>=', $min)->where('value->original', '<=', $max)->select('attributes.id');
                             }
                             else if ($attribute->search_type == 'checkboxlist') {
-                                $query->whereIn('value->original', $attributes[$attribute->name]);
+                                $query->whereIn('value->original', $attributes[$attribute->name])->select('attributes.id');
                             }
                             else {
-                                $query->where('value->original', $attributes[$attribute->name]);
+                                $query->where('value->original', $attributes[$attribute->name])->select('attributes.id');
                             }
                         });
                     }

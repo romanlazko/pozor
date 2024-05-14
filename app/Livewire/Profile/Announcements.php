@@ -46,7 +46,7 @@ class Announcements extends Component implements HasForms, HasTable
                 Stack::make([
                     TextColumn::make('status')
                         ->label('Status')
-                        ->getStateUsing(fn ($record) => $record->status->name)
+                        ->getStateUsing(fn ($record) => $record->status)
                         ->color(fn ($record) => $record->status->filamentColor())
                         ->extraAttributes(['class' => 'py-1'])
                         ->badge(),
@@ -85,7 +85,7 @@ class Announcements extends Component implements HasForms, HasTable
                         ->wrap(),
                     TextColumn::make('status')
                         ->label('Status')
-                        ->getStateUsing(fn ($record) => $record->status->name)
+                        ->getStateUsing(fn ($record) => $record->status)
                         ->color(fn ($record) => $record->status->filamentColor())
                         ->badge(),
                 ])

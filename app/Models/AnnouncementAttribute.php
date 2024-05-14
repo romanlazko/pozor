@@ -53,7 +53,7 @@ class AnnouncementAttribute extends Pivot
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class)->with('attribute_options');
+        return $this->belongsTo(Attribute::class);
     }
 
     // public function getLabelAttribute()
@@ -73,9 +73,12 @@ class AnnouncementAttribute extends Pivot
 
     public function getFormatedValueAttribute()
     {
-        if ($this->attribute->attribute_options->isNotEmpty()) {
-            return $this->attribute->attribute_options->find(json_decode($this->attributes['value'], true)['original'])?->name;
-        } 
+        $attribute_options = $this->attribute->attribute_options;
+
+        if ($attribute_options->isNotEmpty()) {
+            return $attribute_options->find(json_decode($this->attributes['value'], true)['original'])?->name;
+        }
+
         return json_decode($this->attributes['value'], true)[app()->getLocale()] ?? json_decode($this->attributes['value'], true)['original'];
     }
 }

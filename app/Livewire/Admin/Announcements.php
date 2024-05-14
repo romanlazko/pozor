@@ -65,11 +65,11 @@ class Announcements extends Component implements HasForms, HasTable
     {
         return $table
             ->heading("All announcements")
-            ->query(Announcement::query())
+            ->query(Announcement::with('media', 'user.media', 'categories', 'attributes', 'attributes.attribute_options'))
             ->columns([
                 Stack::make([
                     TextColumn::make('status')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->status->name)
+                            ->getStateUsing(fn (Announcement $announcement) => $announcement->status)
                             ->badge()
                             ->color(fn (Announcement $announcement) => $announcement->status->filamentColor())
                             ->grow(false),
@@ -78,15 +78,15 @@ class Announcements extends Component implements HasForms, HasTable
                     
                     Panel::make([
                         Split::make([
-                            ImageColumn::make('avatar')
-                                ->defaultImageUrl(fn (Announcement $announcement) => asset($announcement->user->avatar))
-                                ->grow(false),
+                            SpatieMediaLibraryImageColumn::make('user.avatar')
+                                ->collection('avatar', 'thumb')
+                                ->grow(false)
+                                ->circular()
+                                ->extraAttributes(['class' => 'border rounded-full']),
                             TextColumn::make('user.name')
                                 ->label('User')
                                 ->description(fn (Announcement $announcement) => $announcement->user->email)
                         ])
-                        // ->from('xs')
-                        // ->url(fn (Announcement $announcement) => route('admin.users.edit', $announcement->user->id)),
                             
                     ]),
                     
@@ -100,8 +100,13 @@ class Announcements extends Component implements HasForms, HasTable
                         ->wrap()
                         ->description(fn (Announcement $announcement) => $announcement->original_description),
                     Split::make([
-                        TextColumn::make('attributes')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->attributes->map(fn ($attribute) => $attribute->label . ': ' . $attribute->pivot->value))
+                        TextColumn::make('attr')
+                            ->getStateUsing(fn (Announcement $announcement) => $announcement->attributes->map(function ($attribute) {
+                                if ($attribute->attribute_options->isNotEmpty()) {
+                                    return $attribute->label . ': ' . $attribute->attribute_options->find($attribute->pivot->original_value)?->name;
+                                }
+                                return $attribute->label . ': ' . $attribute->pivot->original_value;
+                            }))
                             ->badge()
                             ->color('gray')
                             ->wrap()
@@ -361,7 +366,7 @@ class Announcements extends Component implements HasForms, HasTable
                 'sm' => 2,
                 'lg' => 3,
             ])
-            ->paginationPageOptions([25, 50, 100])
-            ->poll('2s');
+            ->paginationPageOptions([25, 50, 100]);
+            // ->poll('2s');
     }
 }

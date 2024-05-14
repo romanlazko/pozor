@@ -2,7 +2,10 @@
 
 namespace App\Enums;
 
-enum Status: int
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Facades\App;
+
+enum Status: int implements HasLabel
 {
     case created = 1;
     case await_moderation = 2;
@@ -133,8 +136,75 @@ enum Status: int
         };
     }
 
-    public function trans($lang = null)
+    public function getLabel() : ?string
     {
-        return __('statuses.'.$this->name, [], $lang);
+        return match ($this) {
+            self::created => match (App::getLocale()) {
+                'ru' => 'Создан',
+                'en' => 'Created',
+                'cz' => 'Vytvořen',
+            },
+            self::await_moderation => match (App::getLocale()) {
+                'ru' => 'Ожидает модерации',
+                'en' => 'Await moderation',
+                'cz' => 'Ceka na moderaci',
+            },
+            self::moderation_not_passed => match (App::getLocale()) {
+                'ru' => 'Модерация не прошла',
+                'en' => 'Moderation not passed',
+                'cz' => 'Moderace nebyla prosána',
+            },
+            self::moderation_failed => match (App::getLocale()) {
+                'ru' => 'Ошибка модерации',
+                'en' => 'Moderation failed',
+                'cz' => 'Chyba moderace',
+            },
+            self::rejected => match (App::getLocale()) {
+                'ru' => 'Отклонено',
+                'en' => 'Rejected',
+                'cz' => 'Zamitnuto',
+            },
+            self::approved => match (App::getLocale()) {
+                'ru' => 'Одобрено',
+                'en' => 'Approved',
+                'cz' => 'Schváleno',
+            },
+            self::await_translation => match (App::getLocale()) {
+                'ru' => 'Ожидает перевода',
+                'en' => 'Await translation',
+                'cz' => 'Ceka na prevod',
+            },
+            self::translation_failed => match (App::getLocale()) {
+                'ru' => 'Перевод не прошёл',
+                'en' => 'Translation failed',
+                'cz' => 'Prevod nebyl prosán',
+            },
+            self::translated => match (App::getLocale()) {
+                'ru' => 'Переведено',
+                'en' => 'Translated',
+                'cz' => 'Prevod',
+            },
+            self::await_publication => match (App::getLocale()) {
+                'ru' => 'Ожидает публикации',
+                'en' => 'Await publication',
+                'cz' => 'Ceka na publikaci',
+            },
+            self::publishing_failed => match (App::getLocale()) {
+                'ru' => 'Публикация не прошла',
+                'en' => 'Publishing failed',
+                'cz' => 'Publikace nebyla prosána',
+            },
+            self::published => match (App::getLocale()) {
+                'ru' => 'Опубликовано',
+                'en' => 'Published',
+                'cz' => 'Publikovano',
+            },
+            self::sold => match (App::getLocale()) {
+                'ru' => 'Продано',
+                'en' => 'Sold',
+                'cz' => 'Prodáno',
+            },
+            default => null,
+        };
     }
 }

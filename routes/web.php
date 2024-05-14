@@ -1,26 +1,16 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\Profile\ProfileController;
-use App\Http\Controllers\RealEstateController;
-use App\Http\Controllers\SuperDuperAdmin\AttributeIndexController;
-use App\Http\Controllers\SuperDuperAdmin\CategoryIndexController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramAdvertisementController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramChatController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramController;
-use App\Http\Controllers\WelcomeController;
 use App\Livewire\Admin\AnnouncementAudits;
 use App\Livewire\Admin\Announcements as AdminAnnouncements;
 use App\Livewire\Admin\Attributes;
 use App\Livewire\Admin\Categories;
 use App\Livewire\Announcement\Create;
-use App\Livewire\Announcement\CreateClothingAnnouncement;
-use App\Livewire\Announcement\CreateElectronicAnnouncement;
-use App\Livewire\Announcement\CreateRealEstateAnnouncement;
 use App\Livewire\Profile\Announcements;
-use App\Livewire\Profile\Dashboard;
-use App\Livewire\Profile\Edit;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use NlpTools\Classifiers\MultinomialNBClassifier;
@@ -30,7 +20,7 @@ use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
-use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\Profile\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,12 +70,13 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
     Route::patch('/update', [ProfileController::class, 'update'])->name('update');
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
 
+    Route::patch('/updateLang', [ProfileController::class, 'updateLang'])->name('updateLang');
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/announcement', Announcements::class)->name('announcement.index');
     Route::get('/announcement/create', Create::class)->name('announcement.create');
 
 
-    Route::controller(MessagesController::class)->prefix('messages')->name('message.')->group(function () {
+    Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');
         Route::get('{thread}', 'show')->name('show');
