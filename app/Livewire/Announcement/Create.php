@@ -272,7 +272,7 @@ class Create extends Component implements HasForms
         $this->category_attributes = 
         // Cache::remember($this->categories->pluck('id')->implode('_') . '_create_attributes', 30, function () use ($categoryIds) {
             Attribute::select('id', 'name', 'alterlabels', 'searchable', 'create_type', 'is_feature', 'label', 'visible', 'column_span', 'column_start', 'order_number', 'attribute_section_id', 'required')
-                ->with('attribute_options:name,attribute_id,id', 'section:id,order_number,name,alternames')
+                ->with('attribute_options:name,attribute_id,id,alternames', 'section:id,order_number,name,alternames')
                 ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds))
                 ->get();
         // });
