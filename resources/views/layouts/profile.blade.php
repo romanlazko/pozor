@@ -3,7 +3,7 @@
         @include('layouts.header')
     </div>
     
-    <div class="pb-10 pt-0 lg:pt-10 lg:pb-0 min-h-screen flex w-full h-full">
+    <div class="pb-10 pt-0 lg:pt-10 lg:pb-0 min-h-dvh flex w-full h-full">
         <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
             <x-sidebar>
                 <div class="p-4 space-y-3">

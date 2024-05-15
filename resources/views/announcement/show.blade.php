@@ -91,6 +91,7 @@
                         {{ __("Message") }}
                     </x-a-buttons.primary>
                     @if ($announcement->user->phone)
+                        {{$announcement->user->phone}}
                         <x-a-buttons.secondary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
                             {{ __("Call") }}
                         </x-a-buttons.secondary>
@@ -125,7 +126,7 @@
     </x-modal>
     @if ($announcement->user->phone)
         <x-modal name="show-contact">
-            <livewire:components.show-contact user_id="{{ $announcement->user->id }}"/>
+            <livewire:components.show-contact :user="$announcement->user->id"/>
         </x-modal>
     @endif
     

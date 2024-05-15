@@ -20,7 +20,7 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-gray-50 min-h-screen" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
+    <body class="font-roboto bg-gray-50 h-dvh" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
         {{ $slot }}
         
         @if (session('ok') === true)
