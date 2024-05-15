@@ -91,7 +91,6 @@
                         {{ __("Message") }}
                     </x-a-buttons.primary>
                     @if ($announcement->user->phone)
-                        {{$announcement->user->phone}}
                         <x-a-buttons.secondary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
                             {{ __("Call") }}
                         </x-a-buttons.secondary>
@@ -109,8 +108,8 @@
                         Similar announcements
                     </h2>
                     <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2" >
-                        @foreach ($announcements as $index => $announcement)
-                            <x-announcement-card :announcement="$announcement" />
+                        @foreach ($announcements as $index => $announcement_item)
+                            <x-announcement-card :announcement="$announcement_item" />
                         @endforeach
                     </div>
                 </div>
@@ -126,7 +125,7 @@
     </x-modal>
     @if ($announcement->user->phone)
         <x-modal name="show-contact">
-            <livewire:components.show-contact :user="$announcement->user->id"/>
+            <livewire:components.show-contact :user_id="$announcement->user->id"/>
         </x-modal>
     @endif
     

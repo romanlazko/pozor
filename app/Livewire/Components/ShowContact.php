@@ -11,20 +11,15 @@ class ShowContact extends Component
 {
     use WithRecaptcha;
     
-    public $user;
+    public $user_id;
 
     public $phone;
 
     public $error;
 
-    public function mount($user)
-    {
-        $this->user = $user;
-    }
-
     public function render()
     {
-        $user = User::find($this->user);
+        $user = User::find($this->user_id);
 
         if ($user?->phone) {
             return view('livewire.components.show-contact');
@@ -36,7 +31,7 @@ class ShowContact extends Component
     {
         try {
             if ($this->recaptchaPasses()) {
-                $this->phone = User::find($this->user)->phone;
+                $this->phone = User::find($this->user_id)->phone;
             }
         } catch (\Exception $e) {
             $this->error = $e->getMessage();
