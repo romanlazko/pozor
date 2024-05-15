@@ -41,7 +41,7 @@
             </x-sidebar>
         </aside>
         
-        <div class="w-full sm:ml-72 xl:ml-96 h-full">
+        <div class="w-full sm:ml-72 xl:ml-96 h-full min-h-screen flex-1 flex flex-col">
             @if (isset($header))
                 <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 sticky md:top-10 top-0 bg-gray-50">
                     <div class="flex items-center justify-between space-x-3">
@@ -50,7 +50,7 @@
                 </div>
             @endif
             
-            <main id="main-block" class="w-full space-y-4 h-full" >
+            <main id="main-block" class="w-full space-y-4 min-h-full flex-1" >
                 {{ $slot }}
             </main>
 

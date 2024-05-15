@@ -77,7 +77,7 @@
             {{-- <div class="w-full bg-red-400 sticky top-3 h-[300px] lg:rounded-xl ">
                 <!-- Content of the sticky element -->
             </div> --}}
-            <div class="space-y-6 sticky top-20 bg-white p-6 shadow-md rounded-lg">
+            <div class="space-y-6 bg-white p-6 shadow-md rounded-lg">
                 <div class="flex space-x-4 items-center">
                     <img src="{{ $announcement->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">

@@ -41,7 +41,7 @@
             </x-sidebar>
         </aside>
         
-        <div class="w-full lg:ml-72 xl:ml-96 h-full">
+        <div class="w-full lg:ml-72 xl:ml-96 h-full flex-1 flex flex-col">
             @if (isset($header))
                 <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 sticky lg:top-10 top-0 bg-gray-50" x-data="{ headerOpen: false }">
                     <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
@@ -55,7 +55,7 @@
                 </div>
             @endif
             
-            <main id="main-block" class="w-full space-y-4 h-full" >
+            <main id="main-block" class="w-full space-y-4 h-full flex-1" >
                 {{ $slot }}
             </main>
 

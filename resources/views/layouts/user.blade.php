@@ -45,7 +45,7 @@
     
     <div class="pb-10 pt-0 lg:pt-10 lg:pb-0 flex w-full h-full">
         @if (isset($sidebar))
-            <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
+            <aside id="default-sidebar" class="fixed left-0 z-50 h-full" aria-label="Sidebar">
                 <x-sidebar>
                     {{ $sidebar }}
                 </x-sidebar>
@@ -54,14 +54,14 @@
         
         <div @class(['w-full h-full', 'lg:ml-72 xl:ml-96' => isset($sidebar)])>
             @if (isset($header))
-                <div class="flex w-full px-2 min-h-10 items-center py-1 fixed lg:top-10 space-x-2 bg-gray-50 z-40" x-data="{ headerOpen: false }">
+                <div class="flex w-full px-2 min-h-10 items-center py-1 sticky lg:top-10 top-0 space-x-2 bg-gray-50 z-40" x-data="{ headerOpen: false }">
                     <div class="flex items-center justify-between space-x-3 w-full">
                         {{ $header }}
                     </div>
                 </div>
             @endif
             
-            <main id="main-block" class="w-full space-y-4 h-full p-2 pt-11" >
+            <main id="main-block" class="w-full space-y-4 h-full p-2 " >
                 {{ $slot }}
             </main>
 
