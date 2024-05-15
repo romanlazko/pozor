@@ -44,7 +44,7 @@
                 <div class="flex flex-1 flex-col overflow-hidden" >
                     
                     <div class="flex w-full px-2 min-h-[50px] items-center space-x-2 sticky top-0 bg-gray-50">
-                        <a href="{{ route('profile.message.index') }}" class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
+                        <a href="{{ route('profile.message.index') }}" wire:navigate class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <div class="flex">
