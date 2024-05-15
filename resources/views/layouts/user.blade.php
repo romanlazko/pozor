@@ -39,27 +39,29 @@
 </x-base-layout> --}}
 
 <x-base-layout>
-    <div class="w-full hidden lg:block fixed top-0 h-10 bg-black">
+    <div class="w-full hidden lg:block fixed top-0 h-10 bg-black z-50">
         @include('layouts.header')
     </div>
     
     <div class="pb-10 pt-0 lg:pt-10 lg:pb-0 flex w-full h-full">
-        <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
-            <x-sidebar>
-                {{ $sidebar }}
-            </x-sidebar>
-        </aside>
+        @if (isset($sidebar))
+            <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
+                <x-sidebar>
+                    {{ $sidebar }}
+                </x-sidebar>
+            </aside>
+        @endif
         
-        <div class="w-full lg:ml-72 xl:ml-96 h-full">
+        <div @class(['w-full h-full', 'lg:ml-72 xl:ml-96' => isset($sidebar)])>
             @if (isset($header))
-                <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 sticky lg:top-10 top-0 bg-gray-50" x-data="{ headerOpen: false }">
+                <div class="flex w-full px-2 min-h-10 items-center py-1 fixed lg:top-10 space-x-2 bg-gray-50 z-40" x-data="{ headerOpen: false }">
                     <div class="flex items-center justify-between space-x-3 w-full">
                         {{ $header }}
                     </div>
                 </div>
             @endif
             
-            <main id="main-block" class="w-full space-y-4 h-full" >
+            <main id="main-block" class="w-full space-y-4 h-full p-2 pt-11" >
                 {{ $slot }}
             </main>
 

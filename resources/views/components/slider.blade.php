@@ -17,7 +17,7 @@
         </div>
         <div class="w-full m-auto items-center h-[500px] z-30">
             <div class="flex relative h-full justify-center items-center">
-                <div class="absolute z-50 left-0 content-center h-full flex items-center px-1">
+                <div class="absolute z-30 left-0 content-center h-full flex items-center px-1">
                     <button x-on:click="prev" class="m-auto whitespace-nowrap items-center cursor-pointer grid bg-gray-50 hover:bg-gray-200 aspect-square w-8 h-8 rounded-full content-center">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
@@ -25,7 +25,7 @@
 
                 <img x-bind:srcset="photos[current]" alt="" class="object-contain w-full h-full">
                 
-                <div class="absolute z-50 right-0 content-center h-full flex items-center px-1">
+                <div class="absolute z-30 right-0 content-center h-full flex items-center px-1">
                     <button x-on:click="next" class="m-auto whitespace-nowrap items-center cursor-pointer grid bg-gray-50 hover:bg-gray-200 aspect-square w-8 h-8 rounded-full content-center">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
