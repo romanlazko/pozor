@@ -17,10 +17,14 @@ class MessageController extends Controller
      */
     public function index()
     {
-        $threads = auth()->user()->threads?->load('announcement:id,translated_title', 'announcement.media', 'users:name,id', 'users.media')
-            ->loadCount(['messages as uread_messages_count' => function ($query) {
+        $threads = auth()->user()->threads()
+            ?->with('announcement:id,translated_title', 'announcement.media', 'users:name,id', 'users.media', 'lastMessageRelation')
+            
+            ->whereHas('announcement')
+            ->withCount(['messages as uread_messages_count' => function ($query) {
                 $query->where('read_at', null)->where('user_id', '!=', auth()->id());
-            }]);
+            }])
+            ->get();
 
         return view('profile.message.index', compact('threads'));
     }
