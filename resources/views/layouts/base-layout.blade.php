@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-hidden">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,8 +20,7 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="flex h-dvh font-roboto bg-gray-50">
-        
+    <body class="font-roboto bg-gray-50 min-h-screen" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
         {{ $slot }}
         
         @if (session('ok') === true)
@@ -29,8 +28,8 @@
         @elseif (session('ok') === false)
             <x-notifications.small class="bg-red-400 z-50" :title="session('description')"/>
         @endif
-
     </body>
+
     @livewireScripts
     @filamentScripts
     @vite(['resources/js/app.js'])

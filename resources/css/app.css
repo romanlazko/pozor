@@ -31,3 +31,7 @@
 .grecaptcha-badge { 
     visibility: hidden;
 }
+
+.hide-scroll::-webkit-scrollbar {
+    display: none;
+}

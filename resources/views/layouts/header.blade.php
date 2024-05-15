@@ -1,9 +1,8 @@
-<header class="flex items-center justify-between px-2 md:px-4 py-1 bg-white border-b border-gray-300 space-x-3">
+<header class="flex items-center justify-between bg-white border-b border-gray-300 space-x-3 h-10 p-1">
 	<div class="flex-1 items-center justify-start hidden lg:flex">
 		<a href="{{ route('announcement.index') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
 		</a>
-		
 	</div>
 
 	<div class="flex items-center space-x-2">

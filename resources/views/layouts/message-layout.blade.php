@@ -3,7 +3,7 @@
         @include('layouts.header')
     </div>
     
-    <div class="pb-10 pt-0 lg:pt-10 lg:pb-0 min-h-screen flex w-full h-full">
+    <div class="pb-0 pt-0 lg:pt-10 lg:pb-0 min-h-screen flex w-full h-full">
         <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
             <x-sidebar>
                 <div class="p-4 space-y-3">
@@ -41,14 +41,9 @@
             </x-sidebar>
         </aside>
         
-        <div class="w-full lg:ml-72 xl:ml-96 h-full">
+        <div class="w-full sm:ml-72 xl:ml-96 h-full">
             @if (isset($header))
-                <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 sticky lg:top-10 top-0 bg-gray-50" x-data="{ headerOpen: false }">
-                    <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
-                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
+                <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 sticky md:top-10 top-0 bg-gray-50">
                     <div class="flex items-center justify-between space-x-3">
                         {{ $header }}
                     </div>
@@ -60,14 +55,10 @@
             </main>
 
             @if (isset($footer))
-                <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-10 md:bottom-0">
+                <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0">
                     {{ $footer }}
                 </div>
             @endif
         </div>
-    </div>
-
-    <div class="w-full lg:hidden block fixed bottom-0 h-10">
-        @include('layouts.footer')
     </div>
 </x-base-layout>
