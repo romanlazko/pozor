@@ -34,10 +34,6 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
-
-        if ($request->hasFile('avatar')) {
-            $request->user()->addMediaFromRequest('avatar')->toMediaCollection('avatar');
-        }
         
         $request->user()->save();
 
@@ -60,6 +56,22 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with([
             'ok' => true, 
             'description' => 'Your profile language has been updated!'
+        ]);
+    }
+
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $request->user()->addMediaFromRequest('avatar')->toMediaCollection('avatar');
+        }
+
+        return Redirect::route('profile.edit')->with([
+            'ok' => true,
+            'description' => 'Your avatar has been updated!'
         ]);
     }
 

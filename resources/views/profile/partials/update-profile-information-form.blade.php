@@ -1,12 +1,23 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
+    <header class="flex space-x-6">
+        <form method="post" action="{{ route('profile.updateAvatar') }}" enctype="multipart/form-data" onsubmit="event.target.submit(); return false;">
+            @csrf
+            @method('patch')
+            <label for="avatar" class="block w-14 h-14 min-w-14 min-h-14 rounded-full border-2 hover:border-indigo-700 overflow-hidden">
+                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="object-cover " alt="">
+                <input type="file" name="avatar" id="avatar" class="hidden" accept="image/*" onchange="event.target.form.submit();">
+            </label>
+            <x-form.error class="mt-2" :messages="$errors->get('avatar')" />
+        </form>
+        <div>
+            <h2 class="text-lg font-medium text-gray-900">
+                {{ __('Profile Information') }}
+            </h2>
+    
+            <p class="mt-1 text-sm text-gray-600">
+                {{ __("Update your account's profile information and email address.") }}
+            </p>
+        </div>
     </header>
 
     {{-- <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -16,15 +27,6 @@
     <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
-
-        <div>
-            <x-form.label :value="__('Avatar')" />
-            <label for="avatar" class="block text-sm font-medium text-gray-700 sm:flex items-center sm:space-x-3">
-                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="w-14 h-14 min-w-14 min-h-14 rounded-full object-cover border" alt="">
-                <input type="file" name="avatar" id="avatar" class="hidden sm:block">
-            </label>
-            <x-form.error class="mt-2" :messages="$errors->get('avatar')" />
-        </div>
 
         <div>
             <x-form.label for="name" :value="__('Name')" />
@@ -64,16 +66,6 @@
 
         <div class="flex items-center gap-4">
             <x-buttons.primary>{{ __('Save') }}</x-buttons.primary>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
         </div>
     </form>
 </section>

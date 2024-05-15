@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="grid grid-cols-1 gap-2">
+    <div class="grid grid-cols-1 gap-2 p-2">
         @forelse ($threads ?? [] as $thread)
             <a href="{{ route('profile.message.show', $thread->id) }}" class="flex items-center space-x-2 relative">
                 @if ($thread?->uread_messages_count > 0)

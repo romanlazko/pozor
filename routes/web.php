@@ -71,6 +71,7 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
 
     Route::patch('/updateLang', [ProfileController::class, 'updateLang'])->name('updateLang');
+    Route::patch('/updateAvatar', [ProfileController::class, 'updateAvatar'])->name('updateAvatar');
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/announcement', Announcements::class)->name('announcement.index');
     Route::get('/announcement/create', Create::class)->name('announcement.create');

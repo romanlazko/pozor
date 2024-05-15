@@ -8,10 +8,10 @@
 
 	<div class="flex items-center space-x-2">
 		@auth
-			<a href="{{ route('profile.message.index') }}" class="text-gray-500 hover:text-indigo-700 flex items-center space-x-1">
-				<i class="fa-solid fa-comment"></i>
+			<a href="{{ route('profile.message.index') }}" class="text-gray-500 hover:text-indigo-700 relative">
+				<i class="fa-solid fa-comments"></i>
 				@if (auth()->user()?->unreadMessagesCount > 0)
-					<p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
+					<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
 				@endif
 			</a>
 		@endauth

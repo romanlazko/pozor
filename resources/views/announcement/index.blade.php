@@ -16,7 +16,7 @@
                         @if (!$loop->last)
                             <a href="{{ route('announcement.index', ['category' => $parent->slug]) }}" class="text-xs text-gray-500">
                                 <span class="hover:underline hover:text-indigo-700">
-                                    {{ $parent->name }}
+                                    {{ $parent->translated_name }}
                                 </span>
                                 >
                             </a>
@@ -34,7 +34,7 @@
                     
                     
                     <h2 class="text-xl font-bold">
-                        {{ $category?->name ?? __("Latest announcements:")}}
+                        {{ $category?->translated_name ?? __("Latest announcements:")}}
                     </h2> 
                 </div>
                 <button @click="sidebarOpen = true" class="text-xs text-gray-900 focus:outline-none lg:hidden whitespace-nowrap">

@@ -1,4 +1,10 @@
 <x-profile-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('My announcements') }}
+        </h2>
+    </x-slot>
+    
     <div class="space-y-4 m-auto">
         @foreach ($announcements as $announcement)
             <div class="bg-white rounded-xl flex space-x-4 p-2 shadow-xl border-2 border-white hover:border-indigo-800">

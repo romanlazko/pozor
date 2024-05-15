@@ -20,7 +20,7 @@ return [
      */
     'features' => [
         Features::spammerIpTracking(),
-        Features::blockSpammersGlobally(),
+        // Features::blockSpammersGlobally(),
 //        Features::neverGonnaGiveYouUp(),
     ],
 
