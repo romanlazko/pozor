@@ -17,6 +17,11 @@ class ShowContact extends Component
 
     public $error;
 
+    public function mount($user_id)
+    {
+        $this->user_id = $user_id;
+    }
+
     public function render()
     {
         $user = User::find($this->user_id);

@@ -123,8 +123,11 @@
     <x-modal name="send-message">
         <x-send-message :announcement="$announcement"/>
     </x-modal>
-    <x-modal name="show-contact">
-        <livewire:components.show-contact :user_id="$announcement->user->id"/>
-    </x-modal>
+    @if ($announcement->user->phone)
+        <x-modal name="show-contact">
+            <livewire:components.show-contact user_id="{{ $announcement->user->id }}"/>
+        </x-modal>
+    @endif
+    
 </x-user-layout>
 
