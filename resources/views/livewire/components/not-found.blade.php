@@ -1,6 +1,6 @@
 <x-layout>
     <x-slot name="header">
-        <x-a-buttons.close href="{{ route('marketplace.index') }}" wire:navigate/>
+        <x-a-buttons.close href="{{ route('marketplace.index') }}" />
     </x-slot>
     <div class="p-2 md:p-12 space-y-4 max-w-3xl m-auto">
         <x-white-block>

@@ -1,6 +1,6 @@
 <x-message-layout>
     <x-slot name="header">
-        <a href="{{ route('profile.message.index') }}" wire:navigate class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
+        <a href="{{ route('profile.message.index') }}"  class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <div class="flex">

@@ -7,10 +7,10 @@
         <aside id="default-sidebar" class="fixed left-0 z-40 h-full" aria-label="Sidebar">
             <x-sidebar>
                 <div class="p-4 space-y-3">
-                    <x-responsive-nav-link wire:navigate :href="route('profile.announcement.index')" :active="request()->routeIs('profile.announcement.*')">
+                    <x-responsive-nav-link  :href="route('profile.announcement.index')" :active="request()->routeIs('profile.announcement.*')">
                         {{ __('My Announcements') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link wire:navigate :href="route('profile.message.index')" :active="request()->routeIs('profile.message.*')" class="flex items-center space-x-3">
+                    <x-responsive-nav-link  :href="route('profile.message.index')" :active="request()->routeIs('profile.message.*')" class="flex items-center space-x-3">
                         <p>
                             {{ __('Messages') }} 
                         </p>
@@ -18,7 +18,7 @@
                             <p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
                         @endif
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link wire:navigate :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
+                    <x-responsive-nav-link  :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         {{ __('Profile') }}
                     </x-responsive-nav-link>
                     
@@ -33,7 +33,7 @@
         
                     @hasrole('super-duper-admin')
                         <hr>
-                        <x-responsive-nav-link wire:navigate :href="route('admin.announcement')">
+                        <x-responsive-nav-link  :href="route('admin.announcement')">
                             {{ __("Admin") }}
                         </x-responsive-nav-link>
                     @endhasrole

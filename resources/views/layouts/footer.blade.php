@@ -1,5 +1,5 @@
 <nav class="px-2 py-1 flex w-full justify-between items-center bg-white border-b border-gray-100 h-10">
-    <x-header.link href="{{ route('announcement.index') }}" wire:navigate :active="request()->routeIs('announcement.index')" class="border-none">
+    <x-header.link href="{{ route('announcement.index') }}"  :active="request()->routeIs('announcement.index')" class="border-none">
         <div class="grid">
             <i class="fa-solid fa-store"></i>
             <small class="text-[8px]">{{ __('Marketplace') }}</small>

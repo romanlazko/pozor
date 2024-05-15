@@ -12,13 +12,13 @@
 
     <x-slot name="sidebar">
         <div class="p-4 space-y-3">
-            <x-responsive-nav-link wire:navigate :href="route('profile.dashboard')" :active="request()->routeIs('profile.dashboard')">
+            <x-responsive-nav-link  :href="route('profile.dashboard')" :active="request()->routeIs('profile.dashboard')">
 				{{ __('Dashboard') }}
 			</x-responsive-nav-link>
-            {{-- <x-responsive-nav-link wire:navigate :href="route('profile.announcement')" :active="request()->routeIs('profile.announcement')">
+            {{-- <x-responsive-nav-link  :href="route('profile.announcement')" :active="request()->routeIs('profile.announcement')">
 				{{ __('My Announcements') }}
 			</x-responsive-nav-link> --}}
-            <x-responsive-nav-link wire:navigate :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
+            <x-responsive-nav-link  :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
 				{{ __('Profile') }}
 			</x-responsive-nav-link>
             
@@ -33,7 +33,7 @@
 
             @hasrole('super-duper-admin')
                 <hr>
-                <x-responsive-nav-link wire:navigate :href="route('admin.category.index')">
+                <x-responsive-nav-link  :href="route('admin.category.index')">
                     {{ __("Admin") }}
                 </x-responsive-nav-link>
             @endhasrole

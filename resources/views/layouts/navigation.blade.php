@@ -6,13 +6,13 @@
             </div>
            
             <div class="flex w-full max-w-lg m-auto justify-between shrink-0 items-center">
-                <x-header.link href="{{ route('marketplace.index') }}" wire:navigate :active="request()->routeIs('marketplace.index')">
+                <x-header.link href="{{ route('marketplace.index') }}"  :active="request()->routeIs('marketplace.index')">
                     <i class="fa-solid fa-store md:mr-1"></i>
                     <span class="hidden md:block">
                         {{ __('Marketplace') }}
                     </span>
                 </x-header.link>
-                <x-header.link href="{{ route('real-estate.index') }}" wire:navigate :active="request()->routeIs('real-estate.*')" >
+                <x-header.link href="{{ route('real-estate.index') }}"  :active="request()->routeIs('real-estate.*')" >
                     <i class="fa-solid fa-house-circle-check md:mr-1"></i>
                     <span class="hidden md:block">
                         {{ __('Real Estate') }}
@@ -24,19 +24,19 @@
                         {{ __('Prace') }}
                     </span>
                 </x-header.link>
-                <x-header.link href="{{ route('profile.dashboard') }}" wire:navigate :active="request()->routeIs('profile.*')">
+                <x-header.link href="{{ route('profile.dashboard') }}"  :active="request()->routeIs('profile.*')">
                     <i class="fa-solid fa-address-card md:mr-1"></i>
                     <span  class="hidden md:block">
                         {{ __('Profile') }}
                     </span>
                 </x-header.link>
-                <x-a-buttons.create href="{{ route('create') }}" wire:navigate class="h-min lg:hidden">
+                <x-a-buttons.create href="{{ route('create') }}"  class="h-min lg:hidden">
                     {{ __("Create announcement") }}
                 </x-a-buttons.create>
             </div>
 
             <div class="hidden flex-1 items-center space-x-3 justify-end lg:flex">
-                <x-a-buttons.create href="{{ route('create') }}" wire:navigate class="">
+                <x-a-buttons.create href="{{ route('create') }}"  class="">
                     {{ __("Create announcement") }}
                 </x-a-buttons.create>
             </div>
