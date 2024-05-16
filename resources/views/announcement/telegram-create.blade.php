@@ -7,11 +7,10 @@
     </x-slot> --}}
     <livewire:announcement.telegram-create/>
 
-    <div x-on:announcement-created="window.Telegram.WebApp.close()"></div>
-    {{-- @push('scripts') --}}
-        {{-- <script>
+    {{-- <div x-on:announcement-created="window.Telegram.WebApp.close()"></div> --}}
+    @push('scripts')
+        <script>
             $wire.on('announcement-created', () => {
-                ;
             });
             $wire.on('announcement-created', () => {
                 alert('announcement-created');
@@ -21,7 +20,7 @@
                     alert('announcement-created');
                 });
             });
-        </script> --}}
-    {{-- @endpush --}}
+        </script>
+    @endpush
     
 </x-body-layout>
