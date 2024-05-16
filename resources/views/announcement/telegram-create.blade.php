@@ -4,5 +4,6 @@
             {{ __("Create announcement") }}
         </h2>
     </x-slot> --}}
+    @dump(auth()->user()->email)
     <livewire:announcement.create/>
 </x-body-layout>

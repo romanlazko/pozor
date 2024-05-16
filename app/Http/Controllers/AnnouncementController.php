@@ -73,10 +73,7 @@ class AnnouncementController extends Controller
             dd('User not found');
         }
 
-        if (! Auth::login($user))
-        {
-            dd('Auth error');
-        }
+        Auth::login($user);
 
         return view('announcement.telegram-create');
     }
