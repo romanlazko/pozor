@@ -7,7 +7,7 @@
     </x-slot> --}}
     <livewire:announcement.telegram-create/>
 
-    @push('scripts')
+    {{-- @push('scripts') --}}
         <script>
             $wire.on('announcement-created', () => {
                 window.Telegram.WebApp.close();
@@ -21,6 +21,6 @@
                 });
             });
         </script>
-    @endpush
+    {{-- @endpush --}}
     
 </x-body-layout>
