@@ -22,9 +22,7 @@ class Email extends Command
         $updates->getFrom()->setExpectation(AwaitEmail::$expectation);
         
         $buttons = BotApi::inlineKeyboard([
-            [
-                array(MenuCommand::getTitle('ru'), MenuCommand::$command, '')
-            ]
+            [array(MenuCommand::getTitle('ru'), MenuCommand::$command, '')]
         ]);
 
         $data = [

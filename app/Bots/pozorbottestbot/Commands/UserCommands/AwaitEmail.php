@@ -32,7 +32,7 @@ class AwaitEmail extends Command
             'email' => $text,
         ]);
         
-        return $this->bot->executeCommand(Profile::$command);
+        return $this->bot->executeCommand(Phone::$command);
     }
 
 

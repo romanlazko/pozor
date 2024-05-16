@@ -9,9 +9,9 @@
         @forelse ($threads ?? [] as $thread)
             <a href="{{ route('profile.message.show', $thread->id) }}"  class="flex items-center space-x-2 relative">
                 @if ($thread?->uread_messages_count > 0)
-                    <span class="block absolute text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center top-1 left-0 m-0">{{ $thread?->uread_messages_count }}</span>
+                    <span class="block absolute text-xs text-white w-5 h-5 min-w-5 min-h-5 rounded-full bg-blue-500 text-center content-center items-center top-1 left-0 m-0">{{ $thread?->uread_messages_count }}</span>
                 @endif
-                <div class="w-12 h-12 rounded-full overflow-hidden bg-white-300 border ">
+                <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white-300 border ">
                     <img src="{{ $thread?->announcement?->getFirstMediaUrl('announcements') }}" alt="" class="object-cover">
                 </div>
                 
@@ -20,7 +20,7 @@
                     
                     @if ($thread?->recipient)
                         <div class="flex items-center space-x-1">
-                            <div class="w-5 h-5 rounded-full overflow-hidden bg-white border">
+                            <div class="w-5 h-5 min-w-5 min-h-5 rounded-full overflow-hidden bg-white border">
                                 <img src="{{ $thread?->recipient?->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="object-cover ">
                             </div>
                             <p class="text-xs">{{ $thread?->recipient?->name }}</p>

@@ -3,9 +3,8 @@
 namespace App\Bots\pozorbottestbot\Commands\UserCommands;
 
 use App\Models\User;
+use App\Notifications\TelegramConnect;
 use App\Notifications\TelegramEmailVerification;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Romanlazko\Telegram\App\BotApi;
 use Romanlazko\Telegram\App\Commands\Command;
@@ -13,31 +12,28 @@ use Romanlazko\Telegram\App\DB;
 use Romanlazko\Telegram\App\Entities\Response;
 use Romanlazko\Telegram\App\Entities\Update;
 
-class CreateUser extends Command
+class SendEmailVerificationNotification extends Command
 {
-    public static $command = 'create_user';
+    public static $command = 'sendemailverificationnotification';
 
-    public static $title = '';
+    public static $title = [
+        'ru' => 'Отправить письмо снова',
+        'en' => 'Send email again',
+    ];
 
-    public static $usage = ['create_user'];
+    public static $usage = ['sendemailverificationnotification'];
 
     protected $enabled = true;
 
     public function execute(Update $updates): Response
     {
-        $notes = $this->getConversation()->notes;
-
-        $user = User::where('email', $notes['email'])->first();
-
-        if (! $user) {
-            $user = User::create([
-                'name' => $updates->getFrom()->getFirstName() . ' ' . $updates->getFrom()->getLastName(),
-                'email' => $notes['email'],
-                'phone' => $notes['phone'],
-            ]);
-        }
-
         $telegram_chat_id = DB::getChat($updates->getChat()->getId())->id;
+        
+        $user = User::where('telegram_chat_id', $telegram_chat_id)->first();
+
+        if (!$user) {
+            return $this->bot->executeCommand(MenuCommand::$command);
+        }
 
         $token = Password::createToken($user);
 

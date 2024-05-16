@@ -7,6 +7,8 @@ use App\Enums\Status;
 use App\Models\Announcement;
 use App\Models\Attribute;
 use App\Models\Category;
+use App\Models\User;
+use Auth;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Http\Request;
 use Session;
@@ -61,6 +63,19 @@ class AnnouncementController extends Controller
     public function create()
     {
         return view('announcement.create');
+    }
+
+    public function telegram_create(Request $request)
+    {
+        if (! Auth::attempt($request->only('email', 'telegram_chat_id')))
+        {
+            return abort(404);
+        }
+
+        dump(auth()->user());
+
+
+        return view('announcement.telegram-create');
     }
 
     // public function edit(Announcement $announcement)

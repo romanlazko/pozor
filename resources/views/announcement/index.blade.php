@@ -4,7 +4,7 @@
     </x-slot>
 
     <x-slot name="sidebar">
-        <livewire:announcement.index :search="$data" :category="$category"/>
+        <livewire:announcement.filters :search="$data" :category="$category"/>
     </x-slot>
     
     <x-slot name="header">

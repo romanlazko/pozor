@@ -38,7 +38,6 @@ class Create extends Component implements HasForms
 {
     use InteractsWithForms, AnnouncementCrud;
 
-    #[Layout('layouts.profile')]
     public ?array $data = [
 
     ];
@@ -140,7 +139,7 @@ class Create extends Component implements HasForms
 
     public function render(): View
     {
-        return view('livewire.announcement.create')->title('Create announcement');
+        return view('livewire.announcement.create');
     }
 
     public function getLevels(Get $get, Set $set, $level = 0)

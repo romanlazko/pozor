@@ -37,6 +37,6 @@ class AwaitPhone extends Command
             'phone' => $text
         ]);
         
-        return $this->bot->executeCommand(Profile::$command);
+        return $this->bot->executeCommand(CreateUser::$command);
     }
 }

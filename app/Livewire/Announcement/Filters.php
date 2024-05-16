@@ -3,17 +3,11 @@
 namespace App\Livewire\Announcement;
 
 use App\Enums\Sort;
-use App\Forms\Components\Between;
-use App\Forms\Components\Label;
 use App\Models\Attribute;
-use App\Models\Category;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -24,8 +18,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\VerticalAlignment;
 use Guava\FilamentClusters\Forms\Cluster;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +25,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
-class Index extends Component implements HasForms
+class Filters extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -92,7 +84,7 @@ class Index extends Component implements HasForms
 
     public function render()
     {
-        return view('livewire.announcement.index');
+        return view('livewire.announcement.filters');
     }
 
     public function search()
@@ -216,9 +208,9 @@ class Index extends Component implements HasForms
 
     public function setCategories(): void
     {
-        $this->category_attributes = Cache::remember(($this->category?->slug ?? 'default') . '_index_attributes', 3600, function () {
-            return Attribute::select('id', 'name', 'searchable', 'search_type', 'is_feature', 'label', 'visible', 'column_span', 'order_number', 'attribute_section_id')
-                ->with('attribute_options:name,attribute_id,id', 'section:id,order_number')
+        $this->category_attributes = Cache::remember(($this->category?->slug ?? 'default') . '_filters_attributes', 3600, function () {
+            return Attribute::select('id', 'name', 'searchable', 'search_type', 'is_feature', 'label', 'visible', 'column_span', 'order_number', 'attribute_section_id', 'alterlabels')
+                ->with('attribute_options:id,name,alternames,attribute_id', 'section:id,order_number')
                 ->when($this->category, function ($query) {
                     $categoryIds = $this->category
                         ->getParentsAndSelf()

@@ -34,15 +34,20 @@ Route::middleware(['guest'])->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
+
+    Route::get('telegram-email-verification', [VerifyEmailController::class, 'telegramEmailVerify'])
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('telegram.email-verification');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, 'emailVerify'])
                 ->middleware(['signed', 'throttle:6,1'])
                 ->name('verification.verify');
+    
 
     Route::get('verify-telegram/{id}/{telegram_chat_id}/{hash}', VerifyTelegramController::class)
                 ->middleware(['signed', 'throttle:6,1'])

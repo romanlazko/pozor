@@ -1,11 +1,11 @@
-<header class="flex items-center justify-between bg-white border-b border-gray-300 space-x-3 h-10 p-1">
+<header class="flex items-center justify-between bg-white border-b border-gray-300 space-x-3 h-12 px-3 ">
 	<div class="flex-1 items-center justify-start hidden lg:flex">
 		<a href="{{ route('announcement.index') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
 		</a>
 	</div>
 
-	<div class="flex items-center space-x-2">
+	<div class="flex items-center space-x-3">
 		@auth
 			<a href="{{ route('profile.message.index') }}" class="text-gray-500 hover:text-indigo-700 relative">
 				<i class="fa-solid fa-comments"></i>
@@ -13,12 +13,10 @@
 					<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
 				@endif
 			</a>
-		@endauth
-		
-		@guest
+		@else
 			<a href="{{ route('register') }}" class="hover:text-indigo-700">Register</a>
 			<a href="{{ route('login') }}" class="hover:text-indigo-700">Login</a>
-		@endguest
+		@endauth
 		
 		<x-a-buttons.create href="{{ route('profile.announcement.create') }}" class="">
 			{{ __("Create announcement") }}

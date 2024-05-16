@@ -21,7 +21,7 @@ class Phone extends Command
 
         $buttons = BotApi::inlineKeyboard([
             [
-                array("👈 Назад", Profile::$command, ''),
+                array("👈 Назад", Email::$command, ''),
                 array(MenuCommand::getTitle('ru'), MenuCommand::$command, ''),
             ]
         ]);

@@ -363,8 +363,8 @@ class Announcements extends Component implements HasForms, HasTable
             ->persistFiltersInSession()
             
             ->contentGrid([
-                'sm' => 2,
-                'lg' => 3,
+                'md' => 2,
+                'xl' => 3,
             ])
             ->paginationPageOptions([25, 50, 100]);
             // ->poll('2s');

@@ -24,16 +24,12 @@ class MenuCommand extends Command
     public function execute(Update $updates): Response
     {
         $buttons = BotApi::inlineKeyboard([
-            [array(Marketplace::getTitle('en'), Marketplace::$command, '')],
-            // [array(RealEstate::getTitle('en'), RealEstate::$command, '')],
-            // [array(Job::getTitle('en'), Job::$command, '')],
-            // [array(Contacts::getTitle('en'), Contacts::$command, '')],
+            [array(CreateAnnouncement::getTitle('ru'), CreateAnnouncement::$command, '')],
         ]);
 
         $text = implode("\n", [
             "Привет 👋" ."\n", 
-            "Я помогу тебе создать объявление в каналах *Pozor*."."\n", 
-            "_Выбери в каком типе каналов нужно опубликовать твое объявление!_",
+            "Я помогу тебе создать объявление в каналах *Pozor*."."\n",
         ]);
 
         $data = [

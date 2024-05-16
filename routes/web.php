@@ -42,6 +42,10 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     Route::get('/', 'index')->name('index');
     Route::get('/search/{category:slug}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
+    Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
+        ->middleware(['signed', 'throttle:6,1'])
+        // ->middleware(['auth:sanctum'])
+        ->name('telegram-create');
     // Route::get('/create', 'create')->middleware('auth')->name('create');
     // Route::get('/edit/{announcement}', 'edit')->middleware('auth')->name('edit');
     // Route::patch('/update/{announcement}', 'update')->middleware('auth')->name('update');
@@ -74,8 +78,7 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
     Route::patch('/updateAvatar', [ProfileController::class, 'updateAvatar'])->name('updateAvatar');
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/announcement', Announcements::class)->name('announcement.index');
-    Route::get('/announcement/create', Create::class)->name('announcement.create');
-
+    Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
 
     Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -84,6 +87,8 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
         Route::put('{thread}', 'update')->name('update');
     });
 });
+
+
 
 
 // Route::middleware('auth')->group(function () {
