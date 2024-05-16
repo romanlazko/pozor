@@ -15,6 +15,11 @@
             $wire.on('announcement-created', () => {
                 alert('announcement-created');
             });
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('announcement-created', (event) => {
+                    alert('announcement-created');
+                });
+            });
         </script>
     @endpush
     
