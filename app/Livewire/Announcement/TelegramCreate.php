@@ -6,8 +6,10 @@ class TelegramCreate extends Create
 {
     public function create(): void
     {
+        $this->validate();
+
         $this->createAnnouncement((object) $this->data);
 
-        dump('created');
+        $this->redirectRoute('created');
     }
 }

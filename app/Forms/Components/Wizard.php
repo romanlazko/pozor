@@ -71,6 +71,10 @@ class Wizard extends Component
                         return;
                     }
 
+                    /** @var LivewireComponent $livewire */
+                    $livewire = $component->getLivewire();
+                    $livewire->updatedInteractsWithForms($statePath);
+
                     if (! $component->isSkippable()) {
                         /** @var Step $currentStep */
                         $currentStep = array_values(
@@ -87,10 +91,20 @@ class Wizard extends Component
                             return;
                         }
                     }
+                    
+                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
+                },
+            ],
+            'wizard::previousStep' => [
+                function (Wizard $component, string $statePath, int $currentStepIndex): void {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
-                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
+                    $livewire->updatedInteractsWithForms($statePath);
+                    $livewire->dispatch('previous-wizard-step', statePath: $statePath);
                 },
             ],
         ]);

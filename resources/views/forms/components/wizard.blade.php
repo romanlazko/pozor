@@ -96,6 +96,7 @@
         autofocusFields()
     "
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
+    x-on:previous-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') previousStep()"
     {{
         $attributes
             ->merge([
@@ -130,7 +131,16 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
+        <span x-cloak 
+            x-on:click="
+                $wire.dispatchFormEvent(
+                    'wizard::previousStep',
+                    '{{ $statePath }}',
+                    getStepIndex(step),
+                )
+            "   
+            x-show="! isFirstStep()"
+        >
             {{ $getAction('previous') }}
         </span>
 

@@ -46,11 +46,16 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
         ->middleware(['signed', 'throttle:6,1'])
         // ->middleware(['auth:sanctum'])
         ->name('telegram-create');
+
     // Route::get('/create', 'create')->middleware('auth')->name('create');
     // Route::get('/edit/{announcement}', 'edit')->middleware('auth')->name('edit');
     // Route::patch('/update/{announcement}', 'update')->middleware('auth')->name('update');
     // Route::delete('/delete/{announcement}', 'delete')->middleware('auth')->name('delete');
 });
+
+Route::get('/created', function (){
+    return view('announcement.created');
+})->name('created');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

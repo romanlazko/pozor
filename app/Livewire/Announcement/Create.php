@@ -39,24 +39,21 @@ class Create extends Component implements HasForms
     use InteractsWithForms, AnnouncementCrud;
 
     public ?array $data = [
-
+        'geo_id' => null,
     ];
 
     public $parent_categories;
 
     protected $countries;
 
-    protected $category_attributes = null;
+    public $category_attributes = null;
 
     public $categories = null;
 
     public function mount()
     {
         $this->parent_categories = Category::where('parent_id', null)->get()->pluck('translated_name', 'id');
-        $this->form->fill([
-            'geo_id' => null,
-            'attributes' => []
-        ]);
+        // $this->form->fill();
     }
 
     public function form(Form $form): Form
@@ -99,7 +96,8 @@ class Create extends Component implements HasForms
                                             'lg' => 2,
                                             'xl' => 2,
                                             '2xl' => 2,
-                                        ])->schema($fields)
+                                        ])
+                                        ->schema($fields)
                                     ]);
                                 }
                             }
@@ -120,18 +118,20 @@ class Create extends Component implements HasForms
                     
                 ])
                 ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                    <x-filament.submit>
+                    <x-filament.submit >
                         {{ __('Submit') }}
-                    </x-filament.submit> 
+                    </x-filament.submit>
                 BLADE)))
                 ->contained(false)
-                ->skippable()
+                // ->skippable()
             ])
             ->statePath('data');
     }
 
     public function create(): void
     {
+        $this->validate();
+
         $this->createAnnouncement((object) $this->data);
 
         $this->redirectRoute('announcement.index');
@@ -206,30 +206,30 @@ class Create extends Component implements HasForms
                 ->hidden(fn (Get $get) => $this->isVisible($get, $attribute))
                 ->required($attribute->required),
 
-            'location' => Grid::make(2)->schema([
-                    Select::make('country')
-                        ->label('Country')
-                        ->options($this->countries)
-                        ->afterStateUpdated(fn (Set $set) => $set('geo_id', null))
-                        ->placeholder('Country')
-                        ->required()
-                        ->live(),
-                    Select::make('geo_id')
-                        ->label('City')
-                        ->options(function (Get $get) {
-                            return Geo::where('country', $get('country'))->limit(10)->pluck('name', 'id');
-                        })
-                        ->searchable()
-                        ->getSearchResultsUsing(function (string $search, Get $get) {
-                            return Geo::where('country', $get('country'))
-                                ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
-                                ->limit(10)
-                                ->pluck('name', 'id');
-                        })
-                        ->required()
-                        ->placeholder('City')
-                        ->live(),
-                ]),
+            // 'location' => Grid::make(2)->schema([
+            //         Select::make('country')
+            //             ->label('Country')
+            //             ->options($this->countries)
+            //             ->afterStateUpdated(fn (Set $set) => $set('geo_id', null))
+            //             ->placeholder('Country')
+            //             ->required()
+            //             ->live(),
+            //         Select::make('geo_id')
+            //             ->label('City')
+            //             ->options(function (Get $get) {
+            //                 return Geo::where('country', $get('country'))->limit(10)->pluck('name', 'id');
+            //             })
+            //             ->searchable()
+            //             ->getSearchResultsUsing(function (string $search, Get $get) {
+            //                 return Geo::where('country', $get('country'))
+            //                     ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
+            //                     ->limit(10)
+            //                     ->pluck('name', 'id');
+            //             })
+            //             ->required()
+            //             ->placeholder('City')
+            //             ->live(),
+            //     ]),
                 
             default => Hidden::make('')
         };
@@ -259,7 +259,7 @@ class Create extends Component implements HasForms
     {
         $this->categories = Category::whereIn('id', $categoryIds)
             ->select('id', 'name', 'alternames')
-            ->with('children')
+            ->with('children:name,alternames,id,parent_id')
             ->get()
             ->keyBy('id')
             ->map(fn (Category $category) => collect([
@@ -269,12 +269,12 @@ class Create extends Component implements HasForms
             ]));
 
         $this->category_attributes = 
-        // Cache::remember($this->categories->pluck('id')->implode('_') . '_create_attributes', 30, function () use ($categoryIds) {
-            Attribute::select('id', 'name', 'alterlabels', 'searchable', 'create_type', 'is_feature', 'label', 'visible', 'column_span', 'column_start', 'order_number', 'attribute_section_id', 'required')
+        Cache::remember($this->categories->pluck('id')->implode('_') . '_create_attributes', 30, function () use ($categoryIds) {
+            return Attribute::select('id', 'name', 'alterlabels', 'searchable', 'create_type', 'is_feature', 'label', 'visible', 'column_span', 'column_start', 'order_number', 'attribute_section_id', 'required')
                 ->with('attribute_options:name,attribute_id,id,alternames', 'section:id,order_number,name,alternames')
                 ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds))
                 ->get();
-        // });
+        });
         $this->countries = Cache::remember('countries', 3600, fn () => Geo::getCountries()->pluck('name', 'country'));
     }
     
