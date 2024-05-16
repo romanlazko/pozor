@@ -4,5 +4,5 @@
             {{ __("Create announcement") }}
         </h2>
     </x-slot> --}}
-    <livewire:announcement.create/>
+    <livewire:announcement.telegram-create/>
 </x-body-layout>
