@@ -8,14 +8,14 @@
             this.current = (this.current + 1) % this.photos.length;
         },
     }"
-    class="bg-white rounded-lg shadow-md overflow-hidden"
+    class="bg-white rounded-lg shadow-md overflow-hidden h-dvh md:h-[500px] flex flex-col"
 >
-    <div class="relative bg-gray-200 overflow-hidden">
+    <div class="relative bg-gray-200 overflow-hidden flex-1">
         <div class="absolute z-0 inset-0 bg-cover bg-center filter blur-2xl border-none h-full w-full"
             x-bind:style="'background-image: url('+ photos[current] +')'">
             <div class="bg-white opacity-60 h-full w-full"></div>
         </div>
-        <div class="w-full m-auto items-center h-[500px] z-30">
+        <div class="w-full m-auto items-center z-30 h-full">
             <div class="flex relative h-full justify-center items-center">
                 <div class="absolute z-30 left-0 content-center h-full flex items-center px-1">
                     <button x-on:click="prev" class="m-auto whitespace-nowrap items-center cursor-pointer grid bg-gray-50 hover:bg-gray-200 aspect-square w-8 h-8 rounded-full content-center">
@@ -32,12 +32,11 @@
                 </div>
             </div>
         </div>
-        
     </div>
 
     <div class="flex m-auto w-full justify-center overflow-hidden z-30 py-2 px-3">
         <template x-for="(photo, index) in photos" :key="index">
-            <img x-bind:srcset="photos[current]" class="bg-gray-200 w-16 h-16 border-2 rounded-lg object-cover mx-2 hover:border-indigo-400"
+            <img x-bind:srcset="photo" class="bg-gray-200 w-16 h-16 border-2 rounded-lg object-cover mx-2 hover:border-indigo-400"
                 :class="{ 'border-indigo-700': index === current, 'border-transparent': index !== current }"
                 x-on:click="current = index"
             >

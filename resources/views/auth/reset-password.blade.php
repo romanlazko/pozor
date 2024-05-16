@@ -1,7 +1,8 @@
-<x-user-layout>
-    <form method="POST" action="{{ route('password.store') }}">
+<x-guest-layout>
+    <form class="bg-white p-4 sm:p-6 max-w-md m-auto my-2 rounded-lg space-y-4 shadow-xl h-full" method="POST" action="{{ route('password.store') }}">
         @csrf
-
+        <x-honey/>
+        <x-honey-recaptcha/> 
         <!-- Password Reset Token -->
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
@@ -30,10 +31,19 @@
             <x-form.error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-buttons.primary>
+        <div class="text-center space-y-4">
+            <x-buttons.primary class="w-full text-center justify-center">
                 {{ __('Reset Password') }}
             </x-buttons.primary>
         </div>
+
+        <hr>
+
+        <div>
+            <small>This site is protected by reCAPTCHA and the Google 
+                <a href="https://policies.google.com/privacy" class="underline text-blue-500">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms" class="underline text-blue-500">Terms of Service</a> apply.
+            </small>
+        </div>
     </form>
-</x-user-layout>
+</x-guest-layout>

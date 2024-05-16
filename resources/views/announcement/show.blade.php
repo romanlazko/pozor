@@ -1,4 +1,8 @@
-<x-user-layout>
+<x-body-layout>
+    <x-slot name="headerNavigation">
+        @include('layouts.header')
+    </x-slot>
+
     <x-slot name="header">
         <x-a-buttons.back 
             onclick="if (document.referrer == '' && !document.referrer.includes('announcement') && '{{ redirect()->back()->getTargetUrl() }}' != '{{ route('announcement.index') }}') { window.location.href = '{{ route('announcement.index') }}'; } else { window.history.back(); }"
@@ -28,7 +32,7 @@
         </div>
     </x-slot>
 
-    <div class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
+    <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
         <div class="w-full lg:w-2/3 space-y-6">
             <x-slider :medias="$announcement->getMedia('announcements')"/>
             <div class="space-y-6 p-6 bg-white rounded-lg shadow-md">
@@ -62,9 +66,7 @@
                     <hr>
                     <div class="space-y-4">
                         <h4 class="font-bold text-2xl">{{ __("Description:") }}</h4>
-                        <p class="text-base">
-                            {{ $announcement->translated_description }}
-                        </p>
+                        <p class="max-w-lg whitespace-pre-wrap">{{ $announcement->translated_description }}</p>
                     </div>
                 @endif
     
@@ -98,9 +100,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0 py-6">
+    <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0 py-6">
         <div class="w-full lg:w-2/3 space-y-6">
             @if ($announcements?->isNotEmpty())
                 <div class="space-y-6 bg-white p-6 shadow-md rounded-lg">
@@ -118,16 +120,20 @@
         <div class="w-full lg:w-1/3 space-y-6">
             
         </div>
-    </div>
+    </section>
 
     <x-modal name="send-message">
         <x-send-message :announcement="$announcement"/>
     </x-modal>
-    @if ($announcement->user->phone)
+
+    @if ($announcement?->user?->phone)
         <x-modal name="show-contact">
             <livewire:components.show-contact :user_id="$announcement->user->id"/>
         </x-modal>
     @endif
-    
-</x-user-layout>
+
+    <x-slot name="footerNavigation">
+        @include('layouts.footer')
+    </x-slot>
+</x-body-layout>
 

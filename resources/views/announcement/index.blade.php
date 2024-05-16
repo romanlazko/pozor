@@ -1,4 +1,12 @@
-<x-user-layout>
+<x-body-layout>
+    <x-slot name="headerNavigation">
+        @include('layouts.header')
+    </x-slot>
+
+    <x-slot name="sidebar">
+        <livewire:announcement.index :search="$data" :category="$category"/>
+    </x-slot>
+    
     <x-slot name="header">
         <div class="w-full relative">
             <div class="w-full">
@@ -31,12 +39,12 @@
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                     @endif
-                    
-                    
+
                     <h2 class="text-xl font-bold">
                         {{ $category?->translated_name ?? __("Latest announcements:")}}
                     </h2> 
                 </div>
+
                 <button @click="sidebarOpen = true" class="text-xs text-gray-900 focus:outline-none lg:hidden whitespace-nowrap">
                     <i class="fa-solid fa-filter"></i>
                     <span>
@@ -47,12 +55,7 @@
         </div>
     </x-slot>
 
-    <x-slot name="sidebar">
-        <livewire:announcement.index :search="$data" :category="$category"/>
-    </x-slot>
-
-    <div class="p-2 space-y-3">
-        
+    <div class="space-y-3">
         <div class="w-full overflow-auto space-x-1 whitespace-nowrap">
             @foreach ($categories as $child)
                 <a href="{{ route('announcement.index', ['category' => $child->slug]) }}" class="m-0.5 bg-gray-800 rounded-lg text-white text-sm hover:bg-gray-700 overflow-hidden inline-block h-24">
@@ -75,8 +78,13 @@
                 <x-announcement-card :announcement="$announcement" />
             @endforeach
         </div>
+
         <div class="p-4">
             {{ $announcements->onEachSide(1)->links() }}
         </div>
     </div>
-</x-user-layout>
+
+    <x-slot name="footerNavigation">
+        @include('layouts.footer')
+    </x-slot>
+</x-body-layout>

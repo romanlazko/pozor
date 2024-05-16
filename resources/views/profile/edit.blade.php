@@ -4,7 +4,8 @@
             {{ __('Profile') }}
         </h2>
     </x-slot>
-    <div class="p-2 space-y-4">
+    
+    <div class="space-y-4">
         <div class="p-4 sm:p-8 bg-white shadow rounded-lg">
             <div class="max-w-xl">
                 @include('profile.partials.update-profile-information-form')
@@ -29,5 +30,4 @@
             </div>
         </div>
     </div>
-    
 </x-profile-layout>
