@@ -8,9 +8,9 @@ use App\Models\Announcement;
 use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\User;
-use Auth;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Session;
 
 class AnnouncementController extends Controller
