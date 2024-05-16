@@ -69,9 +69,13 @@ class AnnouncementController extends Controller
     {
         $user = User::where('email', $request->email)->where('telegram_chat_id', $request->telegram_chat_id)->first();
 
-        if (! $user OR ! Auth::login($user))
+        if (!$user) {
+            dd('User not found');
+        }
+
+        if (! Auth::login($user))
         {
-            return abort(404);
+            dd('Auth error');
         }
 
         return view('announcement.telegram-create');
