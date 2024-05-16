@@ -67,13 +67,12 @@ class AnnouncementController extends Controller
 
     public function telegram_create(Request $request)
     {
-        if (! Auth::attempt($request->only('email', 'telegram_chat_id')))
+        $user = User::where('email', $request->email)->where('telegram_chat_id', $request->telegram_chat_id)->first();
+
+        if (! $user OR ! Auth::login($user))
         {
             return abort(404);
         }
-
-        dump(auth()->user());
-
 
         return view('announcement.telegram-create');
     }
