@@ -14,7 +14,7 @@
 
         <!-- Scripts -->
         <script async src="https://www.google.com/recaptcha/api.js"></script>
-
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
         @livewireStyles
         @filamentStyles
         @vite(['resources/css/app.css'])
