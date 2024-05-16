@@ -31,8 +31,6 @@ class CreateAnnouncement extends Command
 
         $user = User::where('telegram_chat_id', $telegram_chat->id)->first();
 
-        $url = URL::temporarySignedRoute('announcement.telegram-create', now()->addMinutes(10), ['email' => $user->email, 'telegram_chat_id' => $telegram_chat->id]);
-
         if (! $user) {
             return $this->bot->executeCommand(Email::$command);
         }
@@ -53,6 +51,8 @@ class CreateAnnouncement extends Command
     
             return BotApi::returnInline($data);
         }
+
+        $url = URL::signedRoute('announcement.telegram-create', ['email' => $user->email, 'telegram_chat_id' => $telegram_chat->id]);
 
         $buttons = BotApi::inlineKeyboardWithLink(
             array('text' => "Опубликовать объявление", 'web_app' => ['url' => $url]),

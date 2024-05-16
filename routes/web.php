@@ -21,6 +21,7 @@ use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +45,6 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     Route::get('/show/{announcement:slug}', 'show')->name('show');
     Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
         ->middleware(['signed', 'throttle:6,1'])
-        // ->middleware(['auth:sanctum'])
         ->name('telegram-create');
 
     // Route::get('/create', 'create')->middleware('auth')->name('create');
@@ -53,7 +53,13 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     // Route::delete('/delete/{announcement}', 'delete')->middleware('auth')->name('delete');
 });
 
-Route::get('/created', function (){
+Route::get('/created', function (Request $request) {
+    Auth::guard('web')->logout();
+
+    $request->session()->invalidate();
+
+    $request->session()->regenerateToken();
+
     return view('announcement.created');
 })->name('created');
 

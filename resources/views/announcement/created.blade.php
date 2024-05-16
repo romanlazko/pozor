@@ -7,7 +7,6 @@
                 </svg>
             </div>
             <span class="block text-lg font-semibold">Ваше объявление успешно создано!</span>
-            <a href="{{ route('profile.announcement.index') }}" class="block ml-2 underline">Просмотреть объявление</a>
         </div>
     </div>
 </x-body-layout>
