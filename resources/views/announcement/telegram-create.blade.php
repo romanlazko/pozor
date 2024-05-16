@@ -6,4 +6,10 @@
         </h2>
     </x-slot> --}}
     <livewire:announcement.telegram-create/>
+
+    <script>
+        $wire.on('announcement-created', () => {
+            window.Telegram.WebApp.close();
+        });
+    </script>
 </x-body-layout>
