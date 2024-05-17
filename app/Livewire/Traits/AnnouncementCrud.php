@@ -28,11 +28,11 @@ trait AnnouncementCrud
 
         $announcement->categories()->sync($data->categories);
 
-        if ($data->attributes) {
+        if (isset($data->attributes) AND !empty($data->attributes)) {
             $announcement->attributes()->sync($this->setAttributes($data->categories, $data->attributes));
         }
         
-        if ($data->attachments) {
+        if (isset($data->attachments) AND !empty($data->attributes)) {
             foreach ($data->attachments ?? [] as $attachment) {
                 $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
             }

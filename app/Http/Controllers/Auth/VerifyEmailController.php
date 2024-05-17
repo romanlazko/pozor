@@ -41,7 +41,7 @@ class VerifyEmailController extends Controller
         }
 
         if (! Password::tokenExists($user, $request->token)) {
-            dd('token not found');
+            
         }
 
         if ($user->markEmailAsVerified()) {
