@@ -44,7 +44,7 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     Route::get('/search/{category:slug}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
     Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
-        ->middleware(['signed', 'throttle:6,1'])
+        // ->middleware(['signed', 'throttle:6,1'])
         ->name('telegram-create');
 
     // Route::get('/create', 'create')->middleware('auth')->name('create');
