@@ -7,6 +7,7 @@ use App\Notifications\TelegramEmailVerification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Romanlazko\Telegram\App\BotApi;
 use Romanlazko\Telegram\App\Commands\Command;
 use Romanlazko\Telegram\App\DB;
@@ -30,10 +31,13 @@ class CreateUser extends Command
         $user = User::where('email', $notes['email'])->first();
 
         if (! $user) {
+            $password = Hash::make(Str::random(8));
+
             $user = User::create([
                 'name' => $updates->getFrom()->getFirstName() . ' ' . $updates->getFrom()->getLastName(),
                 'email' => $notes['email'],
                 'phone' => $notes['phone'],
+                'password' => $password,
             ]);
         }
 
@@ -45,7 +49,7 @@ class CreateUser extends Command
 
         return BotApi::sendMessage([
             'chat_id' => $updates->getChat()->getId(),
-            'text' => "На ваш эмейл было отправлено письмо для подтверждения. Пожалуйста, подтвердите свой эмейл, нажав на кнопку в письме.",
+            'text' => "$password На ваш эмейл было отправлено письмо для подтверждения. Пожалуйста, подтвердите свой эмейл, нажав на кнопку в письме.",
         ]);
     }
 }
