@@ -1,28 +1,15 @@
 <x-body-layout>
-    
-    {{-- <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __("Create announcement") }}
-        </h2>
-    </x-slot> --}}
-    <livewire:announcement.telegram-create/>
+    @push('headerScripts')
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    @endpush
 
-    {{-- <div x-on:announcement-created="alert('announcement-created')"></div> --}}
-    {{-- @push('scripts') --}}
-        <script>
-            // $wire.on('announcement-created', () => {
-            //     window.Telegram.WebApp.close();
-            // });
-            // $wire.on('announcement-created', () => {
-            //     alert('announcement-created');
-            // });
-            document.addEventListener('livewire:init', () => {
-                Livewire.on('announcement-created', (event) => {
-                    alert('announcement-created');
-                    window.Telegram.WebApp.close();
-                });
+    <livewire:announcement.telegram-create/>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('announcement-created', (event) => {
+                alert('Объявление успешно создано!');
+                window.Telegram.WebApp.close();
             });
-        </script>
-    {{-- @endpush --}}
-    
+        });
+    </script>
 </x-body-layout>

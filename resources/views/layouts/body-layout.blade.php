@@ -14,7 +14,7 @@
 
         <!-- Scripts -->
         <script async src="https://www.google.com/recaptcha/api.js"></script>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        @stack('headerScripts')
         @livewireStyles
         @filamentStyles
         @vite(['resources/css/app.css'])
@@ -22,7 +22,7 @@
     
     <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
         <livewire:components.empty-component/>
-        
+
         @if (isset($headerNavigation))
             <div class="w-full hidden lg:block fixed top-0 h-12 bg-black z-40">
                 {{ $headerNavigation }}
