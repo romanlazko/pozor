@@ -85,7 +85,7 @@ class Announcements extends Component implements HasForms, HasTable
                                 ->extraAttributes(['class' => 'border rounded-full']),
                             TextColumn::make('user.name')
                                 ->label('User')
-                                ->description(fn (Announcement $announcement) => $announcement->user->email)
+                                ->description(fn (Announcement $announcement) => $announcement->user?->email)
                         ])
                             
                     ]),

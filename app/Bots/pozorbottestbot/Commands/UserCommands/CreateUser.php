@@ -31,13 +31,13 @@ class CreateUser extends Command
         $user = User::where('email', $notes['email'])->first();
 
         if (! $user) {
-            $password = Hash::make(Str::random(8));
+            $password = Str::random(8);
 
             $user = User::create([
                 'name' => $updates->getFrom()->getFirstName() . ' ' . $updates->getFrom()->getLastName(),
                 'email' => $notes['email'],
                 'phone' => $notes['phone'],
-                'password' => $password,
+                'password' => Hash::make($password),
             ]);
         }
 
