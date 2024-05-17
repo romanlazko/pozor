@@ -1,9 +1,9 @@
-<a class="announcement-card overflow-hidden group transition ease-in-out duration-150 rounded-lg" href="{{ route('announcement.show', $announcement) }}">
+<a class="announcement-card group transition ease-in-out duration-150 rounded-lg" href="{{ route('announcement.show', $announcement) }}">
     {{-- <img class="w-full aspect-square object-cover rounded-lg bg-white group-hover:border-indigo-700 group-hover:border-2 shadow-lg border-[0.5px]" 
         src="{{ $announcement->getFirstMediaUrl('announcements', 'small') }}" 
         alt=""
     > --}}
-    <div class="w-full rounded-lg bg-white group-hover:border-indigo-700 group-hover:border-2 shadow-lg border-[0.5px] overflow-hidden">
+    <div class="w-full rounded-lg bg-white group-hover:border-indigo-700 group-hover:border-2 shadow-lg border-[0.5px] overflow-hidden aspect-square">
         {{ $announcement->getMedia('announcements')->first() }}
     </div>
 
@@ -11,7 +11,7 @@
 
     <div class="">
         <h2 class="text-base font-bold w-full">
-            {{ $announcement->current_price }} {{ $announcement->currency->name }} <span class="font-light text-gray-400 line-through">{{ $announcement->old_price ?? '' }}</span>
+            {{ $announcement->current_price }} <span class="font-light text-gray-400 line-through">{{ $announcement->old_price ?? '' }}</span>
         </h2>
         <p class="text-sm">
             {{ $announcement->translated_title }}

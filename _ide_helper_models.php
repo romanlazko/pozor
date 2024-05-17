@@ -283,23 +283,6 @@ namespace App\Models{
 	class Category extends \Eloquent {}
 }
 
-namespace App\Models{
-/**
- * 
- *
- * @property-read \App\Models\Attribute|null $attribute
- * @property-read mixed $label
- * @property-read mixed $not_formated_value
- * @property-read mixed $value
- * @method static \Illuminate\Database\Eloquent\Builder|Feature newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Feature newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Feature onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Feature query()
- * @method static \Illuminate\Database\Eloquent\Builder|Feature withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Feature withoutTrashed()
- */
-	class Feature extends \Eloquent {}
-}
 
 namespace App\Models\Messanger{
 /**

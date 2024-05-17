@@ -8,7 +8,7 @@
             this.current = (this.current + 1) % this.photos.length;
         },
     }"
-    class="bg-white rounded-lg shadow-md overflow-hidden h-dvh md:h-[500px] flex flex-col"
+    class="bg-white rounded-lg shadow-md overflow-hidden h-[500px] flex flex-col"
 >
     <div class="relative bg-gray-200 overflow-hidden flex-1">
         <div class="absolute z-0 inset-0 bg-cover bg-center filter blur-2xl border-none h-full w-full"
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="flex m-auto w-full justify-center overflow-hidden z-30 py-2 px-3">
+    <div class="flex m-auto w-full justify-center overflow-hidden z-20 py-2 px-3">
         <template x-for="(photo, index) in photos" :key="index">
             <img x-bind:srcset="photo" class="bg-gray-200 w-16 h-16 border-2 rounded-lg object-cover mx-2 hover:border-indigo-400"
                 :class="{ 'border-indigo-700': index === current, 'border-transparent': index !== current }"

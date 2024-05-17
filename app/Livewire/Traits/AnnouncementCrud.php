@@ -29,11 +29,22 @@ trait AnnouncementCrud
         $announcement->categories()->sync($data->categories);
 
         if (isset($data->attributes) AND !empty($data->attributes)) {
-            $announcement->attributes()->sync($this->setAttributes($data->categories, $data->attributes));
+            $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $data->categories))->get();
+
+            foreach ($availableAttributes as $availableAttribute) {
+                if (isset($data->attributes[$availableAttribute->name]) && !empty($data->attributes[$availableAttribute->name]) && $availableAttribute->is_feature) {
+                    $announcement->features()->create([
+                        'attribute_id' => $availableAttribute->id,
+                        'value'        => [
+                            'original' => $data->attributes[$availableAttribute->name]
+                        ],
+                    ]);
+                }
+            }
         }
         
         if (isset($data->attachments) AND !empty($data->attributes)) {
-            foreach ($data->attachments ?? [] as $attachment) {
+            foreach ($data->attachments as $attachment) {
                 $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
             }
         }

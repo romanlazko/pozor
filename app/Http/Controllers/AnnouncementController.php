@@ -29,7 +29,7 @@ class AnnouncementController extends Controller
             ->get()
             ->filter(fn ($category) => $category->announcements_count > 0);
 
-        $announcements = Announcement::with('media', 'attributes:id', 'currency:id,name')
+        $announcements = Announcement::with('media', 'features:id', 'currency:id,name')
             ->isPublished()
             ->categories($category)
             ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
@@ -46,18 +46,24 @@ class AnnouncementController extends Controller
         if (!$announcement->status->isPublished() AND $announcement->user->id != auth()->id()) {
             abort(404);
         }
+
+        $announcement->load(['user', 'features']);
+
+        $user_announcements = $announcement->user->announcements()->isPublished()
+            ->limit(4)
+            ->whereNot('id', $announcement->id)
+            ->get();
         
-        $announcements = Announcement::with('attributes', 'currency', 'media')
-            ->isPublished()
+        $announcements = Announcement::isPublished()
             ->whereHas('categories', function ($query) use ($announcement) {
                 return $query->where('category_id', $announcement->categories->last()->id);
             })
             ->orderByDesc('created_at')
             ->limit(12)
-            ->get()
-            ->whereNotIn('id', $announcement->id);
+            ->whereNot('id', $announcement->id)
+            ->get();
 
-        return view('announcement.show', compact('announcement', 'announcements'));
+        return view('announcement.show', compact('announcement', 'announcements', 'user_announcements'));
     }
 
     public function create()

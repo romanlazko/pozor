@@ -162,7 +162,7 @@
             {{ $getAction('next') }}
         </span>
 
-        <span x-show="isLastStep()">
+        <span >
             {{ $getSubmitAction() }}
         </span>
     </div>

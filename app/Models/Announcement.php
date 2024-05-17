@@ -35,6 +35,8 @@ class Announcement extends Model implements HasMedia, Auditable
         'status' => Status::class,
     ];
 
+    protected $with = ['media'];
+
     protected static function booted(): void
     {
         // static::creating(function (Announcement $announcement) {
@@ -114,14 +116,29 @@ class Announcement extends Model implements HasMedia, Auditable
         return $this->description;
     }
 
+    public function getCurrentPriceAttribute()
+    {
+        return $this->attributes['current_price'] . " ". $this->currency->name;
+    }
+
     public function currency()
     {
         return $this->belongsTo(AttributeOption::class, 'currency_id', 'id');
     }
 
-    public function attributes()
+    // public function attributes()
+    // {
+    //     return $this->belongsToMany(Attribute::class)->using(AnnouncementAttribute::class)->withPivot('value');
+    // }
+
+    public function features()
     {
-        return $this->belongsToMany(Attribute::class)->using(AnnouncementAttribute::class)->withPivot('value');
+        return $this->hasMany(Feature::class)->with('attribute:id,label,alterlabels,attribute_section_id');
+    }
+
+    public function attribute_options()
+    {
+        return $this->attributes()->with('attribute_options');
     }
 
     public function scopeCategories($query, Category|null $category)

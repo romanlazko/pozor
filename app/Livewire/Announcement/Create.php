@@ -118,7 +118,7 @@ class Create extends Component implements HasForms
                     
                 ])
                 ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                    <x-filament.submit >
+                    <x-filament.submit>
                         {{ __('Submit') }}
                     </x-filament.submit>
                 BLADE)))

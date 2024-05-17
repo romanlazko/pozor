@@ -35,10 +35,10 @@
     <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
         <div class="w-full lg:w-2/3 space-y-6">
             <x-slider :medias="$announcement->getMedia('announcements')"/>
-            <div class="space-y-6 p-6 bg-white rounded-lg shadow-md">
+            <div class="space-y-6 p-4 py-6 bg-white rounded-lg shadow-md">
                 <div class="space-y-1 ">
                     <p class="font-extrabold text-indigo-600 text-2xl">
-                        {{ $announcement->current_price }} {{ $announcement->currency->name }} 
+                        {{ $announcement->current_price }}
                     </p>
                     <h2 class="text-xl">
                         {{ ucfirst($announcement->translated_title) }}
@@ -50,13 +50,13 @@
                     </p>
                 </div>
     
-                @if ($announcement->attributes->isNotEmpty())
+                @if ($announcement->features->isNotEmpty())
                     <hr>
                     <div class="space-y-4">
                         <h4 class="font-bold text-2xl">{{ __("Features:") }}</h4>
                         <div class="w-full gap-3 grid grid-cols-1 lg:grid-cols-2">
-                            @foreach ($announcement->attributes->sortBy('section.order_number') as $attribute)
-                                <p><span class="text-gray-500">{{ $attribute->label }}</span>: <span>{{ $attribute->pivot->value }}</span></p>
+                            @foreach ($announcement->features->sortBy('section.order_number') as $feature)
+                                <p><span class="text-gray-500">{{ $feature->label }}</span>: <span>{{ $feature->value }}</span></p>
                             @endforeach
                         </div>
                     </div>
@@ -69,17 +69,14 @@
                         <p class="max-w-lg whitespace-pre-wrap">{{ $announcement->translated_description }}</p>
                     </div>
                 @endif
-    
-                {{-- <hr> --}}
-    
                 
             </div>
         </div>
-        <div class="w-full lg:w-1/3 space-y-6">
+        <div class="w-full lg:w-1/3 space-y-6 sticky top-24">
             {{-- <div class="w-full bg-red-400 sticky top-3 h-[300px] lg:rounded-xl ">
                 <!-- Content of the sticky element -->
             </div> --}}
-            <div class="space-y-6 bg-white p-6 shadow-md rounded-lg">
+            <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg ">
                 <div class="flex space-x-4 items-center">
                     <img src="{{ $announcement->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">
@@ -99,13 +96,27 @@
                     @endif
                 </div>
             </div>
+            <div>
+                @if ($user_announcements->isNotEmpty())
+                    <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
+                        <h2 class="text-2xl font-bold">
+                            User announcements:
+                        </h2>
+                        <div class="w-full grid grid-cols-2 gap-2" >
+                            @foreach ($user_announcements as $index => $user_announcement_item)
+                                <x-announcement-card :announcement="$user_announcement_item" />
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
         </div>
     </section>
 
     <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0 py-6">
         <div class="w-full lg:w-2/3 space-y-6">
             @if ($announcements?->isNotEmpty())
-                <div class="space-y-6 bg-white p-6 shadow-md rounded-lg">
+                <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
                     <h2 class="text-2xl font-bold">
                         Similar announcements
                     </h2>
