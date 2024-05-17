@@ -78,11 +78,11 @@
             </div> --}}
             <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg ">
                 <div class="flex space-x-4 items-center">
-                    <img src="{{ $announcement->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
+                    <img src="{{ $announcement->user?->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
                     <div class="w-full">
-                        <span class="block font-bold">{{ $announcement->user->name }}</span>
-                        <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user->email }}</a>
-                        <span class="block text-gray-500 text-xs">{{ __("Registered") }} {{ $announcement->user->created_at->diffForHumans() }}</span>
+                        <span class="block font-bold">{{ $announcement->user?->name }}</span>
+                        <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user?->email }}</a>
+                        <span class="block text-gray-500 text-xs">{{ __("Registered") }} {{ $announcement->user?->created_at->diffForHumans() }}</span>
                     </div>
                 </div>
                 <div class="w-full flex space-x-3 items-center justify-between">
