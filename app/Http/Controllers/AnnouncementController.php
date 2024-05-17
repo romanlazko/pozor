@@ -43,20 +43,20 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
-        if (!$announcement->status->isPublished() AND $announcement->user->id != auth()->id()) {
+        if (!$announcement->status->isPublished() AND $announcement->user?->id != auth()->id()) {
             abort(404);
         }
 
         $announcement->load(['user', 'features']);
 
-        $user_announcements = $announcement->user->announcements()->isPublished()
+        $user_announcements = $announcement->user?->announcements()?->isPublished()
             ->limit(4)
             ->whereNot('id', $announcement->id)
             ->get();
         
         $announcements = Announcement::isPublished()
             ->whereHas('categories', function ($query) use ($announcement) {
-                return $query->where('category_id', $announcement->categories->last()->id);
+                return $query->where('category_id', $announcement->categories?->last()->id);
             })
             ->orderByDesc('created_at')
             ->limit(12)
