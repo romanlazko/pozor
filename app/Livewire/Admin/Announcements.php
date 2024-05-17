@@ -101,11 +101,11 @@ class Announcements extends Component implements HasForms, HasTable
                         ->description(fn (Announcement $announcement) => $announcement->original_description),
                     Split::make([
                         TextColumn::make('attr')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->attributes->map(function ($attribute) {
-                                if ($attribute->attribute_options->isNotEmpty()) {
-                                    return $attribute->label . ': ' . $attribute->attribute_options->find($attribute->pivot->original_value)?->name;
+                            ->getStateUsing(fn (Announcement $announcement) => $announcement->features->map(function ($feature) {
+                                if ($feature?->attribute_options->isNotEmpty()) {
+                                    return $feature->label . ': ' . $feature->value;
                                 }
-                                return $attribute->label . ': ' . $attribute->pivot->original_value;
+                                return $feature->label . ': ' . $feature->original_value;
                             }))
                             ->badge()
                             ->color('gray')
