@@ -26,6 +26,8 @@ class CreateUser extends Command
 
     public function execute(Update $updates): Response
     {
+        $telegram_chat = DB::getChat($updates->getChat()->getId());
+
         $notes = $this->getConversation()->notes;
 
         $user = User::where('email', $notes['email'])->first();
@@ -39,13 +41,15 @@ class CreateUser extends Command
                 'phone' => $notes['phone'],
                 'password' => Hash::make($password),
             ]);
-        }
 
-        $telegram_chat_id = DB::getChat($updates->getChat()->getId())->id;
+            $photo_url = BotApi::getPhoto(['file_id' => $telegram_chat->photo]);
+
+            $user->addMediaFromUrl($photo_url)->toMediaCollection('avatar');
+        }
 
         $token = Password::createToken($user);
 
-        $user->notify(new TelegramEmailVerification($token, $telegram_chat_id));
+        $user->notify(new TelegramEmailVerification($token, $telegram_chat->id));
 
         return BotApi::sendMessage([
             'chat_id' => $updates->getChat()->getId(),
