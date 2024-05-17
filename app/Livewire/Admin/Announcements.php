@@ -65,7 +65,7 @@ class Announcements extends Component implements HasForms, HasTable
     {
         return $table
             ->heading("All announcements")
-            ->query(Announcement::with('media', 'user.media', 'categories', 'attributes', 'attributes.attribute_options'))
+            ->query(Announcement::with('media', 'user.media', 'categories', 'features'))
             ->columns([
                 Stack::make([
                     TextColumn::make('status')
