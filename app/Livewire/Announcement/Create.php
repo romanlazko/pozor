@@ -139,9 +139,6 @@ class Create extends Component implements HasForms
 
     public function render(): View
     {
-
-
-        // $this->dispatch('announcement-created'); 
         return view('livewire.announcement.create');
     }
 

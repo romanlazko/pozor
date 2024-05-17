@@ -27,10 +27,15 @@ trait AnnouncementCrud
         ]);
 
         $announcement->categories()->sync($data->categories);
-        $announcement->attributes()->sync($this->setAttributes($data->categories, $data->attributes));
 
-        foreach ($data->attachments ?? [] as $attachment) {
-            $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
+        if ($data->attributes) {
+            $announcement->attributes()->sync($this->setAttributes($data->categories, $data->attributes));
+        }
+        
+        if ($data->attachments) {
+            foreach ($data->attachments ?? [] as $attachment) {
+                $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
+            }
         }
 
         if ($announcement) {
