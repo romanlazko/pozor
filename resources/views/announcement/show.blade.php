@@ -89,7 +89,7 @@
                     <x-a-buttons.primary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
                         {{ __("Message") }}
                     </x-a-buttons.primary>
-                    @if ($announcement->user->phone)
+                    @if ($announcement?->user?->phone)
                         <x-a-buttons.secondary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
                             {{ __("Call") }}
                         </x-a-buttons.secondary>
