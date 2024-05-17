@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div>
-                @if ($user_announcements->isNotEmpty())
+                @if ($user_announcements?->isNotEmpty())
                     <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
                         <h2 class="text-2xl font-bold">
                             User announcements:
