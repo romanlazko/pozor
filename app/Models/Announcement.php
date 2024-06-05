@@ -211,7 +211,7 @@ class Announcement extends Model implements HasMedia, Auditable
             title: $this->getFeatureByName('title')?->value,
             description: $this->getFeatureByName('description')?->value,
             author: $this->user?->name,
-            image: $this->getFirstMediaUrl('announcement'),
+            image: $this->getFirstMediaUrl('announcements'),
             url: url()->current(),
             enableTitleSuffix: true,
             site_name: config('app.name'),
