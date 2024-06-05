@@ -32,8 +32,8 @@ class AnnouncementController extends Controller
         $announcements = Announcement::with([
                 'media',
                 'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersyffixes,create_type',
-                'features.attribute_option:id,name,alternames',
+                'features.attribute:id,alterlabels,order_number,searchable,is_feature,altersyffixes,create_type',
+                'features.attribute_option:id,alternames',
                 'user', 
                 'userVotes'
             ])
