@@ -57,7 +57,7 @@ class AnnouncementController extends Controller
             'user.media',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
             'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersyffixes,create_type',
-            'features.attribute_option:id,name,alternames',
+            'features.attribute_option:id,alternames',
             'features.attribute.section:id,alternames,order_number', 
             'categories:id,slug,alternames',
         ]);
