@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
 
         for ($i=0; $i < 10; $i++) { 
             Announcement::factory(5)->create();
-        }
+            $this->call(GeoTableSeeder::class);
+    }
         
         // $this->call(CategoriesTableSeeder::class);
         // $this->call(AttributesTableSeeder::class);
