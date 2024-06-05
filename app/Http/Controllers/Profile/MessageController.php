@@ -18,7 +18,7 @@ class MessageController extends Controller
     public function index()
     {
         $threads = auth()->user()->threads()
-            ?->with('announcement:id,translated_title', 'announcement.media', 'users:name,id', 'users.media', 'lastMessageRelation')
+            ?->with('announcement:id', 'announcement.media', 'users:name,id', 'users.media', 'lastMessageRelation')
             
             ->whereHas('announcement')
             ->withCount(['messages as uread_messages_count' => function ($query) {
@@ -37,7 +37,7 @@ class MessageController extends Controller
      */
     public function show(Thread $thread)
     {
-        $thread->load('announcement:id,translated_title', 'announcement.media');
+        $thread->load('announcement:id', 'announcement.media');
         $thread->messages()->where('user_id', '!=', auth()->id())->whereNull('read_at')->update(['read_at' => now()]);
         $messages = $thread->messages->load('user:id,name', 'user.media');
 
