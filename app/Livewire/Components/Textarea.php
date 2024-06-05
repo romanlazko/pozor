@@ -12,13 +12,15 @@ class Textarea extends Component implements HasForms
 {
     use InteractsWithForms;
 
+    public $rows = 1;
+
     public $data = [
         'message' => '',
     ];
 
     public function render()
     {
-        return view('livewire.components.textarea');
+        return view('components.livewire.textarea');
     }
 
     public function form(Form $form): Form
@@ -26,7 +28,7 @@ class Textarea extends Component implements HasForms
         return $form
             ->schema([
                 FilamentTextarea::make('message')
-                    ->rows(1)
+                    ->rows($this->rows)
                     ->required()
                     ->autosize()
                     ->hiddenLabel()

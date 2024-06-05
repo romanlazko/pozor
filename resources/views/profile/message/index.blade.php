@@ -12,11 +12,10 @@
                     <span class="block absolute text-xs text-white w-5 h-5 min-w-5 min-h-5 rounded-full bg-blue-500 text-center content-center items-center top-1 left-0 m-0">{{ $thread?->uread_messages_count }}</span>
                 @endif
                 <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white-300 border ">
-                    <img src="{{ $thread?->announcement?->getFirstMediaUrl('announcements') }}" alt="" class="object-cover">
+                    <img src="{{ $thread?->announcement?->getFirstMediaUrl('announcements', 'thumb') }}" alt="" class="object-cover">
                 </div>
-                
                 <div>
-                    <p class="font-bold">{{ $thread?->announcement?->translated_title }}</p>
+                    <p class="font-bold">{{ ucfirst($thread?->announcement?->getFeatureByName('title')?->value) }}</p>
                     
                     @if ($thread?->recipient)
                         <div class="flex items-center space-x-1">

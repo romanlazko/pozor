@@ -4,24 +4,19 @@ namespace App\Livewire\Admin;
 
 use App\Models\Attribute;
 use App\Models\Category;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Get;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -62,8 +57,16 @@ class Categories extends Component implements HasForms, HasTable
                 TextColumn::make('name')
                     ->url(fn (Category $category): string => route('admin.categories', $category)),
                 ToggleColumn::make('is_active'),
-                TextColumn::make('children.name')->badge(),
-                TextColumn::make('attributes.label')->badge(),
+                TextColumn::make('children')
+                    ->state(function (Category $record) {
+                        return $record->children->pluck('name');
+                    })
+                    ->badge(),
+                TextColumn::make('attributes')
+                    ->state(function (Category $record) {
+                        return $record->attributes->pluck('label');
+                    })
+                    ->badge(),
             ])
             ->headerActions([
                 Action::make('back')
@@ -92,9 +95,6 @@ class Categories extends Component implements HasForms, HasTable
                                                     ->relationship('attributes')
                                                     ->multiple()
                                                     ->options($this->category_attributes),
-                                                TextInput::make('name')
-                                                        ->required()
-                                                        ->maxLength(255),
                                             ])
                                             ->columnSpan(2)
                                 ]),
@@ -146,9 +146,6 @@ class Categories extends Component implements HasForms, HasTable
                                                         ->relationship('attributes')
                                                         ->multiple()
                                                         ->options($this->category_attributes),
-                                                    TextInput::make('name')
-                                                            ->required()
-                                                            ->maxLength(255),
                                                 ])
                                                 ->columnSpan(2)
                                     ]),

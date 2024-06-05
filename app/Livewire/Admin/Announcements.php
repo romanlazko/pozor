@@ -3,51 +3,31 @@
 namespace App\Livewire\Admin;
 
 use App\Enums\Status;
+use App\Livewire\Components\Tables\Columns\ImageGridColumn;
 use App\Models\Announcement;
-use App\Models\Attribute;
-use App\Models\AttributeSection;
-use App\Models\Category;
-use App\Models\User;
-use App\Tables\Columns\ImageGridColumn;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Get;
 use Filament\Support\Enums\ActionSize;
-use Filament\Support\View\Components\Modal;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\Layout\Grid as LayoutGrid;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Tables\Grouping\Group;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Spatie\LaravelMarkdown\MarkdownRenderer;
 
 class Announcements extends Component implements HasForms, HasTable
 {
@@ -65,7 +45,7 @@ class Announcements extends Component implements HasForms, HasTable
     {
         return $table
             ->heading("All announcements")
-            ->query(Announcement::with('media', 'user.media', 'categories', 'features'))
+            ->query(Announcement::with('media', 'user.media'))
             ->columns([
                 Stack::make([
                     TextColumn::make('status')
@@ -73,7 +53,8 @@ class Announcements extends Component implements HasForms, HasTable
                             ->badge()
                             ->color(fn (Announcement $announcement) => $announcement->status->filamentColor())
                             ->grow(false),
-                    TextColumn::make('categories.name')
+                    TextColumn::make('categories')
+                            ->getStateUsing(fn (Announcement $announcement) => $announcement->categories->pluck('name'))
                             ->badge(),
                     
                     Panel::make([
@@ -95,17 +76,21 @@ class Announcements extends Component implements HasForms, HasTable
                         ->height(200)
                         ->extraAttributes(['class' => 'w-full']),
                     
-                    TextColumn::make('original_title')
-                        ->label('Title')
+                    TextColumn::make('Title')
                         ->wrap()
-                        ->description(fn (Announcement $announcement) => $announcement->original_description),
+                        ->state(fn (Announcement $announcement) => $announcement->getFeatureByName('title')?->value)
+                        ->description(fn (Announcement $announcement) => 
+                            new HtmlString(
+                                app(MarkdownRenderer::class)->toHtml($announcement->getFeatureByName('description')?->value ?? '')
+                            )
+                        )
+                        ->extraAttributes([
+                            'class' => 'html'
+                        ]),
                     Split::make([
                         TextColumn::make('attr')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->features?->map(function ($feature) {
-                                if ($feature?->attribute?->attribute_options?->isNotEmpty()) {
-                                    return $feature->label . ': ' . $feature->value;
-                                }
-                                return $feature->label . ': ' . $feature->original_value;
+                            ->state(fn (Announcement $announcement) => $announcement->features->where('attribute.is_feature')->map(function ($feature) {
+                                return $feature->label . ': ' . $feature->value;
                             }))
                             ->badge()
                             ->color('gray')
@@ -353,8 +338,8 @@ class Announcements extends Component implements HasForms, HasTable
                 SelectFilter::make('status')
                     ->options(Status::class)
                     ->default(Status::await_moderation->value),
-                SelectFilter::make('category')
-                    ->relationship('categories', 'name'),
+                // SelectFilter::make('category')
+                //     ->relationship('categories', 'name'),
                 SelectFilter::make('user')
                     ->relationship('user', 'name')
                     ->searchable()
@@ -366,7 +351,7 @@ class Announcements extends Component implements HasForms, HasTable
                 'md' => 2,
                 'xl' => 3,
             ])
-            ->paginationPageOptions([25, 50, 100]);
-            // ->poll('2s');
+            ->paginationPageOptions([25, 50, 100])
+            ->poll('2s');
     }
 }

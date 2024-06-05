@@ -15,53 +15,60 @@
             </h2>
     
             <p class="mt-1 text-sm text-gray-600">
-                {{ __("Update your account's profile information and email address.") }}
+                {{ __("Update your account's profile information.") }}
             </p>
         </div>
     </header>
-
-    {{-- <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form> --}}
 
     <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
         <div>
-            <x-form.label for="name" :value="__('Name')" />
+            <x-form.label for="name" :value="__('Name')" :required="true"/>
             <x-form.input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-form.error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
-            <x-form.label for="email" :value="__('Email')" />
+            <x-form.label for="email" :value="__('Email')" :required="true"/>
             <x-form.input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-form.error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
         </div>
 
         <div>
-            <x-form.label for="phone" :value="__('Phone')" />
+            <x-form.label for="phone" :value="__('Phone')" :required="true"/>
             <x-form.input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" autofocus autocomplete="phone" />
             <x-form.error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <div>
+            {{-- <p class="mt-1 text-sm text-gray-600">
+                {{ __('Select languages you speak') }}
+            </p> --}}
+            <x-form.label :value="__('Select languages you speak')" :required="true"/>
+            <div class="w-full flex space-x-3 items-center p-3 border rounded-md mt-1">
+                <x-form.label for="en" class="items-center flex space-x-2">
+                    <span class="text-indigo-700">
+                        {{ __("English") }}
+                    </span>
+                    <x-form.checkbox id="en" name="lang[]" value="en" :checked="in_array('en', auth()?->user()?->lang ?? [])"/>
+                </x-form.label>
+                <x-form.label for="ru" class="items-center flex space-x-2">
+                    <span class="text-indigo-700">
+                        {{ __("Русский") }}
+                    </span>
+                    <x-form.checkbox id="ru" name="lang[]" value="ru" :checked="in_array('ru', auth()?->user()?->lang ?? [])"/>
+                </x-form.label>
+                <x-form.label for="cz" class="items-center flex space-x-2">
+                    <span class="text-indigo-700">
+                        {{ __("Czech") }}
+                    </span>
+                    <x-form.checkbox id="cz" name="lang[]" value="cz" :checked="in_array('cz', auth()?->user()?->lang ?? [])"/>
+                </x-form.label>
+            </div>
+            
+            <x-form.error class="mt-2" :messages="$errors->get('lang')" />
         </div>
 
         <div class="flex items-center gap-4">

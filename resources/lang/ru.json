@@ -1,0 +1,144 @@
+{
+    "LAYOUTS-PROFILE.BLADE": "LAYOUTS-PROFILE.BLADE",
+
+        "My announcements": "Мои объявления",
+        "Wishlist": "Избранное",
+        "Messages": "Сообщения",
+        "Profile": "Профиль",
+        "Log Out": "Выйти",
+        "Admin": "Админ",
+        "Password": "Пароль",
+
+    "VERIFY-EMAIL": "VERIFY-EMAIL",
+
+        "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Спасибо за регистрацию! Прежде чем начать, подтвердите свой адрес электронной почты, нажав на ссылку, которую мы вам отправили. Если вы не получили письмо, мы с радостью отправим вам новое.",
+        "A new verification link has been sent to the email address you provided during registration.": "На указанный вами при регистрации адрес электронной почты была отправлена новая ссылка для подтверждения.",
+
+    "TELEGRAM": "TELEGRAM",
+
+        "Telegram": "Telegram",
+        "Update your telegram information.": "Обновите информацию о Telegram.",
+        "Connect Telegram": "Подключить Telegram",
+
+    "UPDATE-PROFILE-INFORMATION-FORM.BLADE": "UPDATE-PROFILE-INFORMATION-FORM.BLADE",
+
+        "Profile Information": "Информация профиля",
+        "Update your account's profile information.": "Обновите информацию профиля вашего аккаунта.",
+        "Name": "Имя",
+        "Email": "Электронная почта",
+        "Phone": "Телефон",
+        "Select languages you speak": "Выберите языки, которыми вы владеете",
+        "English": "Английский",
+        "Русский": "Русский",
+        "Czech": "Чешский",
+        "Save": "Сохранить",
+
+    "UPDATE-PASSWORD-FORM.BLADE": "UPDATE-PASSWORD-FORM.BLADE",
+
+        "Update Password": "Обновить пароль",
+        "Ensure your account is using a long, random password to stay secure.": "Убедитесь, что ваш аккаунт использует длинный, случайный пароль для обеспечения безопасности.",
+        "Current Password": "Текущий пароль",
+        "New Password": "Новый пароль",
+        "Confirm Password": "Подтвердите пароль",
+        "Save": "Сохранить",
+        "Saved.": "Сохранено.",
+
+    "DELETE-USER-FORM.BLADE": "DELETE-USER-FORM.BLADE",
+
+        "Delete Account": "Удалить аккаунт",
+        "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "После удаления вашего аккаунта все его ресурсы и данные будут безвозвратно удалены. Перед удалением аккаунта, пожалуйста, скачайте все данные или информацию, которую вы хотите сохранить.",
+        "Are you sure you want to delete your account?": "Вы уверены, что хотите удалить свой аккаунт?",
+        "Please enter your password to confirm you would like to permanently delete your account.": "Введите, пожалуйста, ваш пароль, чтобы подтвердить, что вы хотите безвозвратно удалить ваш аккаунт.",
+        "Cancel": "Отменить",
+
+    "ANNOUNCEMENTS": "ANNOUNCEMENTS",
+    
+        "My announcements": "Мои объявления",
+        "Edit": "Редактировать",
+        "Delete": "Удалить",
+        "Mark as 'Sold'": "Продано",
+        "Where did you sell it?": "Укажите, через какую платформу вы продали товар:",
+        "I sold it on this site": "Я продал это на этом сайте",
+        "I sold it on another site": "Я продал это в другом месте",
+        "I don't want to answer": "Не хочу отвечать",
+        "Save": "Сохранить",
+        "Submit": "Отправить",
+        "Discount the price": "Снизить цену",
+        "Set new price:": "Установить новую цену:",
+        "Mark as 'Available'": "Доступно",
+        "Message": "Сообщение",
+        "Call": "Позвонить",
+        "Similar announcements": "Похожие объявления",
+        "Show more": "Показать больше",
+        "User announcements": "Объявления пользователя",
+        "From": "От",
+        "To": "До",
+        "from": "от",
+        "to": "до",
+
+        "Main page": "Главная страница",
+        "Filters": "Фильтры",
+        "Latest announcements:": "Последние объявления:",
+
+    "MESSAGE-INDEX.BLADE": "MESSAGE-INDEX.BLADE",
+
+        "Messages": "Сообщения",
+        "You: ": "Вы: ",
+        "No messages found.": "Сообщения не найдены.",
+
+    "FILTERS":"FILTERS",
+
+        "Show results": "Показать результаты",
+        "Country": "Страна",
+        "City": "Город",
+        "Search": "Поиск",
+        "Full text search": "Полнотекстовый поиск",
+        "Sorting": "Сортировка",
+        "Reset filters": "Сбросить фильтры",
+
+    "LAYOUTS-SIDEBAR.BLADE": "LAYOUTS-SIDEBAR.BLADE",
+
+        "telegram": "telegram",
+        "Announcements": "Объявления",
+        "Category": "Категория",
+        "Attribute": "Атрибут",
+        "Back to user": "Назад к пользователю",
+
+    "LAYOUTS-HEADER.BLADE": "LAYOUTS-HEADER.BLADE",
+
+        "Register": "Регистрация",
+        "Login": "Войти",
+        "Create announcement": "Создать объявление",
+        "Profile": "Профиль",
+        "My announcements": "Мои объявления",
+        "Log Out": "Выйти",
+
+    "LAYOUTS-FOOTER.BLADE": "LAYOUTS-FOOTER.BLADE",
+
+        "Marketplace": "Рынок",
+        "Wishlist": "Избранное",
+        "Create": "Создать",
+        "Messages": "Сообщения",
+        "Profile": "Профиль",
+
+    "COMPONENTS.BLADE": "COMPONENTS.BLADE",
+
+        "Send": "Отправить",
+        "Login for meassaging": "Войдите для отправки сообщений",
+        "Phone:": "Телефон:",
+        "Show contacts": "Показать контакты",
+        "Page not found": "Страница не найдена",
+        "registered": "регистрация",
+
+    "AUTH.BLADE": "AUTH.BLADE",
+
+        "This is a secure area of the application. Please confirm your password before continuing.": "Это защищенная область приложения. Пожалуйста, подтвердите ваш пароль перед продолжением.",
+        "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Забыли пароль? Нет проблем. Просто сообщите нам свой адрес электронной почты, и мы отправим вам ссылку для сброса пароля, которая позволит вам выбрать новый.",
+        "Email Password Reset Link": "Отправить ссылку для сброса пароля",
+        "Remember me": "Запомнить меня",
+        "Log in": "Войти",
+        "Forgot your password?": "Забыли пароль?",
+        "Already registered?": "Уже зарегистрированы?",
+        "Reset Password": "Сбросить пароль",
+        "Resend Verification Email": "Повторно отправить письмо для подтверждения"
+}

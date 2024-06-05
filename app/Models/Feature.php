@@ -14,7 +14,7 @@ class Feature extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'value' => 'array'
+        'translated_value' => 'array'
     ];
 
     protected $with = [
@@ -24,35 +24,64 @@ class Feature extends Model
     protected static function booted(): void
     {
         static::creating(function (Feature $feature) {
-            $value = [
-                'original' => $feature->original_value,
-            ];
-            // dd($announcementAttribute->value);
-            if ($feature->attribute->translatable) {
-                $value['en'] = Deepl::translateText($feature->original_value, null, 'en-US')->text;
-                $value['ru'] = Deepl::translateText($feature->original_value, null, 'RU')->text;
-                $value['cz'] = Deepl::translateText($feature->original_value, null, 'CS')->text;
-            }
-            $feature->value = $value;
-        });
+            
+            // if ($feature->attribute->translatable) {
+            //     $values = [
+            //         'original' => $feature->translated_value['original']
+            //     ];
 
+            //     $values['en'] = Deepl::translateText($feature->translated_value['original'], null, 'en-US')->text;
+            //     $values['ru'] = Deepl::translateText($feature->translated_value['original'], null, 'RU')->text;
+            //     $values['cz'] = Deepl::translateText($feature->translated_value['original'], null, 'CS')->text;
 
-        static::updating(function (Feature $feature) {
-            $value = [
-                'original' => $feature->original_value,
-            ];
-            if ($feature->attribute->translatable) {
-                $value['en'] = Deepl::translateText($feature->original_value, null, 'en-US')->text;
-                $value['ru'] = Deepl::translateText($feature->original_value, null, 'RU')->text;
-                $value['cz'] = Deepl::translateText($feature->original_value, null, 'CS')->text;
-            }
-            $feature->value = $value;
+            //     $feature->translated_value = $values;
+            // }
         });
     }
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class)->with('attribute_options:id,name,attribute_id,alternames', 'section:order_number');
+        return $this->belongsTo(Attribute::class);
+    }
+
+    public function announcement()
+    {
+        return $this->belongsTo(Announcement::class);
+    }
+
+    public function attribute_option()
+    {
+        return $this->belongsTo(AttributeOption::class);
+    }
+
+    public function getValueAttribute()
+    {
+        $attribute_option = $this->attribute_option;
+        
+        if ($attribute_option) {
+            return $attribute_option->name;
+        }
+
+        $value = ($this->translated_value[app()->getLocale()] ?? $this->translated_value['original']);
+
+        if ($this->attribute->create_type == "between") {
+            if (is_array($value)) {
+                $value = $value['min'] . ' - ' . $value['max'];
+            }
+        }
+
+        if ($this->attribute->create_type == "toggle") {
+            $value = $this->attribute->label;
+        }
+
+        if ($this->attribute->create_type == "from") {
+            
+            if (is_array($value)) {
+                $value = $value['from'] . ' - ' . $value['to'];
+            }
+        }
+
+        return $value;
     }
 
     public function getLabelAttribute()
@@ -60,24 +89,22 @@ class Feature extends Model
         return $this->attribute->label;
     }
 
-    public function getValueAttribute()
+    public function getSuffixAttribute()
     {
-        return $this->formated_value;
-    }
-
-    public function getOriginalValueAttribute()
-    {
-        return json_decode($this->attributes['value'], true)['original'];
-    }
-
-    public function getFormatedValueAttribute()
-    {
-        $attribute_options = $this->attribute->attribute_options;
-
-        if ($attribute_options->isNotEmpty()) {
-            return $attribute_options->find(json_decode($this->attributes['value'], true)['original'])?->name;
+        if ($this->attribute->create_type == "price") {
+            $suffix = $this->announcement->getFeatureByName('currency')->value;
         }
-
-        return json_decode($this->attributes['value'], true)[app()->getLocale()] ?? json_decode($this->attributes['value'], true)['original'];
+        return $suffix ?? $this->attribute->suffix;
     }
+
+    // public function getTranslatedValueAttribute()
+    // {
+    //     $attribute_options = $this->attribute->attribute_options;
+
+    //     if ($attribute_options->isNotEmpty()) {
+    //         return $attribute_options->find($this->value)?->name;
+    //     }
+
+    //     return json_decode($this->attributes['translated_value'], true)[app()->getLocale()] ?? $this->value;
+    // }
 }

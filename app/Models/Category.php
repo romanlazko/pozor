@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -13,7 +15,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Category extends Model implements HasMedia
 {
-    use HasFactory; use HasSlug; use SoftDeletes; use InteractsWithMedia;
+    use HasFactory; use HasSlug; use SoftDeletes; use InteractsWithMedia; use HasSEO;
 
     protected $guarded = [];
 
@@ -56,9 +58,14 @@ class Category extends Model implements HasMedia
         return $this->belongsTo(Category::class, 'parent_id', 'id');
     }
 
+    public function getNameAttribute()
+    {
+        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
+    }
+
     public function getTranslatedNameAttribute()
     {
-        return $this->alternames[app()->getLocale()] ?? $this->attributes['name'];
+        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
     }
 
     public function getChildren()
@@ -105,5 +112,22 @@ class Category extends Model implements HasMedia
         foreach ($parent->parent as $parent) {
             $parents[] = $parent;
         }
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            title: $this->name,
+            description: $this->name,
+            image: $this->getFirstMediaUrl('categories'),
+            url: url()->current(),
+            enableTitleSuffix: true,
+            site_name: config('app.name'),
+            published_time: $this->created_at,
+            modified_time: $this->updated_at,
+            locale: app()->getLocale(),
+            section: $this->children->pluck('name')->implode(', '),
+            tags: $this->children->pluck('name')->toArray(),
+        );
     }
 }

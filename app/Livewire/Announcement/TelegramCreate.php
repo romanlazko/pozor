@@ -10,6 +10,6 @@ class TelegramCreate extends Create
 
         $this->createAnnouncement((object) $this->data);
 
-        $this->dispatch('announcement-created'); 
+        $this->dispatch('announcement-created');
     }
 }

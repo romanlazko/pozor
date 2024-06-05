@@ -24,8 +24,12 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('value')->nullable();
-
+            $table->foreignIdFor(AttributeOption::class)
+                ->nullable()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->json('translated_value')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

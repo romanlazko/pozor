@@ -15,10 +15,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasBots, HasRoles; use InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable, HasBots, HasRoles; use InteractsWithMedia; use HasSlug; 
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +35,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'phone',
         'telegram_chat_id',
         'lang',
+        'locale',
     ];
 
     /**
@@ -53,7 +56,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'lang' => 'array'
     ];
+
+    public function getSlugOptions() : SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
+    }
 
     public function registerMediaCollections(): void
     {
@@ -71,6 +82,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function chat()
     {
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id', 'id');
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
     }
 
     public function announcements()
@@ -91,5 +107,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->threads
             ->pluck('messages_count')
             ->sum();
+    }
+
+    public function wishlist()
+    {
+        return $this->belongsToMany(Announcement::class, 'votes')->where('vote', true);
+    }
+
+    public function isProfileFilled()
+    {
+        return ! is_null($this->phone) AND ! is_null($this->lang) AND ! is_null($this->name); 
     }
 }

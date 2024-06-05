@@ -1,4 +1,15 @@
-<x-body-layout>
+@php
+    $title = $category?->translated_name ?? __("Latest announcements:");
+@endphp
+<x-body-layout :title="$title">
+
+    @if ($category)
+        <x-slot name="meta">
+            {!! seo($category) !!}
+        </x-slot>
+    @endif
+    
+
     <x-slot name="headerNavigation">
         @include('layouts.header')
     </x-slot>
@@ -14,7 +25,7 @@
                     @if ($category)
                         <a href="{{ route('announcement.index') }}" class="text-xs text-gray-500">
                             <span class="hover:underline hover:text-indigo-700">
-                                Main page
+                                {{ __("Main page") }}
                             </span>
                             >
                         </a>
@@ -41,14 +52,14 @@
                     @endif
 
                     <h2 class="text-xl font-bold">
-                        {{ $category?->translated_name ?? __("Latest announcements:")}}
-                    </h2> 
+                        {{ $category?->translated_name ?? __("Latest announcements:")}} <span class="text-gray-500">{{ $category?->announcements_count }}</span>
+                    </h2>
                 </div>
 
                 <button @click="sidebarOpen = true" class="text-xs text-gray-900 focus:outline-none lg:hidden whitespace-nowrap">
-                    <i class="fa-solid fa-filter"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <span>
-                        Filters
+                        {{ __("Search") }}
                     </span>
                 </button>
             </div>
@@ -58,22 +69,22 @@
     <div class="space-y-3">
         <div class="w-full overflow-auto space-x-1 whitespace-nowrap">
             @foreach ($categories as $child)
-                <a href="{{ route('announcement.index', ['category' => $child->slug]) }}" class="m-0.5 bg-gray-800 rounded-lg text-white text-sm hover:bg-gray-700 overflow-hidden inline-block h-24">
-                    <div class="flex-col h-full flex pt-2 pl-2">
-                        <div class="flex flex-1 pr-2">
+                <a href="{{ route('announcement.index', ['category' => $child->slug]) }}" class="p-2 bg-gray-800 rounded-lg text-white text-sm hover:bg-gray-700 overflow-hidden inline-block">
+                    <div class="flex-col h-full flex ">
+                        <div class="flex flex-1">
                             {{ $child->translated_name }}
                         </div>
-                        <div class="w-full">
+                        {{-- <div class="w-full">
                             <div class="w-24 float-right ">
                                 <img src="{{ $child->getFirstMediaUrl('categories', 'thumb') }}" alt="" class="float-right">
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </a>
             @endforeach
         </div>
 
-        <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7 gap-2 lg:gap-6 " >
+        <div class="w-full grid grid-cols-1 gap-6 sm:w-4/5" >
             @foreach ($announcements as $index => $announcement)
                 <x-announcement-card :announcement="$announcement" />
             @endforeach

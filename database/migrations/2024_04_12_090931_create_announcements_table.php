@@ -29,8 +29,6 @@ return new class extends Migration
             $table->integer('old_price')->nullable();
             $table->string('currency_id')->nullable();
 
-            $table->unsignedBigInteger('category_id')->nullable();
-
             $table->foreignIdFor(Geo::class)->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();

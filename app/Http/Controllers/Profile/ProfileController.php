@@ -43,22 +43,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function updateLang(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'lang' => 'required'
-        ]);
-        
-        $request->user()->update([
-            'lang' => $request->lang
-        ]);
-
-        return Redirect::route('profile.edit')->with([
-            'ok' => true, 
-            'description' => 'Your profile language has been updated!'
-        ]);
-    }
-
     public function updateAvatar(Request $request): RedirectResponse
     {
         $request->validate([
@@ -96,15 +80,15 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function dashboard()
-    {
-        return view('profile.dashboard');
-    }
+    // public function dashboard()
+    // {
+    //     return view('profile.dashboard');
+    // }
 
-    public function announcements()
-    {
-        $announcements = auth()->user()->announcements()->with('currency')->paginate(30);
+    // public function announcements()
+    // {
+    //     $announcements = auth()->user()->announcements()->with('currency')->paginate(30);
 
-        return view('profile.announcement', compact('announcements'));
-    }
+    //     return view('profile.announcement', compact('announcements'));
+    // }
 }

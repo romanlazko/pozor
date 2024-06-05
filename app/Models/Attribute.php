@@ -13,10 +13,16 @@ class Attribute extends Model
     public $guarded = [];
 
     public $casts = [
-        'options' => 'array',
         'alterlabels' => 'array',
-        'visible' => 'array'
+        'visible' => 'array',
+        'rules' => 'array',
+        'altersyffixes' => 'array',
     ];
+
+    public function getVisibleConditionAttribute()
+    {
+        return json_decode($this->attributes['visible'], true);
+    }
 
     public function attribute_options()
     {
@@ -25,7 +31,12 @@ class Attribute extends Model
 
     public function getLabelAttribute()
     {
-        return $this->alterlabels[app()->getLocale()] ?? $this->attributes['label'];
+        return $this->alterlabels[app()->getLocale()] ?? $this->alterlabels['en'] ?? null;
+    }
+
+    public function getSuffixAttribute()
+    {
+        return $this->altersyffixes[app()->getLocale()] ?? $this->altersyffixes['en'] ?? null;
     }
 
     public function scopeFindByName($query, $name)
@@ -41,15 +52,5 @@ class Attribute extends Model
     public function section()
     {
         return $this->belongsTo(AttributeSection::class, 'attribute_section_id');
-    }
-
-    public function getFeaturedNameAttribute()
-    {
-        return $this->is_feature ? 'attributes.' . $this->name : $this->name;
-    }
-
-    public function getStringAttribute()
-    {
-        return $this->label . ': ' . $this->getFormatedValueAttribute();
     }
 }

@@ -3,11 +3,8 @@
 namespace App\Livewire\Profile;
 
 use App\Enums\Status;
-use Filament\Forms\Components\Grid;
+use App\Models\Announcement;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -15,7 +12,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -42,7 +38,6 @@ class Announcements extends Component implements HasForms, HasTable
         return $table
             ->query(auth()->user()->announcements()->getQuery())
             ->columns([
-                
                 Stack::make([
                     TextColumn::make('status')
                         ->label('Status')
@@ -56,11 +51,17 @@ class Announcements extends Component implements HasForms, HasTable
                         ->height(200)
                         ->url(fn ($record) => route('announcement.show', $record))
                         ->extraAttributes(['class' => 'py-2']),
+                    // TextColumn::make('title')
+                    //     ->description(fn ($record) => $record->current_price . ' ' . $record->currency->name)
+                    //     ->wrap()
+                    //     ->extraAttributes(['class' => 'py-2'])
+                    //     ->weight(FontWeight::Bold),
                     TextColumn::make('title')
-                        ->description(fn ($record) => $record->current_price . ' ' . $record->currency->name)
+                        ->state(fn (Announcement $announcement) => $announcement->getFeatureByName('title')?->value)
+                        ->description(fn (Announcement $announcement) => $announcement->getFeatureByName('current_price')?->value . ' ' . $announcement->getFeatureByName('currency')?->value)
+                        ->weight(FontWeight::Bold)
                         ->wrap()
-                        ->extraAttributes(['class' => 'py-2'])
-                        ->weight(FontWeight::Bold),
+                        ->extraAttributes(['class' => 'py-2']),
                     TextColumn::make('description')
                         ->limit(100)
                         ->wrap(),
@@ -78,10 +79,11 @@ class Announcements extends Component implements HasForms, HasTable
                         ->extraAttributes(['class' => 'my-auto'])
                         ->grow(false),
                     TextColumn::make('title')
-                        ->description(fn ($record) => Str::limit($record->description, 50))
+                        ->state(fn (Announcement $announcement) => $announcement->getFeatureByName('title')?->value)
+                        ->description(fn (Announcement $announcement) => Str::limit($announcement->getFeatureByName('description')?->value, 50))
                         ->weight(FontWeight::Bold),
                     TextColumn::make('price')
-                        ->getStateUsing(fn ($record) => $record->current_price . ' ' . $record->currency->name)
+                        ->state(fn (Announcement $announcement) => $announcement->getFeatureByName('current_price')?->value . ' ' . $announcement->getFeatureByName('currency')?->value)
                         ->wrap(),
                     TextColumn::make('status')
                         ->label('Status')
@@ -95,16 +97,16 @@ class Announcements extends Component implements HasForms, HasTable
             ->actions([
                 ActionGroup::make([
                     Action::make('sold')
-                        ->label('Mark as "Sold"')
+                        ->label(__("Mark as 'Sold'"))
                         ->form([
                             Section::make()
                                 ->schema([
                                     ToggleButtons::make('sold')
                                         ->label(__('Where did you sell it?'))
                                         ->options([
-                                            '1' => 'I sold it on this site',
-                                            '2' => 'I sold it on another site',
-                                            '3' => 'I do not want to answer',
+                                            '1' => __('I sold it on this site'),
+                                            '2' => __('I sold it on another site'),
+                                            '3' => __("I don't want to answer"),
                                         ])
                                         ->required()
                                 ])
@@ -119,42 +121,13 @@ class Announcements extends Component implements HasForms, HasTable
                         })
                         ->visible(fn ($record) => $record->status == Status::published),
                     Action::make('available')
-                        ->label('Mark as "Available"')
+                        ->label(__("Mark as 'Available'"))
                         ->icon('heroicon-m-archive-box-arrow-down')
                         ->color('info')
                         ->action(function ($record) {
                             $record->published();
                         })
                         ->visible(fn ($record) => $record->status == Status::sold),
-                    EditAction::make()
-                        ->form([
-                            Grid::make(2)
-                                ->schema([
-                                    SpatieMediaLibraryFileUpload::make('attachments')
-                                        ->collection('announcements')
-                                        ->hiddenLabel()
-                                        ->multiple()
-                                        ->columnSpan(1),
-                                    Section::make()
-                                        ->schema([
-                                            TextInput::make('title')
-                                                ->label('Title')
-                                                ->required(),
-                                            Textarea::make('description')
-                                                ->label('Description')
-                                                ->autosize()
-                                                ->rows(6)
-                                                ->required(),
-                                        ])
-                                        ->columnSpan(1)
-                                ])
-                            
-                        ])
-                        ->modalDescription('Are you sure you\'d like to edit this post? We\'ll have to moderate it again.')
-                        ->after(fn ($record) => $record->moderate())
-                        ->slideOver()
-                        ->closeModalByClickingAway(false)
-                        ->visible(fn ($record) => $record->status != Status::sold),
                     DeleteAction::make()
                 ])
                 ->button()
@@ -162,6 +135,6 @@ class Announcements extends Component implements HasForms, HasTable
     }
     public function render()
     {
-        return view('livewire.profile.announcement')->title('My Announcements');
+        return view('livewire.profile.announcement');
     }
 }

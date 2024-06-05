@@ -19,23 +19,28 @@ class AnnouncementController extends Controller
     {
         $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
 
-        $category = Category::where('slug', $request->category)->select('id', 'name', 'alternames', 'slug', 'parent_id')->first();
+        $category = Category::where('slug', $request->category)->select('id', 'alternames', 'slug', 'parent_id')->withCount(['announcements' => fn ($query) => $query->where('status', Status::published)])->first();
 
         $categories = Category::where(['parent_id' => $category?->id ?? null])
-            ->select('id', 'name', 'alternames', 'slug')
+            ->select('id', 'alternames', 'slug')
             ->with('media')
             ->where('is_active', true)
-            ->withCount('announcements')
+            ->withCount(['announcements' => fn ($query) => $query->isPublished()])
             ->get()
             ->filter(fn ($category) => $category->announcements_count > 0);
 
-        $announcements = Announcement::with('media', 'features:id', 'currency:id,name')
+        $announcements = Announcement::with([
+                'media',
+                'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
+                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersyffixes,create_type',
+                'features.attribute_option:id,name,alternames',
+                'user', 
+                'userVotes'
+            ])
             ->isPublished()
             ->categories($category)
             ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
             ->features($category, $data['attributes'] ?? null)
-            ->price($data['current_price'] ?? null)
-            ->search($data['search'] ?? null, $data['search_in_description'] ?? false)
             ->paginate(30)->withQueryString();
 
         return view('announcement.index', compact('announcements', 'categories', 'category', 'data'));
@@ -47,23 +52,40 @@ class AnnouncementController extends Controller
             abort(404);
         }
 
-        $announcement->load(['user', 'features']);
+        $announcement->load([
+            'user',
+            'user.media',
+            'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
+            'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersyffixes,create_type',
+            'features.attribute_option:id,name,alternames',
+            'features.attribute.section:id,alternames,order_number', 
+            'categories:id,slug,alternames',
+        ]);
 
-        $user_announcements = $announcement->user?->announcements()?->isPublished()
-            ->limit(4)
-            ->whereNot('id', $announcement->id)
-            ->get();
-        
-        $announcements = Announcement::isPublished()
-            ->whereHas('categories', function ($query) use ($announcement) {
-                return $query->where('category_id', $announcement->categories?->last()->id);
-            })
-            ->orderByDesc('created_at')
-            ->limit(12)
-            ->whereNot('id', $announcement->id)
-            ->get();
+        $similar_announcements = [];
+        $user_announcements = [];
 
-        return view('announcement.show', compact('announcement', 'announcements', 'user_announcements'));
+        // $announcement->user->isPartner()
+        if (false) {
+            $user_announcements = Announcement::isPublished()
+                ->limit(12)
+                ->whereNot('id', $announcement->id)
+                ->where('user_id', $announcement->user?->id)
+                ->get();
+        }
+        else {
+            $similar_announcements = Announcement::select('announcements.*')
+                ->join('announcement_category', 'announcements.id', '=', 'announcement_category.announcement_id')
+                ->where('announcement_category.category_id', $announcement->categories?->last()->id)
+                ->isPublished()
+                ->with('media', 'features.attribute_option','user','user.media')
+                ->orderByDesc('created_at')
+                ->whereNot('announcements.id', $announcement->id)
+                ->limit(12)
+                ->get();
+        }
+
+        return view('announcement.show', compact('announcement', 'similar_announcements', 'user_announcements'));
     }
 
     public function create()
@@ -84,34 +106,11 @@ class AnnouncementController extends Controller
         return view('announcement.telegram-create');
     }
 
-    // public function edit(Announcement $announcement)
-    // {
-    //     return view('announcement.edit', compact('announcement'));
-    // }
-
-    // public function update(Request $request, Announcement $announcement)
-    // {
-    //     if ($request->has('discount')) {
-    //         $announcement->discount($request->new_price);
-    //     }
-
-    //     if ($request->has('indicate_availability')) {
-    //         $announcement->indicateAvailability(auth()->id());
-    //     }
-
-    //     if ($request->has('sold')) {
-    //         $announcement->sold(auth()->id());
-    //     }
-
-
-
-    //     return back();
-    // }
-
-    public function delete(Announcement $announcement)
+    public function wishlist()
     {
-        $announcement->delete();
+        $announcements = auth()->user()->wishlist()->isPublished()
+            ->get();
 
-        return back();
+        return view('announcement.wishlist', compact('announcements'));
     }
 }

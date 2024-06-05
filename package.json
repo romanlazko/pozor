@@ -17,6 +17,7 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
-        "@enflow/laravel-address-ui": "^0.1.5"
+        "@enflow/laravel-address-ui": "^0.1.5",
+        "shiki": "^1.6.0"
     }
 }

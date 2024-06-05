@@ -35,3 +35,15 @@
 .hide-scroll::-webkit-scrollbar {
     display: none;
 }
+
+.html ul{
+    display: block;
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.html ol{
+    display: block;
+    list-style-type: decimal;
+    padding-left: 20px;
+}

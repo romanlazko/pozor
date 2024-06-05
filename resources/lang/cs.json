@@ -1,0 +1,145 @@
+{
+    "LAYOUTS-PROFILE.BLADE": "LAYOUTS-PROFILE.BLADE",
+
+        "My announcements": "Moje inzeráty",
+        "Wishlist": "Oblibené",
+        "Messages": "Zprávy",
+        "Profile": "Profil",
+        "Log Out": "Odhlásit se",
+        "Admin": "Správce",
+        "Password": "Heslo",
+
+    "VERIFY-EMAIL": "VERIFY-EMAIL",
+
+        "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Děkujeme vám za registraci! Než začnete, mohli byste ověřit svou e-mailovou adresu kliknutím na odkaz, který jsme vám právě zaslali e-mailem? Pokud jste e-mail neobdrželi, rádi vám zašleme další.",
+        "A new verification link has been sent to the email address you provided during registration.": "Na e-mailovou adresu, kterou jste uvedli při registraci, byl odeslán nový ověřovací odkaz.",
+
+    "TELEGRAM": "TELEGRAM",
+
+        "Telegram": "Telegram",
+        "Update your telegram information.": "Aktualizujte své informace o Telegramu.",
+        "Connect Telegram": "Připojit Telegram",
+
+    "UPDATE-PROFILE-INFORMATION-FORM.BLADE": "UPDATE-PROFILE-INFORMATION-FORM.BLADE",
+
+        "Profile Information": "Informace o profilu",
+        "Update your account's profile information.": "Aktualizujte informace o profilu vašeho účtu.",
+        "Name": "Jméno",
+        "Email": "E-mail",
+        "Phone": "Telefon",
+        "Select languages you speak": "Vyberte jazyky, které ovládáte",
+        "English": "Angličtina",
+        "Русский": "Ruština",
+        "Czech": "Čeština",
+        "Save": "Uložit",
+
+    "UPDATE-PASSWORD-FORM.BLADE": "UPDATE-PASSWORD-FORM.BLADE",
+
+        "Update Password": "Aktualizovat heslo",
+        "Ensure your account is using a long, random password to stay secure.": "Ujistěte se, že vaše účet používá dlouhé a náhodné heslo pro zachování bezpečnosti.",
+        "Current Password": "Současné heslo",
+        "New Password": "Nové heslo",
+        "Confirm Password": "Potvrďte heslo",
+        "Save": "Uložit",
+        "Saved.": "Uloženo.",
+
+    "DELETE-USER-FORM.BLADE": "DELETE-USER-FORM.BLADE",
+
+        "Delete Account": "Smazat účet",
+        "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Po smazání vašeho účtu budou všechny jeho prostředky a data trvale smazány. Před smazáním účtu si stáhněte veškerá data nebo informace, které chcete zachovat.",
+        "Are you sure you want to delete your account?": "Opravdu chcete smazat svůj účet?",
+        "Please enter your password to confirm you would like to permanently delete your account.": "Zadejte prosím své heslo, abyste potvrdili, že chcete svůj účet trvale smazat.",
+        "Cancel": "Zrušit",
+
+    "ANNOUNCEMENTS": "ANNOUNCEMENTS",
+    
+        "My announcements": "Moje inzeráty",
+        "Edit": "Upravit",
+        "Delete": "Smazat",
+        "Mark as 'Sold'": "Vyprodáno",
+        "Where did you sell it?": "Uveďte, prostřednictvím které platformy jste zboží prodali:",
+        "I sold it on this site": "Prodával jsem to na tomto webu",
+        "I sold it on another site": "Prodával jsem to přes jiné místo",
+        "I don't want to answer": "Nechci odpovídat",
+        "Save": "Uložit",
+        "Submit": "Odeslat",
+        "Discount the price": "Zlevněte cenu",
+        "Set new price:": "Nastavte novou cenu:",
+        "Mark as 'Available'": "Dostupný",
+        "Message": "Zpráva",
+        "Call": "Zavolat",
+        "Similar announcements": "Podobné inzeráty",
+        "Show more": "Ukázat více",
+        "User announcements": "Inzeráty uživatele",
+        "From": "Od",
+        "To": "Do",
+        "from": "od",
+        "to": "to",
+        "Main page": "Hlavní stránka",
+        "Filters": "Filtry",
+        "Latest announcements:": "Nejnovější inzeráty:",
+
+    "MESSAGE-INDEX.BLADE": "MESSAGE-INDEX.BLADE",
+
+        "Messages": "Zprávy",
+        "You: ": "Ty: ",
+        "No messages found.": "Žádné zprávy nebyly nalezeny.",
+
+    "FILTERS":"FILTERS",
+
+        "Show results": "Zobrazit výsledky",
+        "Country": "Zeme",
+        "City": "Mesto",
+        "Search": "Hledat",
+        "Full text search": "Hledání v celem textu",
+        "Sorting": "Zoradit",
+        "Reset filters": "Vynulovat filtry",
+
+    "LAYOUTS-SIDEBAR.BLADE": "LAYOUTS-SIDEBAR.BLADE",
+
+        "telegram": "telegram",
+        "Announcements": "Inzeráty",
+        "Category": "Kategorie",
+        "Attribute": "Atribut",
+        "Back to user": "Zpět k uživateli",
+
+    "LAYOUTS-HEADER.BLADE": "LAYOUTS-HEADER.BLADE",
+
+        "Register": "Registrace",
+        "Login": "Přihlásit se",
+        "Create announcement": "Vytvořit inzerát",
+        "Profile": "Profil",
+        "My announcements": "Moje inzeráty",
+        "Log Out": "Odhlásit se",
+
+    "LAYOUTS-FOOTER.BLADE": "LAYOUTS-FOOTER.BLADE",
+
+        "Marketplace": "Tržiště",
+        "Wishlist": "Oblibené",
+        "Create": "Vytvořit",
+        "Messages": "Zprávy",
+        "Profile": "Profil",
+
+    "COMPONENTS.BLADE": "COMPONENTS.BLADE",
+
+        "Send": "Odeslat",
+        "Login for meassaging": "Přihlaste se pro zasílání zpráv",
+        "Phone:": "Telefon:",
+        "Show contacts": "Zobrazit kontakty",
+        "Page not found": "Stránka nenalezena",
+        "registered": "registrace",
+
+    "AUTH.BLADE": "AUTH.BLADE",
+
+        "This is a secure area of the application. Please confirm your password before continuing.": "Toto je zabezpečená oblast aplikace. Před pokračováním prosím potvrďte své heslo.",
+        "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Zapomněli jste heslo? Žádný problém. Stačí nám sdělit svou e-mailovou adresu a my vám pošleme odkaz na resetování hesla, který vám umožní vybrat si nové.",
+        "Email Password Reset Link": "Odeslat odkaz pro resetování hesla",
+        "Remember me": "Zapamatovat si mě",
+        "Log in": "Přihlásit se",
+        "Forgot your password?": "Zapomněli jste heslo?",
+        "Already registered?": "Již jste registrováni?",
+        "Reset Password": "Obnovit heslo",
+        "Resend Verification Email": "Znovu odeslat ověřovací e-mail"
+
+
+}

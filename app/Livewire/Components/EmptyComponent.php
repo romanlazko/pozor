@@ -8,6 +8,6 @@ class EmptyComponent extends Component
 {
     public function render()
     {
-        return view('livewire.components.empty');
+        return view('components.livewire.empty');
     }
 }

@@ -19,6 +19,6 @@ class AttributeOption extends Model
 
     public function getNameAttribute()
     {
-        return $this->alternames[app()->getLocale()] ?? $this->attributes['name'];
+        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
     }
 }

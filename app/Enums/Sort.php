@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Facades\App;
 
 enum Sort: string implements HasLabel
 {
@@ -36,11 +37,29 @@ enum Sort: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::newest => 'Newest',
-            self::oldest => 'Oldest',
-            self::cheapest => 'Cheapest',
-            self::mostExpensive => 'Most Expensive',
+            self::newest => match (App::getLocale()) {
+                'ru' => 'Самые новые',
+                'en' => 'Newest',
+                'cs' => 'Najnovejsi',
+            },
+            self::oldest => match (App::getLocale()) {
+                'ru' => 'Самые старые',
+                'en' => 'Oldest',
+                'cs' => 'Najstarsi',
+            },
+            self::cheapest => match (App::getLocale()) {
+                'ru' => 'Самые дешёвые',
+                'en' => 'Cheapest',
+                'cs' => 'Najlevnejsi',
+            },
+            self::mostExpensive => match (App::getLocale()) {
+                'ru' => 'Самые дорогие',
+                'en' => 'Most Expensive',
+                'cs' => 'Najskrátnejsi',
+            },
             default => 'Newest',
         };
     }
+
+    
 }

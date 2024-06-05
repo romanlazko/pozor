@@ -39,33 +39,25 @@ use Illuminate\Http\Request;
 // Route::post('/search', [WelcomeController::class, 'search'])->name('search');
 Route::get('/', fn () => redirect()->route('announcement.index'));
 
+Route::post('/locale', function (Request $request){
+    if ($user = auth()->user()) {
+        $user->update([
+            'locale' => $request->locale
+        ]);
+    }
+
+    session(['locale' => $request->locale]);
+
+    return back();
+})->name('locale');
+
 Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::get('/search/{category:slug}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
     Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
-        // ->middleware(['signed', 'throttle:6,1'])
+        ->middleware(['signed', 'throttle:6,1'])
         ->name('telegram-create');
-
-    // Route::get('/create', 'create')->middleware('auth')->name('create');
-    // Route::get('/edit/{announcement}', 'edit')->middleware('auth')->name('edit');
-    // Route::patch('/update/{announcement}', 'update')->middleware('auth')->name('update');
-    // Route::delete('/delete/{announcement}', 'delete')->middleware('auth')->name('delete');
 });
-
-Route::get('/created', function (Request $request) {
-    Auth::guard('web')->logout();
-
-    $request->session()->invalidate();
-
-    $request->session()->regenerateToken();
-
-    return view('announcement.created');
-})->name('created');
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
     Route::resource('telegram_bot', TelegramController::class);
@@ -80,16 +72,17 @@ Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('a
     Route::get('announcement/audit/{announcement}', AnnouncementAudits::class)->name('announcement.audit');
 });
 
-Route::middleware('auth')->name('profile.')->prefix('profile')->group(function () {
-    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function () {
+    Route::get('/', [ProfileController::class, 'edit'])->name('edit');
     Route::patch('/update', [ProfileController::class, 'update'])->name('update');
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
-
-    Route::patch('/updateLang', [ProfileController::class, 'updateLang'])->name('updateLang');
     Route::patch('/updateAvatar', [ProfileController::class, 'updateAvatar'])->name('updateAvatar');
-    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
-    Route::get('/announcement', Announcements::class)->name('announcement.index');
-    Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
+    Route::get('/announcement/wishlist', [AnnouncementController::class, 'wishlist'])->name('announcement.wishlist');
+
+    Route::middleware(['verified', 'profile_filled'])->group(function () {
+        Route::get('/announcement', Announcements::class)->name('announcement.index');
+        Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
+    });
 
     Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -97,6 +90,13 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
         Route::get('{thread}', 'show')->name('show');
         Route::put('{thread}', 'update')->name('update');
     });
+
+    // Route::patch('/updateLang', [ProfileController::class, 'updateLang'])->name('updateLang');
+    
+    
+    
+
+    
 });
 
 
@@ -146,8 +146,6 @@ Route::middleware('auth')->name('profile.')->prefix('profile')->group(function (
 
 
 Route::get('/request', function () {
-    
-    
     $response = Http::withHeaders([
         'Authorization' => 'Key c965004068a6498aa452a3306f2b516d',
         'Content-Type' => 'application/json',

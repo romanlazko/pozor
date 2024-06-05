@@ -5,55 +5,65 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        {{-- <title>{{ ($title ? $title." | ": null) . config('app.name') }}</title> --}}
+
+        <meta http-equiv="cleartype" content="on">
+        <meta data-rh="true" property="og:type" content="website">
+        <meta data-rh="true" property="og:site_name" content="{{ config('app.name') }}">
+        <meta data-rh="true" property="og:locale" content="{{ app()->getLocale() }}">
+
+        @if (isset($meta))
+            {{ $meta }}
+        @else
+            {!! seo() !!}
+        @endif
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://kit.fontawesome.com/f4c6764ec6.js" crossorigin="anonymous"></script>
 
         <!-- Scripts -->
-        <script async src="https://www.google.com/recaptcha/api.js"></script>
         @stack('headerScripts')
         @livewireStyles
         @filamentStyles
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
+    <body class="font-roboto bg-gray-100 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
         <livewire:components.empty-component/>
 
+        <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-20 transition-opacity  bg-black opacity-50 lg:hidden"></div>
+
         @if (isset($headerNavigation))
-            <div class="w-full hidden lg:block fixed top-0 h-12 bg-black z-40">
+            <div class="w-full hidden bg-white lg:block fixed top-0 h-12 z-40 px-3">
                 {{ $headerNavigation }}
             </div>
         @endif
-
-        <div @class(['flex w-full flex-1 flex-col', 'pt-0 lg:pt-12' => isset($headerNavigation), 'pb-10 lg:pb-0' => isset($footerNavigation)])>
+        
+        <div @class(['flex flex-1 flex-col w-full max-w-7xl mx-auto h-full relative lg:mt-12', 'pt-0 lg:pt-12' => isset($headerNavigation), 'pb-12 lg:pb-0' => isset($footerNavigation)])>
             @if (isset($sidebar))
-                <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-20 transition-opacity  bg-black opacity-50 lg:hidden"></div>
-                <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="lg:mt-12 fixed inset-y-0 left-0 z-50 w-full sm:w-72 xl:w-96 transition duration-300 transform lg:translate-x-0 lg:inset-0 bg-gray-100 border-r" aria-label="Sidebar">
-                    <x-sidebar>
+                <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="lg:mt-12 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-30 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
+                    <x-sidebar class="rounded-lg shadow-lg bg-white h-full lg:h-min">
                         {{ $sidebar }}
                     </x-sidebar>
                 </aside>
             @endif
 
-            <div @class(['w-full h-full flex-1 flex flex-col', 'lg:pl-72 xl:pl-96' => isset($sidebar)])>
+            <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6 ', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
                 @if (isset($header))
-                    <div class="flex w-full px-2 min-h-10 items-center py-1 space-x-2 bg-gray-50 z-30 sticky lg:top-12 top-0" x-data="{ headerOpen: false }">
+                    <div class="flex w-full px-2 min-h-10 items-center py-1 space-x-2 z-30 sticky sm:relative top-0 bg-white lg:rounded-lg shadow-lg" x-data="{ headerOpen: false }">
                         <div class="flex items-center justify-between space-x-3 w-full">
                             {{ $header }}
                         </div>
                     </div>
                 @endif
 
-                <main id="main-block" class="w-full space-y-4 flex-1 h-full p-2">
+                <main id="main-block" class="w-full space-y-4 flex-1 h-full px-2 lg:px-0 pb-8">
                     {{ $slot }}
                 </main>
 
                 @if (isset($footer))
-                    <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0">
+                    <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg">
                         {{ $footer }}
                     </div>
                 @endif
@@ -61,15 +71,15 @@
         </div>
 
         @if (isset($footerNavigation))
-            <div class="w-full lg:hidden block fixed bottom-0 h-10 z-40">
+            <div class="w-full lg:hidden block fixed bottom-0 h-12 z-40 border-t ">
                 {{ $footerNavigation }}
             </div>
         @endif
         
         @if (session('ok') === true)
-            <x-notifications.small class="bg-green-400 z-50" :title="session('description')"/>
+            <x-notifications.small class="bg-green-600 z-50" :title="session('description')"/>
         @elseif (session('ok') === false)
-            <x-notifications.small class="bg-red-400 z-50" :title="session('description')"/>
+            <x-notifications.small class="bg-red-600 z-50" :title="session('description')"/>
         @endif
     </body>
 

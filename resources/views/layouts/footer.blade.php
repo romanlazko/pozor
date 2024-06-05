@@ -1,17 +1,17 @@
-<nav class="px-2 py-1 flex w-full justify-between items-center bg-white border-b border-gray-100 h-10">
+<nav class="px-2 py-1 flex w-full justify-between items-center bg-white border-b border-gray-100 h-12">
     <x-header.link href="{{ route('announcement.index') }}"  :active="request()->routeIs('announcement.index')" class="border-none">
         <div class="grid">
             <i class="fa-solid fa-store"></i>
             <small class="text-[8px]">{{ __('Marketplace') }}</small>
         </div>
     </x-header.link>
-    <x-header.link href="" :active="request()->routeIs('profile.message.*')" class="border-none">
+    <x-header.link href="{{ route('profile.announcement.wishlist') }}" :active="request()->routeIs('profile.announcement.wishlist')" class="border-none">
         <div class="grid">
             <i class="fa-solid fa-heart"></i>
             <small class="text-[8px]">{{ __('Wishlist') }}</small>
         </div>
     </x-header.link>
-    <x-header.link href="{{ route('profile.announcement.create') }}" :active="request()->routeIs('profile.announcement.*')" class="border-none">
+    <x-header.link href="{{ route('profile.announcement.create') }}" :active="request()->routeIs('profile.announcement.create')" class="border-none">
         <div class="grid">
             <i class="fa-solid fa-circle-plus"></i>
             <small class="text-[8px]">{{ __('Create') }}</small>

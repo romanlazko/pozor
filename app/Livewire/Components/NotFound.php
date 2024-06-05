@@ -8,6 +8,6 @@ class NotFound extends Component
 {
     public function render()
     {
-        return view('livewire.components.not-found');
+        return view('components.livewire.not-found');
     }
 }

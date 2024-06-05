@@ -14,10 +14,6 @@ trait AnnouncementCrud
         $location = Geo::find($data->geo_id)?->toArray() ?? [];
 
         $announcement = auth()->user()->announcements()->create([
-            'title'             => $data->title,
-            'description'       => $data->description,
-            'current_price'     => $data->current_price,
-            'currency_id'       => $data->currency_id,
             'geo_id'            => $data->geo_id,
             'latitude'          => $location['lat'] ?? null,
             'longitude'         => $location['long'] ?? null,
@@ -27,21 +23,7 @@ trait AnnouncementCrud
         ]);
 
         $announcement->categories()->sync($data->categories);
-
-        if (isset($data->attributes) AND !empty($data->attributes)) {
-            $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $data->categories))->get();
-
-            foreach ($availableAttributes as $availableAttribute) {
-                if (isset($data->attributes[$availableAttribute->name]) && !empty($data->attributes[$availableAttribute->name]) && $availableAttribute->is_feature) {
-                    $announcement->features()->create([
-                        'attribute_id' => $availableAttribute->id,
-                        'value'        => [
-                            'original' => $data->attributes[$availableAttribute->name]
-                        ],
-                    ]);
-                }
-            }
-        }
+        $announcement->features()->createMany($this->setFeatures($data->categories, $data->attributes));
         
         if (isset($data->attachments) AND !empty($data->attributes)) {
             foreach ($data->attachments as $attachment) {
@@ -97,18 +79,24 @@ trait AnnouncementCrud
         return $announcement;
     }
 
-    private function setAttributes($categories, $attributes)
+    private function setFeatures($categories, $attributes)
     {
-        $sync = [];
+        $features = [];
+        
+        if (isset($attributes) AND !empty($attributes)) {
+            $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))->get();
 
-        $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))->get();
+            foreach ($availableAttributes as $availableAttribute) {
+                if (isset($attributes[$availableAttribute->name]) && !empty($attributes[$availableAttribute->name])) {
+                    $className = "App\\AttributeType\\".str_replace('_', '', ucwords($availableAttribute?->create_type, '_'));
 
-        foreach ($availableAttributes as $availableAttribute) {
-            if (isset($attributes[$availableAttribute->name]) && !empty($attributes[$availableAttribute->name]) && $availableAttribute->is_feature) {
-                $sync[$availableAttribute->id] = ['value' => ['original' => $attributes[$availableAttribute->name]]];
+                    if (class_exists($className)) {
+                        $features[] = (new $className($availableAttribute, $attributes))->create();
+                    }
+                }
             }
         }
 
-        return $sync;
+        return $features;
     }
 }

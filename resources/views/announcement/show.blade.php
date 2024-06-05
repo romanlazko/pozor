@@ -1,143 +1,167 @@
 <x-body-layout>
+    <x-slot name="meta">
+        {{-- @if(isset($announcement?->meta['description']))
+            <meta name="description" content="{{ $announcement?->meta['description'] }}" data-rh="true">
+            <meta name="mrc__share_title" content="{{ $announcement?->meta['description'] }}" data-rh="true">
+            <meta property="og:description" content="{{ $announcement?->meta['description'] }}" data-rh="true">
+        @endif
+
+        @if(isset($announcement?->meta['meta_title']))
+            <meta name="mrc__share_title" content="{{ $announcement?->meta['meta_title'] }}" data-rh="true">
+            <meta property="og:title" content="{{ $announcement?->meta['meta_title'] }}" data-rh="true">
+        @endif
+
+        @if(isset($announcement?->meta['image_url']) AND isset($announcement?->meta['image_alt']))
+            <meta property="og:image" content="{{ $announcement?->meta['image_url'] }}" data-rh="true">
+            <meta property="og:image:alt" content="{{ $announcement?->meta['image_alt'] }}" data-rh="true">
+        @endif
+        
+        
+        <meta property="og:url" content="{{ route('announcement.show', $announcement->slug) }}" data-rh="true">
+        @if(isset($announcement?->meta['price']) AND isset($announcement?->meta['currency']))
+            <meta property="product:price:amount" content="{{ $announcement?->meta['price']}}" data-rh="true">
+            <meta property="product:price:currency" content="{{ $announcement?->meta['currency'] }}" data-rh="true">
+        @endif --}}
+        {{-- {!!  !!} --}}
+
+        {{-- @dump($announcement?->seo ?? null) --}}
+
+        {!! seo()->for($announcement) !!}
+    </x-slot>
+
     <x-slot name="headerNavigation">
         @include('layouts.header')
     </x-slot>
 
     <x-slot name="header">
-        <x-a-buttons.back 
+        <x-buttons.back 
             onclick="if (document.referrer == '' && !document.referrer.includes('announcement') && '{{ redirect()->back()->getTargetUrl() }}' != '{{ route('announcement.index') }}') { window.location.href = '{{ route('announcement.index') }}'; } else { window.history.back(); }"
-            {{-- onclick="window.location.href = '{{ route('announcement.index') }}'" --}}
-            {{-- href="{{ redirect()->back()->getTargetUrl() }}" --}}
         />
+
         <div class="flex space-x-3">
-            {{-- <x-a-buttons.secondary class="">
-                <i class="fa-solid fa-share"></i>
-            </x-a-buttons.secondary>
-            <x-a-buttons.secondary >
-                <i class="fa-regular fa-bookmark"></i>
-            </x-a-buttons.secondary> --}}
-            <x-dropdown>
-                <x-slot name="trigger">
-                    <x-a-buttons.secondary class="" >
-                        <i class="fa-solid fa-ellipsis"></i>
-                    </x-a-buttons.secondary> 
-                </x-slot>
-                <x-slot name="content">
-                    <x-dropdown-link>
-                        {{ __("Report") }}
-                    </x-dropdown-link>
-                </x-slot>
-            </x-dropdown>
-            
+            <livewire:components.like-dislike :announcement="$announcement"/>
         </div>
     </x-slot>
 
-    <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
-        <div class="w-full lg:w-2/3 space-y-6">
-            <x-slider :medias="$announcement->getMedia('announcements')"/>
-            <div class="space-y-6 p-4 py-6 bg-white rounded-lg shadow-md">
-                <div class="space-y-1 ">
-                    <p class="font-extrabold text-indigo-600 text-2xl">
-                        {{ $announcement->current_price }}
-                    </p>
-                    <h2 class="text-xl">
-                        {{ ucfirst($announcement->translated_title) }}
-                    </h2>
+    <div class="space-y-6">
+        <section class="lg:flex w-full mx-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
+            <div class="w-full lg:w-2/3 bg-white rounded-lg shadow-md overflow-hidden">
+                <x-slider :medias="$announcement->getMedia('announcements')"/>
+            </div>
+            <div class="w-full lg:w-1/3 bg-white rounded-lg shadow-md overflow-hidden h-min">
+                <div class="w-full space-y-1 px-4 md:px-6 py-6">
+                    <h1 class="font-bold text-lg lg:text-2xl">
+                        {{ ucfirst($announcement->getFeatureByName('title')?->value) }} 
+                    </h1>
+                    <span class="text-xl text-indigo-600">{{ $announcement->current_price ?? $announcement->salary }} {{ $announcement->getFeatureByName('currency')?->value }}</span>
                     
-                    <p class="text-sm text-gray-400">
-                        {{ $announcement->created_at->diffForHumans() }}:  
-                        {{-- {{ $announcement->location['country'] }}, {{ $announcement->location['name'] }}  --}}
+                    <p class="text-sm text-gray-500">
+                        {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} -
+                        {{ $announcement->created_at->diffForHumans() }}
                     </p>
                 </div>
-    
-                @if ($announcement->features->isNotEmpty())
-                    <hr>
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-2xl">{{ __("Features:") }}</h4>
-                        <div class="w-full gap-3 grid grid-cols-1 lg:grid-cols-2">
-                            @foreach ($announcement->features->sortBy('section.order_number') as $feature)
-                                <p><span class="text-gray-500">{{ $feature->label }}</span>: <span>{{ $feature->value }}</span></p>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-    
-                @if ($announcement->description)
-                    <hr>
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-2xl">{{ __("Description:") }}</h4>
-                        <p class="max-w-lg whitespace-pre-wrap">{{ $announcement->translated_description }}</p>
-                    </div>
-                @endif
-                
-            </div>
-        </div>
-        <div class="w-full lg:w-1/3 space-y-6 sticky top-24">
-            {{-- <div class="w-full bg-red-400 sticky top-3 h-[300px] lg:rounded-xl ">
-                <!-- Content of the sticky element -->
-            </div> --}}
-            <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg ">
-                <div class="flex space-x-4 items-center">
-                    <img src="{{ $announcement->user?->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 lg:w-16 lg:h-16 aspect-square">
-                    <div class="w-full">
-                        <span class="block font-bold">{{ $announcement->user?->name }}</span>
-                        <a class="block text-gray-700 hover:underline cursor-pointer">{{ $announcement->user?->email }}</a>
-                        <span class="block text-gray-500 text-xs">{{ __("Registered") }} {{ $announcement->user?->created_at->diffForHumans() }}</span>
+                <hr>
+                <div class="space-y-6 bg-white p-4 py-6 h-min">
+                    <x-user-card :user="$announcement->user"/>
+                    <div class="w-full flex space-x-3 items-center justify-between">
+                        <x-buttons.primary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
+                            {{ __("Message") }}
+                        </x-buttons.primary>
+                        @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
+                            <x-buttons.secondary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
+                                {{ __("Call") }}
+                            </x-buttons.secondary>
+                        @endif
                     </div>
                 </div>
-                <div class="w-full flex space-x-3 items-center justify-between">
-                    <x-a-buttons.primary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
-                        {{ __("Message") }}
-                    </x-a-buttons.primary>
-                    @if ($announcement?->user?->phone)
-                        <x-a-buttons.secondary class="w-full whitespace-nowrap" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
-                            {{ __("Call") }}
-                        </x-a-buttons.secondary>
-                    @endif
-                </div>
             </div>
-            <div>
-                @if ($user_announcements?->isNotEmpty())
-                    <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
-                        <h2 class="text-2xl font-bold">
-                            User announcements:
-                        </h2>
-                        <div class="w-full grid grid-cols-2 gap-2" >
-                            @foreach ($user_announcements as $index => $user_announcement_item)
-                                <x-announcement-card :announcement="$user_announcement_item" />
-                            @endforeach
-                        </div>
+        </section>
+        <section class="lg:flex w-full mx-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
+            <div class="w-full lg:w-2/3 bg-white rounded-lg shadow-md overflow-hidden">
+                @if ($description = $announcement->getFeatureByName('description'))
+                    <div class="space-y-4 px-4 md:px-6 py-6">
+                        <h3 class="font-bold text-2xl">{{ $description->label }}</h3>
+                        <x-markdown class="html">
+                            {{ $description->value }}
+                        </x-markdown>
                     </div>
                 @endif
-            </div>
-        </div>
-    </section>
-
-    <section class="lg:flex w-full max-w-6xl m-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0 py-6">
-        <div class="w-full lg:w-2/3 space-y-6">
-            @if ($announcements?->isNotEmpty())
-                <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
-                    <h2 class="text-2xl font-bold">
-                        Similar announcements
-                    </h2>
-                    <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2" >
-                        @foreach ($announcements as $index => $announcement_item)
-                            <x-announcement-card :announcement="$announcement_item" />
+                @if ($announcement->features->where('attribute.is_feature')->isNotEmpty())
+                    <hr>
+                    <div class="space-y-3 px-4 md:px-6 py-6 sm:space-y-0 sm:gap-6 grid grid-cols-1 md:grid-cols-2">
+                        @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.section.order_number')->groupBy('attribute.section.name') as $section_name => $feature_section)
+                            <div class="space-y-2">
+                                <h4 class="font-bold text-md">
+                                    {{ $section_name }}:
+                                </h4>
+                                
+                                <div class="w-full space-y-1 ">
+                                    @foreach ($feature_section->sortBy('attribute.section.order_number') as $feature)
+                                        <div class="w-full flex space-x-2 text-base items-center">
+                                            <span class="text-gray-500 inline-block">- {{ $feature->label }}:</span>
+                                            <span class="">
+                                                {{ $feature->value }} {{ $feature->suffix }}
+                                            </span>
+                                            <hr>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                         @endforeach
                     </div>
+                @endif
+            </div>
+            <div class="w-full lg:w-1/3 space-y-6 sticky top-0">
+                <div>
                 </div>
-            @endif
-        </div>
-        <div class="w-full lg:w-1/3 space-y-6">
-            
-        </div>
-    </section>
-
+            </div>
+        </section>
+    
+        <section class="lg:flex w-full space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
+            <div class="w-full lg:w-2/3 space-y-6">
+                @if (!empty($similar_announcements) AND $similar_announcements->isNotEmpty())
+                    <div class="space-y-6 ">
+                        <h2 class="text-2xl font-bold">
+                            {{ __("Similar announcements") }}
+                        </h2>
+                        <div class="w-full grid grid-cols-1 gap-6" >
+                            @foreach ($similar_announcements as $index => $similar_announcement)
+                                <x-announcement-card :announcement="$similar_announcement" />
+                            @endforeach
+                        </div>
+                        <x-a-buttons.secondary href="{{ route('announcement.index', ['category' => $announcement->categories?->last()->slug]) }}">
+                            {{ __("Show more") }}
+                        </x-a-buttons.secondary>
+                    </div>
+                @endif
+    
+                @if (!empty($user_announcements) AND $user_announcements->isNotEmpty())
+                    <div class="space-y-6 bg-white p-4 py-6 shadow-md rounded-lg">
+                        <h2 class="text-2xl font-bold">
+                            User announcements
+                        </h2>
+                        <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2" >
+                            @foreach ($user_announcements as $index => $user_announcement)
+                                <x-announcement-card :announcement="$user_announcement" />
+                            @endforeach
+                        </div>
+                        <x-a-buttons.secondary href="{{ route('announcement.index', ['category' => $announcement->categories?->last()->slug]) }}">
+                            {{ __("Show more") }}
+                        </x-a-buttons.secondary>
+                    </div>
+                @endif 
+    
+            </div>
+            <div class="w-full lg:w-1/3 space-y-6">
+            </div>
+        </section>
+    </div>
+    
     <x-modal name="send-message">
         <x-send-message :announcement="$announcement"/>
     </x-modal>
 
-    @if ($announcement?->user?->phone)
+    @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
         <x-modal name="show-contact">
             <livewire:components.show-contact :user_id="$announcement->user->id"/>
         </x-modal>

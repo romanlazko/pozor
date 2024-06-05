@@ -29,7 +29,7 @@ class CreateAnnouncement extends Command
     {
         $telegram_chat = DB::getChat($updates->getChat()->getId());
 
-        $user = User::where('telegram_chat_id', $telegram_chat->id)->first();
+        $user = User::firstWhere('telegram_chat_id', $telegram_chat->id);
 
         if (! $user) {
             return $this->bot->executeCommand(Email::$command);

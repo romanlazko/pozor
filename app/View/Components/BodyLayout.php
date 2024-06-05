@@ -7,6 +7,10 @@ use Illuminate\View\View;
 
 class BodyLayout extends Component
 {
+    public function __construct(public $title = null)
+    {
+        
+    }
     /**
      * Get the view / contents that represents the component.
      */

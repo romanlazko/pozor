@@ -4,38 +4,7 @@
     </x-slot>
 
     <x-slot name="sidebar">
-        <div class="p-4 space-y-3">
-            <x-responsive-nav-link  :href="route('profile.announcement.index')" :active="request()->routeIs('profile.announcement.*')">
-                {{ __('My Announcements') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link  :href="route('profile.message.index')" :active="request()->routeIs('profile.message.*')" class="flex items-center space-x-3">
-                <p>
-                    {{ __('Messages') }} 
-                </p>
-                @if (auth()->user()->unreadMessagesCount > 0)
-                    <p class="text-xs text-white w-5 h-5 rounded-full bg-blue-500 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
-                @endif
-            </x-responsive-nav-link>
-            <x-responsive-nav-link  :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
-                {{ __('Profile') }}
-            </x-responsive-nav-link>
-            
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <x-responsive-nav-link>
-                    <button type="submit">
-                        {{ __('Log Out') }}
-                    </button>
-                </x-responsive-nav-link>
-            </form>
-
-            @hasrole('super-duper-admin')
-                <hr>
-                <x-responsive-nav-link  :href="route('admin.announcement')">
-                    {{ __("Admin") }}
-                </x-responsive-nav-link>
-            @endhasrole
-        </div>
+        <x-profile-nav/>
     </x-slot>
 
     <x-slot name="header">
@@ -45,9 +14,9 @@
         <div class="flex w-full">
             <div class="flex items-center space-x-2">
                 <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white border aspect-square">
-                    <img src="{{ $thread->announcement->getFirstMediaUrl('announcements') }}" alt="" class="object-cover">
+                    <img src="{{ $thread->announcement->getFirstMediaUrl('announcements', 'thumb') }}" alt="" class="object-cover">
                 </div>
-                <p class="font-bold">{{ $thread->announcement->translated_title }}</p>
+                <p class="font-bold">{{ $thread->announcement->title }}</p>
             </div>
         </div>
     </x-slot>
@@ -88,7 +57,7 @@
             </div>
         </form>
     </x-slot>
-</x-message-layout>
+</x-body-layout>
 
 
 

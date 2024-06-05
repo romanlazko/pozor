@@ -7,11 +7,15 @@ use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Attribute;
 use App\Models\Traits\AnnouncementTrait;
+use Igaster\LaravelCities\Geo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Auditable as AuditingAuditable;
 use OwenIt\Auditing\Contracts\Auditable;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Romanlazko\Telegram\Models\TelegramChat;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -22,13 +26,11 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Announcement extends Model implements HasMedia, Auditable
 {
-    use HasSlug; use SoftDeletes; use Geoly; use InteractsWithMedia; use AuditingAuditable; use AnnouncementTrait;
+    use HasSlug, HasFactory; use SoftDeletes; use Geoly; use InteractsWithMedia; use AuditingAuditable; use AnnouncementTrait; use HasSEO;
 
     protected $guarded = [];
 
     protected $casts = [
-        // 'title' => 'array',
-        // 'description' => 'array',
         'translated_title' => 'array',
         'description_description' => 'array',
         'location' => 'array',
@@ -37,32 +39,13 @@ class Announcement extends Model implements HasMedia, Auditable
 
     protected $with = ['media'];
 
-    protected static function booted(): void
-    {
-        // static::creating(function (Announcement $announcement) {
-        //     $announcement->title = [
-        //         'original' => $announcement->title,
-        //     ];
-        //     $announcement->description = [
-        //         'original' => $announcement->description,
-        //     ];
-        // });
-
-        static::updating(function (Announcement $announcement) {
-            if ($announcement->isDirty('title')) {
-                $announcement->translated_title = null;
-            }
-
-            if ($announcement->isDirty('description')) {
-                $announcement->translated_description = null;
-            }
-        });
-    }
-
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom(function ($model) {
+                return $model->getFeatureByName('title')->translated_value['original'];
+            })
+            ->doNotGenerateSlugsOnCreate()
             ->saveSlugsTo('slug');
     }
 
@@ -70,15 +53,17 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         $this
             ->addMediaConversion('responsive-images')
-            ->greyscale()
-            ->quality(50)
             ->withResponsiveImages();
+
+        $this
+            ->addMediaConversion('thumb')
+            ->width(100)
+            ->height(100);
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('announcements')
-            ->withResponsiveImages();
+        $this->addMediaCollection('announcements');
     }
 
     public function chat()
@@ -96,44 +81,30 @@ class Announcement extends Model implements HasMedia, Auditable
         return $this->belongsToMany(Category::class);
     }
 
-    public function getTranslatedTitleAttribute()
-    {
-        return json_decode($this->attributes['translated_title'], true)[app()->getLocale()] ?? null;
-    }
-
-    public function getOriginalTitleAttribute()
-    {
-        return $this->title;
-    }
-
-    public function getTranslatedDescriptionAttribute()
-    {
-        return json_decode($this->attributes['translated_description'], true)[app()->getLocale()] ?? null;
-    }
-
-    public function getOriginalDescriptionAttribute()
-    {
-        return $this->description;
-    }
-
-    public function getCurrentPriceAttribute()
-    {
-        return $this->attributes['current_price'] . " ". $this->currency->name;
-    }
-
-    public function currency()
-    {
-        return $this->belongsTo(AttributeOption::class, 'currency_id', 'id');
-    }
-
-    // public function attributes()
-    // {
-    //     return $this->belongsToMany(Attribute::class)->using(AnnouncementAttribute::class)->withPivot('value');
-    // }
-
     public function features()
     {
-        return $this->hasMany(Feature::class)->with('attribute:id,label,alterlabels,attribute_section_id');
+        return $this->hasMany(Feature::class);
+    }
+
+    public function geo()
+    {
+        return $this->belongsTo(Geo::class);
+    }
+
+    public function getFeatureByName($name)
+    {
+        return $this->features->firstWhere('attribute.name', $name);
+    }
+
+    public function getFeatureByNameAndPull($name)
+    {
+        $feature = $this->getFeatureByName($name);
+
+        if ($feature) {
+            $this->features->forget($this->features->search($feature));
+        }
+        
+        return $feature ?? null;
     }
 
     public function attribute_options()
@@ -151,60 +122,56 @@ class Announcement extends Model implements HasMedia, Auditable
 
     public function scopeFeatures($query, Category|null $category, array|null $attributes)
     {
-        return $query->when($category and $attributes, fn ($query) =>
+        return 
             $query->where(function ($query) use ($attributes, $category) {
 
-                $category_attributes = Cache::remember($category->slug.'_search_attributes', 3600, function () use ($category) {
-                     return Attribute::select('id', 'name', 'searchable', 'search_type', 'is_feature')
-                        ->whereHas('categories', function ($query) use ($category) {
+                $category_attributes = 
+                // Cache::remember($category->slug.'_search_attributes', 3600, function () use ($category) {
+                    Attribute::select('id', 'visible', 'name', 'search_type')
+                        ->withCount('attribute_options')
+                        ->when($category, function ($query) use ($category) {
                             $categoryIds = $category
                                 ->getParentsAndSelf()
                                 ->pluck('id')
                                 ->toArray();
-
-                            $query->whereIn('category_id', $categoryIds)->select('categories.id');
+                            
+                            $query->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categoryIds ?? [])->select('categories.id'));
                         })
+                        
+                        ->when(!$category, function ($query) { 
+                            $query->where('always_required', true);
+                        })
+                        ->where('filterable', true)
                         ->get();
-                });
-                
+                // });
+
 
                 foreach ($category_attributes as $attribute) {
-                    if ($attribute->is_feature AND $attribute->searchable AND isset($attributes[$attribute->name]) AND !empty($attributes[$attribute->name])) {
-                        $query->whereHas('attributes', function ($query) use ($attribute, $attributes){
-                            if ($attribute->search_type == 'between') {
-                                $max = !empty($attributes[$attribute->name]['max']) ? $attributes[$attribute->name]['max'] : PHP_INT_MAX;
-                                $min = !empty($attributes[$attribute->name]['min']) ? $attributes[$attribute->name]['min'] : 0;
-                                $query->where('value->original', '>=', $min)->where('value->original', '<=', $max)->select('attributes.id');
-                            }
-                            else if ($attribute->search_type == 'checkboxlist') {
-                                $query->whereIn('value->original', $attributes[$attribute->name])->select('attributes.id');
-                            }
-                            else {
-                                $query->where('value->original', $attributes[$attribute->name])->select('attributes.id');
-                            }
-                        });
+                    if (isset($attributes[$attribute->name]) AND !empty($attributes[$attribute->name]) AND $attributes[$attribute->name] != null) {
+                        $className = "App\\AttributeType\\".str_replace('_', '', ucwords($attribute->search_type, '_'));
+
+                        $attributeType = new $className($attribute, $attributes);
+
+                        if ($attributeType->isVisible()) {
+                            $attributeType->apply($query);
+                        }
                     }
                 }
-            })
-        );
+            });
     }
 
-    public function scopePrice($query, $price = null)
-    {
-        return $query->when($price, function ($query) use ($price) {
-            $priceMax = !empty($price['max']) ? $price['max'] : PHP_INT_MAX;
-            $priceMin = !empty($price['min']) ? $price['min'] : 0;
+    // public function isVisible(array $attributes, Attribute $attribute)
+    // {
+    //     if (empty($attribute->visible_condition)) {
+    //         return true;
+    //     }
 
-            $query->whereBetween('current_price', [$priceMin, $priceMax]);
-        });
-    }
+    //     foreach ($attribute->visible_condition as $condition) {
+    //         if ($attributes[$condition['attribute_name']] == $condition['value']) return true;
+    //     }
 
-    public function scopeSearch($query, $search = null, $search_in_description = false)
-    {
-        $query->when($search, fn ($query) => 
-            $query->whereRaw('LOWER(translated_title) LIKE ?', ['%' . mb_strtolower($search) . '%'])
-                ->when($search_in_description, fn ($query) => $query->orWhereRaw('LOWER(translated_description) LIKE ?', ['%' . mb_strtolower($search) . '%'])));
-    }
+    //     return false;
+    // }
 
     public function scopeSort($query, Sort $sort = null)
     {
@@ -214,5 +181,70 @@ class Announcement extends Model implements HasMedia, Auditable
     public function scopeIsPublished($query)
     {
         return $query->where('status', Status::published);
+    }
+
+    public function getMetaAttribute()
+    {
+        $title = $this->getFeatureByName('title')->value ?? '';
+        $currentPrice = $this->current_price ?? $this->salary ?? '';
+        $currency = $this->getFeatureByName('currency')->value ?? '';
+        $description = $this->getFeatureByName('description')->value ?? '';
+        $categories = $this->categories->pluck('name')->implode(' | ');
+
+        return [
+            'title' => $title,
+            'meta_title' => "$title - $currentPrice $currency | $categories",
+            'description' => "$title - $currentPrice $currency | $categories | $description",
+            'image_url' => $this->getFirstMediaUrl('announcement'),
+            'image_alt' => "$title | $categories",
+            'price' => $currentPrice,
+            'currency' => $currency,
+            'category' => $categories,
+            'author' => $this->user->name ?? '',
+            'date' => $this->created_at ?? '',
+        ];
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            title: $this->getFeatureByName('title')?->value,
+            description: $this->getFeatureByName('description')?->value,
+            author: $this->user?->name,
+            image: $this->getFirstMediaUrl('announcement'),
+            url: url()->current(),
+            enableTitleSuffix: true,
+            site_name: config('app.name'),
+            published_time: $this->created_at,
+            modified_time: $this->updated_at,
+            locale: app()->getLocale(),
+            section: $this->categories->pluck('name')->implode(', '),
+            tags: $this->categories->pluck('name')->toArray(),
+        );
+    }
+
+    public function getTitleAttribute()
+    {
+        return $this->getFeatureByName('title')?->value;
+    }
+
+    public function getCurrentPriceAttribute()
+    {
+        return $this->getFeatureByName('current_price')?->value;
+    }
+
+    public function getSalaryAttribute()
+    {
+        return $this->getFeatureByName('salary')?->value;
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    public function userVotes()
+    {
+        return $this->votes()->one()->where('user_id', auth()->id());
     }
 }
