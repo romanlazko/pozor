@@ -3,7 +3,7 @@
 <div x-data="{
         photos: {{ $medias->map(fn ($media) => [
             'srcset' => $media->getSrcset('responsive-images'),
-            'placeholder' => $media->responsiveImages()->getPlaceholderSvg(),
+            'placeholder' => $media->responsiveImages('responsive-images')->getPlaceholderSvg(),
             'thumb' => $media->getUrl('thumb'),
         ]) }},
         current: 0,
