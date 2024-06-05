@@ -22,10 +22,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        for ($i=0; $i < 10; $i++) { 
-            Announcement::factory(5)->create();
-            $this->call(GeoTableSeeder::class);
-    }
+        $this->call(GeoTableSeeder::class);
         
         // $this->call(CategoriesTableSeeder::class);
         // $this->call(AttributesTableSeeder::class);
