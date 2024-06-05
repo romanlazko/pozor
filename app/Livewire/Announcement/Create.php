@@ -206,7 +206,6 @@ class Create extends Component implements HasForms
                 ->with([
                     'attribute_options' => function ($query) {
                         return $query->select(
-                            'name',
                             'attribute_id',
                             'id',
                             'alternames',

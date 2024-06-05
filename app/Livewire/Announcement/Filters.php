@@ -105,7 +105,7 @@ class Filters extends Component implements HasForms
 
         // return Cache::remember($cacheKey, 360, function () {
             return Attribute::select('id', 'name', 'filterable', 'search_type', 'is_feature', 'visible', 'column_span', 'order_number', 'attribute_section_id', 'alterlabels')
-                ->with('attribute_options:id,name,alternames,attribute_id,is_default,is_null', 'section:id,order_number')
+                ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'section:id,order_number')
                 ->when($this->category, function ($query) {
                     $categoryIds = $this->category
                         ->getParentsAndSelf()
