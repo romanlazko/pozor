@@ -22,7 +22,6 @@ class AttributeSectionsTableSeeder extends Seeder
             0 => 
             array (
                 'id' => 1,
-                'name' => NULL,
                 'slug' => 'required_information',
                 'alternames' => '{"cs": "Povinné informace", "en": "Required information", "ru": "Обязательная информация"}',
                 'order_number' => 2,
@@ -33,7 +32,6 @@ class AttributeSectionsTableSeeder extends Seeder
             1 => 
             array (
                 'id' => 2,
-                'name' => NULL,
                 'slug' => 'prices',
                 'alternames' => '{"cs": "Ceniky", "en": "Prices", "ru": "Цены"}',
                 'order_number' => 3,
@@ -44,7 +42,6 @@ class AttributeSectionsTableSeeder extends Seeder
             2 => 
             array (
                 'id' => 3,
-                'name' => NULL,
                 'slug' => 'real_estate_type',
                 'alternames' => '{"cs": "Typ", "en": "Type", "ru": "Тип"}',
                 'order_number' => 1,
@@ -55,7 +52,6 @@ class AttributeSectionsTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-                'name' => NULL,
                 'slug' => 'building_information',
                 'alternames' => '{"cs": "Informace o budově", "en": "Building information", "ru": "Информация о здании"}',
                 'order_number' => 5,
@@ -66,7 +62,6 @@ class AttributeSectionsTableSeeder extends Seeder
             4 => 
             array (
                 'id' => 5,
-                'name' => NULL,
                 'slug' => 'property_information',
                 'alternames' => '{"cs": "Informace o objektu", "en": "Property information", "ru": "Информация об объекте"}',
                 'order_number' => 4,
@@ -77,7 +72,6 @@ class AttributeSectionsTableSeeder extends Seeder
             5 => 
             array (
                 'id' => 6,
-                'name' => NULL,
                 'slug' => 'more_information',
                 'alternames' => '{"cs": "Doplňující informace", "en": "More information", "ru": "Дополнительная информация "}',
                 'order_number' => 3,
@@ -88,7 +82,6 @@ class AttributeSectionsTableSeeder extends Seeder
             6 => 
             array (
                 'id' => 7,
-                'name' => NULL,
                 'slug' => 'remuneration',
                 'alternames' => '{"cs": "Odměna za práci", "en": "Remuneration", "ru": "Оплата труда"}',
                 'order_number' => 3,
@@ -99,7 +92,6 @@ class AttributeSectionsTableSeeder extends Seeder
             7 => 
             array (
                 'id' => 8,
-                'name' => NULL,
                 'slug' => 'phone_memory',
                 'alternames' => '{"cs": "Paměť", "en": "Memory", "ru": "Память"}',
                 'order_number' => 4,
@@ -110,7 +102,6 @@ class AttributeSectionsTableSeeder extends Seeder
             8 => 
             array (
                 'id' => 9,
-                'name' => NULL,
                 'slug' => 'phone_display',
                 'alternames' => '{"cs": "Displej", "en": "Display", "ru": "Дисплей"}',
                 'order_number' => 5,
@@ -121,7 +112,6 @@ class AttributeSectionsTableSeeder extends Seeder
             9 => 
             array (
                 'id' => 10,
-                'name' => NULL,
                 'slug' => 'location',
                 'alternames' => '{"cs": "Lokace", "en": "Location", "ru": "Расположение"}',
                 'order_number' => 3,
