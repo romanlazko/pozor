@@ -23,11 +23,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call(GeoTableSeeder::class);
+        $this->call(AttributeSectionsTableSeeder::class);
+        $this->call(CategoriesTableSeeder::class);
+        $this->call(AttributesTableSeeder::class);
+        $this->call(AttributeCategoryTableSeeder::class);
+        $this->call(AttributeOptionsTableSeeder::class);
         
-        // $this->call(CategoriesTableSeeder::class);
-        // $this->call(AttributesTableSeeder::class);
-        // $this->call(AttributeCategoryTableSeeder::class);
-        // $this->call(AttributeOptionsTableSeeder::class);
-        // $this->call(AttributeSectionsTableSeeder::class);
     }
 }

@@ -17,17 +17,7 @@ return new class extends Migration
 
             $table->bigInteger('user_id')->nullable();
             
-            $table->string('title')->nullable();
-            $table->json('translated_title')->nullable();
-            
             $table->string('slug')->nullable();
-
-            $table->text('description')->nullable();
-            $table->json('translated_description')->nullable();
-
-            $table->integer('current_price')->nullable();
-            $table->integer('old_price')->nullable();
-            $table->string('currency_id')->nullable();
 
             $table->foreignIdFor(Geo::class)->nullable();
             $table->double('latitude')->nullable();

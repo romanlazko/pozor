@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('attribute_sections', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
             $table->string('slug')->nullable();
             $table->json('alternames')->nullable();
             $table->integer('order_number')->nullable();
