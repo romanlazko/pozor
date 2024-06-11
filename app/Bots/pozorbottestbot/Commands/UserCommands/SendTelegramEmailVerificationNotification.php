@@ -31,9 +31,11 @@ class SendTelegramEmailVerificationNotification extends Command
 
         $user->notify(new TelegramEmailVerification);
 
-        return BotApi::sendMessage([
+        return BotApi::returnInline([
             'chat_id' => $updates->getChat()->getId(),
             'text' => "На e-mail: {$user->email} было отправлено письмо для подтверждения. Пожалуйста, подтвердите свой e-mail, нажав на кнопку в письме.",
+            'parse_mode'    =>  'Markdown',
+            'message_id'    =>  $updates->getCallbackQuery()?->getMessage()->getMessageId(),
         ]);
     }
 }
