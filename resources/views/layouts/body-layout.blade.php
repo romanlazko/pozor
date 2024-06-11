@@ -39,36 +39,40 @@
                 {{ $headerNavigation }}
             </div>
         @endif
-        
-        <div @class(['flex flex-1 flex-col w-full max-w-7xl mx-auto h-full relative lg:mt-12', 'pt-0 lg:pt-12' => isset($headerNavigation), 'pb-12 lg:pb-0' => isset($footerNavigation)])>
-            @if (isset($sidebar))
-                <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="lg:mt-12 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-30 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
-                    <x-sidebar class="rounded-lg shadow-lg bg-white h-full lg:h-min">
-                        {{ $sidebar }}
-                    </x-sidebar>
-                </aside>
+        <div @class(['w-full max-w-7xl mx-auto h-full lg:mt-12', 'pt-0 lg:pt-12' => isset($headerNavigation), 'pb-12 lg:pb-0' => isset($footerNavigation)])>
+            @if (isset($header))
+                <div class="flex w-full px-2 min-h-10 items-center py-1 space-x-2 z-30 sticky sm:relative top-0 bg-white lg:rounded-lg shadow-lg" x-data="{ headerOpen: false }">
+                    <div class="flex items-center justify-between space-x-3 w-full">
+                        {{ $header }}
+                    </div>
+                </div>
             @endif
-
-            <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6 ', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
-                @if (isset($header))
-                    <div class="flex w-full px-2 min-h-10 items-center py-1 space-x-2 z-30 sticky sm:relative top-0 bg-white lg:rounded-lg shadow-lg" x-data="{ headerOpen: false }">
-                        <div class="flex items-center justify-between space-x-3 w-full">
-                            {{ $header }}
+            <div @class(['flex flex-1 flex-col  relative ', 'pt-0 lg:pt-12' => isset($headerNavigation), 'pb-12 lg:pb-0' => isset($footerNavigation)])>
+                @if (isset($sidebar))
+                    <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="lg:mt-12 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-30 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
+                        <x-sidebar class="rounded-lg shadow-lg bg-white h-full lg:h-min">
+                            {{ $sidebar }}
+                        </x-sidebar>
+                    </aside>
+                @endif
+    
+                <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6 ', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
+                    
+    
+                    <main id="main-block" class="w-full space-y-4 flex-1 h-full px-2 lg:px-0 pb-8">
+                        {{ $slot }}
+                    </main>
+    
+                    @if (isset($footer))
+                        <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg">
+                            {{ $footer }}
                         </div>
-                    </div>
-                @endif
-
-                <main id="main-block" class="w-full space-y-4 flex-1 h-full px-2 lg:px-0 pb-8">
-                    {{ $slot }}
-                </main>
-
-                @if (isset($footer))
-                    <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg">
-                        {{ $footer }}
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
         </div>
+        
+        
 
         @if (isset($footerNavigation))
             <div class="w-full lg:hidden block fixed bottom-0 h-12 z-40 border-t ">

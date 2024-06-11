@@ -223,20 +223,20 @@ class Announcement extends Model implements HasMedia, Auditable
         );
     }
 
-    public function getTitleAttribute()
-    {
-        return $this->getFeatureByName('title')?->value;
-    }
+    // public function getTitleAttribute()
+    // {
+    //     return $this->getFeatureByName('title')?->value;
+    // }
 
-    public function getCurrentPriceAttribute()
-    {
-        return $this->getFeatureByName('current_price')?->value;
-    }
+    // public function getCurrentPriceAttribute()
+    // {
+    //     return $this->getFeatureByName('current_price')?->value['amount'] . ' ' . $this->getFeatureByName('current_price')?->value['currency'];
+    // }
 
-    public function getSalaryAttribute()
-    {
-        return $this->getFeatureByName('salary')?->value;
-    }
+    // public function getSalaryAttribute()
+    // {
+    //     return $this->getFeatureByName('salary')?->value;
+    // }
 
     public function votes()
     {

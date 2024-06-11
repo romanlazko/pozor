@@ -32,12 +32,13 @@ class CreateAnnouncement extends Command
         $user = User::firstWhere('telegram_chat_id', $telegram_chat->id);
 
         if (! $user) {
-            return $this->bot->executeCommand(Email::$command);
+            return $this->bot->executeCommand(EditProfile::$command);
         }
 
         if (! $user->hasVerifiedEmail()) {
             $buttons = BotApi::inlineKeyboard([
-                [array(SendEmailVerificationNotification::getTitle('ru'), SendEmailVerificationNotification::$command, '')],
+                [array(EditProfile::getTitle('ru'), EditProfile::$command, '')],
+                [array(SendTelegramEmailVerificationNotification::getTitle('ru'), SendTelegramEmailVerificationNotification::$command, '')],
                 [array(MenuCommand::getTitle('ru'), MenuCommand::$command, '')]
             ]);
     

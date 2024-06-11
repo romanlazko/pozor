@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Channels\TelegramChannel;
 use App\Facades\Bot;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Romanlazko\Telegram\App\BotApi;
+use Romanlazko\Telegram\Channels\TelegramChannel;
 
 class NewMessage extends Notification implements ShouldQueue
 {
@@ -33,7 +33,7 @@ class NewMessage extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return [TelegramChannel::class, 'mail'];
+        return ['mail', TelegramChannel::class];
     }
 
     /**
@@ -42,7 +42,7 @@ class NewMessage extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line("🆕You have a new message about the announcement:🆕")
+                    ->line("🆕You have a new message about the announcement🆕")
                     ->line("**{$this->announcement->title}**")
                     ->line($this->message)
                     ->action('View', route('profile.message.show', $this->thread->id))
@@ -51,10 +51,6 @@ class NewMessage extends Notification implements ShouldQueue
 
     public function toTelegram(object $notifiable)
     {
-        if (!$notifiable->chat) {
-            return;
-        }
-
         $text = implode("\n", [
             "🆕You have a new message about the announcement:🆕"."\n",
             "*{$this->announcement->title}*"."\n",
@@ -69,5 +65,15 @@ class NewMessage extends Notification implements ShouldQueue
             'disable_web_page_preview'  => 'true',
             'parse_mode'                => 'Markdown',
         ];
+    }
+
+    public function shouldSend(object $notifiable): bool
+    {
+        $unreadMessagesCount = $this->thread->messages()
+            ->where('read_at', null)
+            ->where('user_id', '!=', $notifiable->id)
+            ->count();
+
+        return $unreadMessagesCount > 0;
     }
 }

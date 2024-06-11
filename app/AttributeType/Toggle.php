@@ -2,13 +2,8 @@
 
 namespace App\AttributeType;
 
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select as ComponentsSelect;
+use App\Models\Feature;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Guava\FilamentClusters\Forms\Cluster;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle as ComponentsToggle;
 
 class Toggle extends BaseAttributeType
@@ -22,6 +17,11 @@ class Toggle extends BaseAttributeType
         return $query;
     }
 
+    public function getValueByFeature(Feature $feature = null)
+    {
+        return $this->attribute->label;
+    }
+
     public function getFilterComponent(Get $get = null)
     {
         if (!$this->attribute->filterable) return null;
@@ -29,7 +29,8 @@ class Toggle extends BaseAttributeType
         return ComponentsToggle::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->columnSpanFull()
-            ->visible(fn (Get $get) => $this->isVisible($get));
+            ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
     public function getCreateComponent(Get $get = null)
@@ -39,6 +40,7 @@ class Toggle extends BaseAttributeType
             ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])
             ->columnStart(['default' => '1', 'sm' => $this->attribute->column_start])
             ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get))
             ->live();
     }
 }

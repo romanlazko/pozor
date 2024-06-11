@@ -14,9 +14,18 @@
         <div class="flex w-full">
             <div class="flex items-center space-x-2">
                 <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white border aspect-square">
-                    <img src="{{ $thread->announcement->getFirstMediaUrl('announcements', 'thumb') }}" alt="" class="object-cover">
+                    <img src="{{ $thread->announcement->getFirstMediaUrl('announcements', 'thumb') }}" alt="" class="object-cover h-full w-full">
                 </div>
-                <p class="font-bold">{{ $thread->announcement->title }}</p>
+                <div>
+                    <p class="font-bold">{{ $thread->announcement->getFeatureByName('title')->value }}</p>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-5 h-5 min-w-5 min-h-5 rounded-full overflow-hidden bg-white border">
+                            <img src="{{ $thread?->recipient?->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="object-cover h-full w-full">
+                        </div>
+                        <p class="text-xs">{{ $thread?->recipient?->name }}</p>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </x-slot>
@@ -28,7 +37,7 @@
                     
                     <div @class(['p-2 shadow-sm rounded-lg space-y-2', 'bg-blue-100' => auth()->user()->id == $message->user_id, 'bg-white' => auth()->user()->id != $message->user_id])>
                         <div class="h-6 flex items-center space-x-2">
-                            <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="min-w-6 min-h-6 w-6 h-6 rounded-full">
+                            <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="min-w-6 min-h-6 w-6 h-6 rounded-full object-cover">
                             <p class="text-xs text-gray-500">{{ $message->user->name }}</p>
                         </div>
                         
@@ -52,7 +61,10 @@
             <div class="flex items-end space-x-2">
                 @livewire('components.textarea')
                 <x-buttons.primary type="submit">
-                    {{ __('Send') }}
+                    <i class="fa-solid fa-paper-plane sm:mr-2"></i>
+                    <span class="hidden sm:block">
+                        {{ __('Send') }}
+                    </span>
                 </x-buttons.primary>
             </div>
         </form>

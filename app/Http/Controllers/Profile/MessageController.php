@@ -18,7 +18,7 @@ class MessageController extends Controller
     public function index()
     {
         $threads = auth()->user()->threads()
-            ?->with('announcement:id', 'announcement.media', 'users:name,id', 'users.media', 'lastMessageRelation')
+            ?->with('announcement:id', 'announcement.media', 'announcement.features', 'announcement.features.attribute', 'users:name,id', 'users.media', 'lastMessageRelation.user:id')
             
             ->whereHas('announcement')
             ->withCount(['messages as uread_messages_count' => function ($query) {
@@ -86,11 +86,11 @@ class MessageController extends Controller
             'message' => $request->message,
         ]);
 
-        $thread->recipient->notify(new NewMessage($thread));
+        $thread->recipient->notify((new NewMessage($thread))->delay(now()->addMinutes(3)));
 
         return redirect()->back()->with([
             'ok' => true,
             'description' => 'Message sent',
-        ]);;
+        ]);
     }
 }

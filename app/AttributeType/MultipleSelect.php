@@ -36,6 +36,7 @@ class MultipleSelect extends BaseAttributeType
             ->columnSpanFull()
             ->multiple()
             ->searchable(false)
-            ->visible(fn (Get $get) => $this->isVisible($get));
+            ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 }

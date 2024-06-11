@@ -36,6 +36,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'telegram_chat_id',
         'lang',
         'locale',
+        'telegram_token'
     ];
 
     /**
@@ -84,11 +85,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         return $this->belongsTo(TelegramChat::class, 'telegram_chat_id', 'id');
     }
 
-    public function profile()
-    {
-        return $this->hasOne(Profile::class);
-    }
-
     public function announcements()
     {
         return $this->hasMany(Announcement::class);
@@ -117,5 +113,10 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function isProfileFilled()
     {
         return ! is_null($this->phone) AND ! is_null($this->lang) AND ! is_null($this->name); 
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('super-duper-admin');
     }
 }

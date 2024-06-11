@@ -4,6 +4,7 @@ namespace App\Bots\pozorbottestbot\Commands\UserCommands;
 
 use App\Models\User;
 use App\Notifications\TelegramConnect;
+use App\Notifications\VerifyTelegramConnection;
 use Romanlazko\Telegram\App\BotApi;
 use Romanlazko\Telegram\App\Commands\Command;
 use Romanlazko\Telegram\App\DB;
@@ -16,7 +17,7 @@ class ConnectCommand extends Command
 
     public static $title = '';
 
-    public static $pattern = "/^(\/start\s)(connect)-(\d+)$/";
+    public static $pattern = "/^(\/start\s)(connect)-(.{10})$/";
 
     protected $enabled = true;
 
@@ -26,9 +27,7 @@ class ConnectCommand extends Command
 
         $telegram_chat = DB::getChat($updates->getChat()->getId());
 
-        $user = User::find($matches[3]);
-
-        $user->notify(new TelegramConnect($telegram_chat->id));
+        User::firstWhere('telegram_token', $matches[3])?->notify(new VerifyTelegramConnection($telegram_chat->id));
 
         return BotApi::sendMessage([
             'chat_id' => $updates->getChat()->getId(),

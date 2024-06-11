@@ -21,6 +21,7 @@ use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
+use App\Livewire\Admin\Users;
 use Illuminate\Http\Request;
 
 /*
@@ -65,10 +66,10 @@ Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('a
     Route::resource('telegram_bot.chat', TelegramChatController::class);
     Route::resource('telegram_bot.advertisement', TelegramAdvertisementController::class);
 
+    Route::get('users', Users::class)->name('users');
     Route::get('category/{category?}', Categories::class)->name('categories');
-
     Route::get('attribute', Attributes::class)->name('attributes');
-    Route::get('announcement', AdminAnnouncements::class)->name('announcement');
+    Route::get('announcements', AdminAnnouncements::class)->name('announcements');
     Route::get('announcement/audit/{announcement}', AnnouncementAudits::class)->name('announcement.audit');
 });
 

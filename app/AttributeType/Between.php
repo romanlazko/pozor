@@ -2,6 +2,7 @@
 
 namespace App\AttributeType;
 
+use App\Models\Feature;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -41,6 +42,7 @@ class Between extends BaseAttributeType
             ->label($this->attribute->label)
             ->columnSpanFull()
             ->columns(['default' => 2])
-            ->visible(fn (Get $get) => $this->isVisible($get));
+            ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 }

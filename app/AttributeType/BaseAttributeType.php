@@ -2,13 +2,8 @@
 
 namespace App\AttributeType;
 
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select as ComponentsSelect;
+use App\Models\Feature;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Guava\FilamentClusters\Forms\Cluster;
-use Filament\Forms\Components\TextInput;
 
 class BaseAttributeType
 {
@@ -19,6 +14,17 @@ class BaseAttributeType
     public function apply($query)
     {
         return $query;
+    }
+
+    public function getValueByFeature(Feature $feature = null)
+    {
+        $attribute_option = $feature->attribute_option;
+        
+        if ($attribute_option) {
+            return $attribute_option->name;
+        }
+
+        return $feature->translated_value[app()->getLocale()] ?? $feature->translated_value['original'] ?? null;
     }
 
     public function create()
@@ -63,5 +69,21 @@ class BaseAttributeType
             return false;
         }
         return true;
+    }
+
+    public function isHidden(Get $get = null)
+    {
+        if (!empty($this->attribute->hidden)) {
+            foreach ($this->attribute->hidden as $condition) {
+                if ($get) {
+                    if ($get($condition['attribute_name']) == $condition['value'] OR $get('attributes.'.$condition['attribute_name']) == $condition['value']) return true;
+                }
+                else {
+                    if (data_get($this->data, $condition['attribute_name']) == $condition['value'] OR data_get($this->data, 'attributes.'.$condition['attribute_name']) == $condition['value']) return true;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

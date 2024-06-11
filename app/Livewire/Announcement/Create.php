@@ -201,7 +201,7 @@ class Create extends Component implements HasForms
                 'attribute_section_id',
                 'required',
                 'rules',
-                'altersyffixes'
+                'altersuffixes'
             )
                 ->with([
                     'attribute_options' => function ($query) {

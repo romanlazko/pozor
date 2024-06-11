@@ -2,6 +2,7 @@
 
 namespace App\Bots\pozorbottestbot\Commands\UserCommands;
 
+use Illuminate\Support\Facades\Validator;
 use Romanlazko\Telegram\App\Commands\Command;
 use Romanlazko\Telegram\App\Entities\Response;
 use Romanlazko\Telegram\App\Entities\Update;
@@ -16,26 +17,27 @@ class AwaitEmail extends Command
 
     public function execute(Update $updates): Response
     {
-        $text = $updates->getMessage()?->getText();
+        $validator = Validator::make(
+            ['email' => $updates->getMessage()?->getText()], 
+            ['email' => 'required|email|unique:users,email',],
+            [
+                'email.unique' => 'Пользователь с таким почтовым адресом уже зарегистрирован',
+                'email.required' => 'Поле e-mail обязательно к заполнению',
+                'email.email' => 'Некорректный e-mail',
+            ]
+        );
 
-        if ($text === null) {
-            $this->handleError("*Пришлите пожалуйста e-mail в виде текста.*");
+        if ($validator->stopOnFirstFailure()->fails()) {
+            $this->handleError($validator->errors()->first());
             return $this->bot->executeCommand(Email::$command);
         }
 
-        if (iconv_strlen($text) > 100){
-            $this->handleError("*Слишком много символов*");
-            return $this->bot->executeCommand(Email::$command);
-        }
+        $validated = $validator->validated();
 
         $this->getConversation()->update([
-            'email' => $text,
+            'email' => $validated['email'],
         ]);
         
-        return $this->bot->executeCommand(Phone::$command);
+        return $this->bot->executeCommand(EditProfile::$command);
     }
-
-
-
-
 }

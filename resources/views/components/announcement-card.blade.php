@@ -13,7 +13,7 @@
                             {{ $announcement->getFeatureByName('title')->value }}
                         </p>
                         <p class="font-bold sm:text-2xl w-full">
-                            {{ $announcement->current_price ?? $announcement->salary }} {{ $announcement->getFeatureByName('currency')?->value }} <span class="font-light text-gray-400 line-through">{{ $announcement->getFeatureByName('old_price')->value ?? '' }}</span>
+                            {{ $announcement->getFeatureByName('current_price')?->value }} <span class="font-light text-gray-400 line-through">{{ $announcement->getFeatureByName('old_price')?->value }}</span>
                         </p>
                         <p class="text-xs block text-gray-500 md:hidden">
                             {{ $announcement->user?->name }}

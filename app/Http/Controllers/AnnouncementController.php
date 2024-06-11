@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Announcement;
-use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\User;
-use Igaster\LaravelCities\Geo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Session;
 
 class AnnouncementController extends Controller
 {
@@ -32,9 +29,10 @@ class AnnouncementController extends Controller
         $announcements = Announcement::with([
                 'media',
                 'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersyffixes,create_type',
+                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersuffixes,create_type',
                 'features.attribute_option:id,alternames',
-                'user', 
+                'user',
+                'geo',
                 'userVotes'
             ])
             ->isPublished()
@@ -56,7 +54,7 @@ class AnnouncementController extends Controller
             'user',
             'user.media',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
-            'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersyffixes,create_type',
+            'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersuffixes,create_type',
             'features.attribute_option:id,alternames',
             'features.attribute.section:id,alternames,order_number', 
             'categories:id,slug,alternames',

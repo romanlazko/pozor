@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\ConnectTelegramController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -36,7 +37,7 @@ Route::middleware(['guest'])->group(function () {
                 ->name('password.store');
 
     Route::get('telegram-email-verification', [VerifyEmailController::class, 'telegramEmailVerify'])
-                ->middleware(['signed', 'throttle:6,1'])
+                // ->middleware(['signed', 'throttle:6,1'])
                 ->name('telegram.email-verification');
 });
 
@@ -47,11 +48,6 @@ Route::middleware('auth')->group(function () {
     Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, 'emailVerify'])
                 ->middleware(['signed', 'throttle:6,1'])
                 ->name('verification.verify');
-    
-
-    Route::get('verify-telegram/{id}/{telegram_chat_id}/{hash}', VerifyTelegramController::class)
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('verification.telegram');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
                 ->middleware('throttle:6,1')
@@ -66,4 +62,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::post('telegram-connect', [ConnectTelegramController::class, 'connectTelegram'])
+                ->name('telegram.connect');
+
+    Route::get('verify-telegram-connection/{telegram_chat_id}/{telegram_token}', [ConnectTelegramController::class, 'verifyTelegramConnection'])
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('verify.telegram.connection');
 });

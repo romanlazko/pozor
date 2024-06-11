@@ -2,6 +2,7 @@
 
 namespace App\AttributeType;
 
+use App\Models\Feature;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -19,9 +20,16 @@ class From extends BaseAttributeType
         return $query;
     }
 
+
+    public function getValueByFeature(Feature $feature = null)
+    {
+        $value = $feature->translated_value[app()->getLocale()] ?? $feature->translated_value['original'] ?? [];
+
+        return ($value['from'] ?? "") . " - " . ($value['to'] ?? "");
+    }
+
     public function create()
     {
-        dump($this->data[$this->attribute->name]);
         return [
             'attribute_id' => $this->attribute->id,
             'translated_value'        => [
@@ -41,7 +49,8 @@ class From extends BaseAttributeType
                 ->default('')
                 ->label($this->attribute->label)
                 ->columnSpanFull()
-                ->visible(fn (Get $get) => $this->isVisible($get));
+                ->visible(fn (Get $get) => $this->isVisible($get))
+                ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
     public function getCreateComponent(Get $get = null)
@@ -60,6 +69,7 @@ class From extends BaseAttributeType
             ->columnSpanFull()
             ->columns(['default' => 2])
             ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get))
             ->required($this->attribute->required);
     }
 }

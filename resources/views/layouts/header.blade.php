@@ -17,8 +17,8 @@
 					<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
 				@endif --}}
 				<div class="relative leading-3">
-					@if (auth()->user()?->unreadMessagesCount > 0)
-						<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
+					@if ($unreadMessagesCount > 0)
+						<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ $unreadMessagesCount }}</p>
 					@endif
 					<i class="fa-solid fa-comments w-4"></i>
 				</div>

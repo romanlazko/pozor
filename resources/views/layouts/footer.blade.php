@@ -19,8 +19,8 @@
     </x-header.link>
     <x-header.link href="{{ route('profile.message.index') }}" :active="request()->routeIs('profile.message.index')" class="border-none">
         <div class="grid relative">
-            @if (auth()->user()?->unreadMessagesCount > 0)
-                <p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-1 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
+            @if ($unreadMessagesCount > 0)
+                <p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-1 text-center content-center items-center">{{ $unreadMessagesCount }}</p>
             @endif
             <i class="fa-solid fa-comments"></i>
             <small class="text-[8px]">{{ __('Messages') }}</small>

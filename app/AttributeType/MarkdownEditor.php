@@ -33,6 +33,7 @@ class MarkdownEditor extends BaseAttributeType
             ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])
             ->columnStart(['default' => '1', 'sm' => $this->attribute->column_start])
             ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get))
             ->required($this->attribute->required)
             ->toolbarButtons([
                 'bold',

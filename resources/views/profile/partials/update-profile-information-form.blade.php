@@ -4,7 +4,7 @@
             @csrf
             @method('patch')
             <label for="avatar" class="block w-14 h-14 min-w-14 min-h-14 rounded-full border-2 hover:border-indigo-700 overflow-hidden">
-                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="object-cover " alt="">
+                <img src="{{ $user->getFirstMediaUrl('avatar', 'thumb') }}" class="object-cover w-full h-full" alt="">
                 <input type="file" name="avatar" id="avatar" class="hidden" accept="image/*" onchange="event.target.form.submit();">
             </label>
             <x-form.error class="mt-2" :messages="$errors->get('avatar')" />
@@ -49,22 +49,22 @@
             <x-form.label :value="__('Select languages you speak')" :required="true"/>
             <div class="w-full flex space-x-3 items-center p-3 border rounded-md mt-1">
                 <x-form.label for="en" class="items-center flex space-x-2">
+                    <x-form.checkbox id="en" name="lang[]" value="en" :checked="in_array('en', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
                         {{ __("English") }}
                     </span>
-                    <x-form.checkbox id="en" name="lang[]" value="en" :checked="in_array('en', auth()?->user()?->lang ?? [])"/>
                 </x-form.label>
                 <x-form.label for="ru" class="items-center flex space-x-2">
+                    <x-form.checkbox id="ru" name="lang[]" value="ru" :checked="in_array('ru', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
                         {{ __("Русский") }}
                     </span>
-                    <x-form.checkbox id="ru" name="lang[]" value="ru" :checked="in_array('ru', auth()?->user()?->lang ?? [])"/>
                 </x-form.label>
                 <x-form.label for="cz" class="items-center flex space-x-2">
+                    <x-form.checkbox id="cz" name="lang[]" value="cz" :checked="in_array('cz', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
                         {{ __("Czech") }}
                     </span>
-                    <x-form.checkbox id="cz" name="lang[]" value="cz" :checked="in_array('cz', auth()?->user()?->lang ?? [])"/>
                 </x-form.label>
             </div>
             

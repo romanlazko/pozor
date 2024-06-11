@@ -34,8 +34,8 @@
 
     <a href="{{ route('profile.message.index') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('profile.message.*')])>
         <div class="relative leading-3">
-            @if (auth()->user()?->unreadMessagesCount > 0)
-                <p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ auth()->user()->unreadMessagesCount }}</p>
+            @if ($unreadMessagesCount > 0)
+                <p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ $unreadMessagesCount }}</p>
             @endif
             <i class="fa-solid fa-comments w-4"></i>
         </div>
@@ -44,7 +44,7 @@
 
     @hasrole('super-duper-admin')
         <hr>
-        <a href="{{ route('admin.announcement') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
+        <a href="{{ route('admin.announcements') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('admin.announcements')])>
             <i class="fa-solid fa-user-tie"></i>
             <span class="font-medium">{{ __("Admin") }}</span>
         </a>

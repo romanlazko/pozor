@@ -56,32 +56,37 @@ class Feature extends Model
 
     public function getValueAttribute()
     {
-        $attribute_option = $this->attribute_option;
+        // $attribute_option = $this->attribute_option;
         
-        if ($attribute_option) {
-            return $attribute_option->name;
-        }
+        // if ($attribute_option) {
+        //     return $attribute_option->name;
+        // }
 
-        $value = ($this->translated_value[app()->getLocale()] ?? $this->translated_value['original']);
+        // $value = ($this->translated_value[app()->getLocale()] ?? $this->translated_value['original']);
 
-        if ($this->attribute->create_type == "between") {
-            if (is_array($value)) {
-                $value = $value['min'] . ' - ' . $value['max'];
-            }
-        }
+        // if ($this->attribute->create_type == "between") {
+        //     if (is_array($value)) {
+        //         $value = $value['min'] . ' - ' . $value['max'];
+        //     }
+        // }
 
-        if ($this->attribute->create_type == "toggle") {
-            $value = $this->attribute->label;
-        }
+        // if ($this->attribute->create_type == "toggle") {
+        //     $value = $this->attribute->label;
+        // }
 
-        if ($this->attribute->create_type == "from") {
+        // if ($this->attribute->create_type == "from") {
             
-            if (is_array($value)) {
-                $value = $value['from'] . ' - ' . $value['to'];
-            }
+        //     if (is_array($value)) {
+        //         $value = $value['from'] . ' - ' . $value['to'];
+        //     }
+        // }
+
+        $class = "App\\AttributeType\\" . str_replace('_', '', ucwords($this->attribute->create_type, '_'));
+        if (class_exists($class)) {
+            return (new $class($this->attribute))->getValueByFeature($this);
         }
 
-        return $value;
+        return null;
     }
 
     public function getLabelAttribute()
@@ -91,10 +96,7 @@ class Feature extends Model
 
     public function getSuffixAttribute()
     {
-        if ($this->attribute->create_type == "price") {
-            $suffix = $this->announcement->getFeatureByName('currency')->value;
-        }
-        return $suffix ?? $this->attribute->suffix;
+        return $this->attribute->suffix;
     }
 
     // public function getTranslatedValueAttribute()

@@ -20,6 +20,10 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // View::share('unreadMessagesCount', auth()->user()?->unreadMessagesCount);
+        View::composer('*', function ($view) {
+            $view->with('unreadMessagesCount', auth()->user()?->unreadMessagesCount);
+        });
         // View::composer('announcement.show', function ($view) {
         //     $announcement = $view->getData()['announcement'];
 

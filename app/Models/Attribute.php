@@ -16,7 +16,7 @@ class Attribute extends Model
         'alterlabels' => 'array',
         'visible' => 'array',
         'rules' => 'array',
-        'altersyffixes' => 'array',
+        'altersuffixes' => 'array',
     ];
 
     public function getVisibleConditionAttribute()
@@ -36,7 +36,7 @@ class Attribute extends Model
 
     public function getSuffixAttribute()
     {
-        return $this->altersyffixes[app()->getLocale()] ?? $this->altersyffixes['en'] ?? null;
+        return $this->altersuffixes[app()->getLocale()] ?? $this->altersuffixes['en'] ?? null;
     }
 
     public function scopeFindByName($query, $name)

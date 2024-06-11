@@ -30,6 +30,7 @@ class CheckboxList extends BaseAttributeType
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))
             ->columns($this->attribute->column_span)
             ->columnSpanFull()
-            ->visible(fn (Get $get) => $this->isVisible($get));
+            ->visible(fn (Get $get) => $this->isVisible($get))
+            ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 }

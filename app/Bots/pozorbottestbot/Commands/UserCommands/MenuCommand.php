@@ -25,6 +25,7 @@ class MenuCommand extends Command
     {
         $buttons = BotApi::inlineKeyboard([
             [array(CreateAnnouncement::getTitle('ru'), CreateAnnouncement::$command, '')],
+            [array(EditProfile::getTitle('ru'), EditProfile::$command, '')],
         ]);
 
         $text = implode("\n", [

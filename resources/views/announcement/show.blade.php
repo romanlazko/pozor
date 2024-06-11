@@ -53,7 +53,7 @@
                     <h1 class="font-bold text-lg lg:text-2xl">
                         {{ ucfirst($announcement->getFeatureByName('title')?->value) }} 
                     </h1>
-                    <span class="text-xl text-indigo-600">{{ $announcement->current_price ?? $announcement->salary }} {{ $announcement->getFeatureByName('currency')?->value }}</span>
+                    <span class="text-xl text-indigo-600">{{ $announcement->getFeatureByName('current_price')?->value }}</span>
                     
                     <p class="text-sm text-gray-500">
                         {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} -
@@ -97,12 +97,11 @@
                                 
                                 <div class="w-full space-y-1 ">
                                     @foreach ($feature_section->sortBy('attribute.section.order_number') as $feature)
-                                        <div class="w-full flex space-x-2 text-base items-center">
-                                            <span class="text-gray-500 inline-block">- {{ $feature->label }}:</span>
+                                        <div class="w-full grid grid-cols-2 space-x-2 text-base ">
+                                            <span class="text-gray-500 inline-block">{{ $feature->label }}:</span>
                                             <span class="">
                                                 {{ $feature->value }} {{ $feature->suffix }}
                                             </span>
-                                            <hr>
                                         </div>
                                     @endforeach
                                 </div>

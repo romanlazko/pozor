@@ -33,7 +33,7 @@ class Thread extends Model
 
     public function lastMessageRelation()
     {
-        return $this->messages()->with('user')->latest()->limit(1);
+        return $this->messages()->latest();
     }
 
     public function getLastMessageAttribute()

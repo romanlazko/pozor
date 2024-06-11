@@ -36,12 +36,6 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        // $avatarPath = 'storage/avatars/' . uniqid().$request->name . ".png";
-
-        // Avatar::create($request->name);
-
-        
         
         $user = User::create([
             'name' => $request->name,
@@ -49,15 +43,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        try {
-            $user->addMediaFromBase64(Avatar::create($request->name))->toMediaCollection('avatar');
-        } catch (\Exception $e) {
-            
-            $user->delete();
-            dd($e);
-        }
-
-        
+        $user->addMediaFromBase64(Avatar::create($request->name))->toMediaCollection('avatar');
 
         event(new Registered($user));
 

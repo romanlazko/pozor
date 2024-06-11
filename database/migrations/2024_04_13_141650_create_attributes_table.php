@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->json('alterlabels')->nullable();
-            $table->json('altersyffixes')->nullable();
+            $table->json('altersuffixes')->nullable();
             $table->string('create_type')->nullable();
             $table->string('search_type')->nullable();
             $table->string('default')->nullable();
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('column_start')->nullable();
             $table->integer('order_number')->nullable();
             $table->json('visible')->nullable();
+            $table->json('hidden')->nullable();
             $table->boolean('translatable')->default(false);
             $table->boolean('is_feature')->default(false);
             $table->boolean('required')->default(false);

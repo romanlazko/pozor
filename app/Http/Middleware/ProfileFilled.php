@@ -15,7 +15,7 @@ class ProfileFilled
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->user()->isProfileFilled()) {
+        if (! auth()->user()->isProfileFilled() && ! auth()->user()->isSuperAdmin()) {
             return redirect()->route('profile.edit')->with([
                 'ok' => false,
                 'description' => __("Please fill your profile")
