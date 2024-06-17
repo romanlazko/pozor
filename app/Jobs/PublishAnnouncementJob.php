@@ -28,11 +28,11 @@ class PublishAnnouncementJob
 
     public function handle(): void
     {
-        $announcement = Announcement::where('id', $this->announcement_id)->with(['channels' => function ($query) {
-            return $query->whereNot('status', 12);
-        }])->first();
+        $announcement = Announcement::where('id', $this->announcement_id)->with('channels')->first();
 
-        dd($announcement->channels);
+        dd($announcement->channels->filter(function ($channel) {
+            return ! $channel->status->isPublished();
+        }));
 
         if ($announcement->status->isAwaitPublication() AND $this->publishOnTelegram($announcement)) {
             $announcement->published();
@@ -41,10 +41,11 @@ class PublishAnnouncementJob
 
     public function publishOnTelegram($announcement)
     {
-        
         if ($announcement->channels->isEmpty()) {
             return true;
         }
+
+
         
         foreach ($announcement->channels as $announcement_channel) {
             try {
