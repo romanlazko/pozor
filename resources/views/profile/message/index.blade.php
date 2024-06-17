@@ -5,13 +5,20 @@
         </h2>
     </x-slot>
 
-    <div class="grid grid-cols-1 gap-2 p-2">
+    <div class="grid grid-cols-1">
         @forelse ($threads->sortByDesc('lastMessage.updated_at') ?? [] as $thread)
-            <a href="{{ route('profile.message.show', $thread->id) }}"  class="flex items-center space-x-2 relative">
-                @if ($thread?->uread_messages_count > 0)
-                    <span class="block absolute text-xs text-white w-5 h-5 min-w-5 min-h-5 rounded-full bg-blue-500 text-center content-center items-center top-1 left-0 m-0">{{ $thread?->uread_messages_count }}</span>
-                @endif
+            <a 
+                href="{{ route('profile.message.show', $thread->id) }}" 
+                @class([
+                    'flex items-center space-x-2 relative p-2 hover:border-gray-900 border', 
+                    'rounded-b-lg' => $loop->last, 
+                    'rounded-t-lg' => $loop->first,
+                ])
+            >
                 <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white-300 border ">
+                    @if ($thread?->uread_messages_count > 0)
+                        <span class="block absolute text-xs text-white w-5 h-5 min-w-5 min-h-5 rounded-full bg-blue-500 text-center content-center items-center top-1 left-1 m-0">{{ $thread?->uread_messages_count }}</span>
+                    @endif
                     <img src="{{ $thread?->announcement?->getFirstMediaUrl('announcements', 'thumb') }}" alt="" class="object-cover h-full w-full">
                 </div>
                 <div>
@@ -34,9 +41,6 @@
                     </p>
                 </div>
             </a>
-            @if (!$loop->last)
-                <hr>
-            @endif
         @empty
             <p>{{ __('No messages found.') }}</p>
         @endforelse

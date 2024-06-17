@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\MediaLibrary\HasMedia;
@@ -58,60 +59,39 @@ class Category extends Model implements HasMedia
         return $this->belongsTo(Category::class, 'parent_id', 'id');
     }
 
-    public function getNameAttribute()
+    public function siblings()
     {
-        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
+        return $this->hasMany(Category::class, 'parent_id', 'parent_id');
     }
 
-    public function getTranslatedNameAttribute()
+    public function channels()
     {
-        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
+        return $this->belongsToMany(TelegramChat::class, 'category_channel', 'category_id', 'telegram_chat_id');
     }
 
-    public function getChildren()
-    {
-        $children = collect([$this]);
-
-        foreach ($this->children as $child) {
-            foreach ($child->getChildren() as $child) {
-                $children->add($child);
-            }
-        }
-
-        return $children;
-    }
-
-    // public function getParentsAndSelf()
-    // {
-    //     $parents = [$this];
-
-    //     $currentCategory = $this;
-    //     while ($currentCategory->parent) {
-    //         $parents[] = $currentCategory->parent;
-    //         $currentCategory = $currentCategory->parent;
-    //     }
-
-    //     return collect($parents)->reverse();
-    // }
-
-    public function getParentsAndSelf()
-    {
-        return collect([
-            $this,
-            ...$this->parent?->getParentsAndSelf() ?? []
-        ]);
-    }
-    
     public function attributes()
     {
         return $this->belongsToMany(Attribute::class);
     }
 
-    private function getParent($parent)
+    public function getNameAttribute()
     {
-        foreach ($parent->parent as $parent) {
-            $parents[] = $parent;
-        }
+        return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
+    }
+
+    public function getParentsAndSelf()
+    {
+        return Cache::remember($this?->slug.'_parents_and_self', 3600, fn () => 
+            collect([
+                $this,
+                ...$this->parent?->getParentsAndSelf() ?? []
+            ])
+        );
+    }
+
+    public function scopeIsActive()
+    {
+        return $this->where('is_active', true);
     }
 
     public function getDynamicSEOData(): SEOData

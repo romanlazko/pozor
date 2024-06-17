@@ -193,6 +193,42 @@ class AttributeCategoryTableSeeder extends Seeder
                 'attribute_id' => 28,
                 'category_id' => 3,
             ),
+            29 => 
+            array (
+                'id' => 45,
+                'attribute_id' => 4,
+                'category_id' => 4,
+            ),
+            30 => 
+            array (
+                'id' => 46,
+                'attribute_id' => 5,
+                'category_id' => 4,
+            ),
+            31 => 
+            array (
+                'id' => 47,
+                'attribute_id' => 29,
+                'category_id' => 1,
+            ),
+            32 => 
+            array (
+                'id' => 48,
+                'attribute_id' => 29,
+                'category_id' => 2,
+            ),
+            33 => 
+            array (
+                'id' => 49,
+                'attribute_id' => 29,
+                'category_id' => 6,
+            ),
+            34 => 
+            array (
+                'id' => 50,
+                'attribute_id' => 29,
+                'category_id' => 7,
+            ),
         ));
         
         

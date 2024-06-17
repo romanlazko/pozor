@@ -16,15 +16,25 @@ class AnnouncementController extends Controller
     {
         $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
 
-        $category = Category::where('slug', $request->category)->select('id', 'alternames', 'slug', 'parent_id')->withCount(['announcements' => fn ($query) => $query->where('status', Status::published)])->first();
-
-        $categories = Category::where(['parent_id' => $category?->id ?? null])
-            ->select('id', 'alternames', 'slug')
-            ->with('media')
-            ->where('is_active', true)
+        $category = Category::select('id', 'alternames', 'slug', 'parent_id')
+            ->where('slug', $request->category)
             ->withCount(['announcements' => fn ($query) => $query->isPublished()])
-            ->get()
-            ->filter(fn ($category) => $category->announcements_count > 0);
+            ->with([
+                'children' => fn ($query) => 
+                    $query->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
+                'siblings' => fn ($query) => 
+                    $query->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
+            ])
+            ->first();
+
+        $categories = ($category?->children->isNotEmpty() ? $category->children : null) 
+            ?? ($category?->siblings->isNotEmpty() ? $category->siblings : null) 
+            ?? Category::whereNull('parent_id')
+                ->with('media')
+                ->withCount(['announcements' => fn ($query) => $query->isPublished()])
+                ->get();
+
+        $categories = $categories->filter(fn ($category) => $category->announcements_count > 0);
 
         $announcements = Announcement::with([
                 'media',
@@ -33,7 +43,8 @@ class AnnouncementController extends Controller
                 'features.attribute_option:id,alternames',
                 'user',
                 'geo',
-                'userVotes'
+                'userVotes',
+                'currentStatus'
             ])
             ->isPublished()
             ->categories($category)
@@ -41,7 +52,7 @@ class AnnouncementController extends Controller
             ->features($category, $data['attributes'] ?? null)
             ->paginate(30)->withQueryString();
 
-        return view('announcement.index', compact('announcements', 'categories', 'category', 'data'));
+        return view('announcement.index', compact('announcements', 'category', 'categories', 'data'));
     }
 
     public function show(Announcement $announcement)

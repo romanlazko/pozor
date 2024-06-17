@@ -6,20 +6,16 @@ use App\Livewire\Components\Forms\Components\Wizard;
 use App\Livewire\Traits\AnnouncementCrud;
 use App\Models\Attribute;
 use App\Models\Category;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Igaster\LaravelCities\Geo;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +48,7 @@ class Create extends Component implements HasForms
 
     public function mount()
     {
-        $this->parent_categories = Category::where('parent_id', null)->get()->pluck('translated_name', 'id');
+        $this->parent_categories = Category::where('parent_id', null)->get()->pluck('name', 'id');
     }
 
     public function form(Form $form): Form
@@ -103,7 +99,6 @@ class Create extends Component implements HasForms
                     </x-filament.submit>
                 BLADE)))
                 ->contained(false)
-                // ->skippable()
             ])
             ->statePath('data');
     }
@@ -175,7 +170,6 @@ class Create extends Component implements HasForms
             $class = "App\\AttributeType\\" . str_replace('_', '', ucwords($attribute->create_type, '_'));
             if (class_exists($class)) {
                 $fields[] = (new $class($attribute))->getCreateComponent();
-                // $this->data['attributes'][$attribute->name] = null;
             }
         }
 

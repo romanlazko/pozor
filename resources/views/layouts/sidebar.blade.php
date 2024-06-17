@@ -19,7 +19,7 @@
 			</x-responsive-nav-link>
 		@endhasrole --}}
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.telegram_bot.index') }}" >
+			<x-responsive-nav-link href="{{ route('admin.telegram.bot.index') }}" >
 				{{ __('telegram') }}
 			</x-responsive-nav-link>
 		@endhasrole

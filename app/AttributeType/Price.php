@@ -15,14 +15,14 @@ class Price extends BaseAttributeType
 {
     public function apply($query)
     {
-        $max = $this->data[$this->attribute->name]['max'] ?? null;
-        $min = $this->data[$this->attribute->name]['min'] ?? null;
+        $from = $this->data[$this->attribute->name]['from'] ?? null;
+        $to = $this->data[$this->attribute->name]['to'] ?? null;
 
-        $query->when(!empty($min) OR !empty($max), function ($query) use ($min, $max){
-            $query->whereHas('features', function ($query) use ($min, $max){
+        $query->when(!empty($min) OR !empty($max), function ($query) use ($to, $from){
+            $query->whereHas('features', function ($query) use ($to, $from){
                 $query->where('attribute_id', $this->attribute->id)
-                    ->when(!empty($min), fn ($query) => $query->where('translated_value->original->amount', '>=', (integer)$min))
-                    ->when(!empty($max), fn ($query) => $query->where('translated_value->original->amount', '<=', (integer)$max));
+                    ->when(!empty($min), fn ($query) => $query->where('translated_value->original->amount', '>=', (integer)$to))
+                    ->when(!empty($max), fn ($query) => $query->where('translated_value->original->amount', '<=', (integer)$from));
             });
         });
 
@@ -60,6 +60,7 @@ class Price extends BaseAttributeType
                     ->options(Currency::class)
                     ->required($this->attribute->required)
                     ->columnSpan(1)
+                    ->placeholder(__('filament.labels.currency')),
             ])
             ->label($this->attribute->label)
             ->columnSpanFull()
@@ -72,12 +73,12 @@ class Price extends BaseAttributeType
     public function getFilterComponent(Get $get = null)
     {   
         return Cluster::make([
-            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.min')
-                ->placeholder('min')
+            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.from')
+                ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default(''),
-            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.max')
-                ->placeholder('max')
+            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.to')
+                ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
                 ->default(''),
             ])

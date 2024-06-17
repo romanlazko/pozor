@@ -6,7 +6,6 @@
 		<a href="{{ route('announcement.index') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
 		</a>
-		<x-locale/>
 		<button @click="sidebarOpen = false" class="text-gray-500 focus:outline-none lg:hidden">
 			<i class="fa-solid fa-xmark text-2xl hover:text-gray-800"></i>
 		</button>

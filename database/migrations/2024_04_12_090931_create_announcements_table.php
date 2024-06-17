@@ -20,14 +20,6 @@ return new class extends Migration
             $table->string('slug')->nullable();
 
             $table->foreignIdFor(Geo::class)->nullable();
-            $table->double('latitude')->nullable();
-            $table->double('longitude')->nullable();
-            
-            $table->boolean('should_be_published_in_telegram')->default(true);
-
-            $table->unsignedBigInteger('views')->default('0');
-
-            $table->integer('status')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

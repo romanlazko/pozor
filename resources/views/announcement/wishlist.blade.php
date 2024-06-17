@@ -9,7 +9,7 @@
         <div class="w-full space-y-6">
             <div class="w-full grid grid-cols-1 gap-6">
                 @foreach ($announcements as $index => $announcement)
-                    <x-announcement-card :announcement="$announcement" />
+                    <x-announcement-card :announcement="$announcement" @class(['rounded-b-lg' => $loop->last, 'rounded-t-lg' => $loop->first])/>
                 @endforeach
             </div>
         </div>

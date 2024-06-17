@@ -19,6 +19,7 @@ class SuperDuperAdminSeeder extends Seeder
             'name' => 'SuperDuperAdmin',
             'email' => 'super-duper-admin@admin.com',
             'password' => Hash::make('admin'),
+            'email_verified_at' => now(),
         ])
         ->roles()
         ->create([

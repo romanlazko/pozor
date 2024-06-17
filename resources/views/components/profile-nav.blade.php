@@ -41,6 +41,8 @@
         </div>
         <span class="font-medium">{{ __("Messages") }}</span>
     </a>
+    <hr>
+    <x-locale class="w-full"/>
 
     @hasrole('super-duper-admin')
         <hr>

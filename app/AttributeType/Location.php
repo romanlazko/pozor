@@ -26,9 +26,11 @@ class Location extends BaseAttributeType
 
     public function apply($query)
     {
-        $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 
-            $query->redius($location->lat, $location->long, $this->data['radius'])
-        );
+        $query->whereHas('geo', function ($query) {
+            $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 
+                $query->radius($location->latitude, $location->longitude, (integer) $this->data['radius'] ?? 30)
+            );
+        });
 
         return $query;
     }
@@ -40,17 +42,17 @@ class Location extends BaseAttributeType
         return Grid::make(2)
             ->schema([
                 ComponentsSelect::make('country')
-                    ->label(__('Country'))
+                    ->label(__('filament.labels.country'))
                     ->options($this->countries->pluck('name', 'country'))
                     ->searchable()
                     ->afterStateUpdated(function (Set $set) {
-                        $set('geo_id', null);
+                        $set('attributes.geo_id', null);
                     })
-                    ->placeholder(__('Country'))
+                    ->placeholder(__('filament.labels.country'))
                     ->default('CZ')
                     ->live(),
-                ComponentsSelect::make('geo_id')
-                    ->label(__('City'))
+                ComponentsSelect::make('attributes.geo_id')
+                    ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
                     ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')?->pluck('name', 'id'))
@@ -60,7 +62,20 @@ class Location extends BaseAttributeType
                             ->pluck('name', 'id');
                     })
                     ->live()
-                    ->placeholder(__('City'))
+                    ->placeholder(__('filament.labels.city')),
+                ComponentsSelect::make('attributes.radius')
+                    ->hiddenLabel()
+                    ->options([
+                        10 => '10 km',
+                        20 => '20 km',
+                        30 => '30 km',
+                        40 => '40 km',
+                        50 => '50 km',
+                        60 => '60 km',
+                        70 => '70 km',
+                    ])
+                    ->hidden(fn (Get $get) => $get('attributes.geo_id') == null)
+                    ->placeholder(__('filament.labels.radius')),
             ]);
     }
 
@@ -69,17 +84,17 @@ class Location extends BaseAttributeType
         return Grid::make(2)
             ->schema([
                 ComponentsSelect::make('country')
-                    ->label(__('Country'))
+                    ->label(__('filament.labels.country'))
                     ->options($this->countries->pluck('name', 'country'))
                     ->searchable()
                     ->afterStateUpdated(function (Set $set) {
                         $set('geo_id', null);
                     })
-                    ->placeholder(__('Country'))
+                    ->placeholder(__('filament.labels.country'))
                     ->default('CZ')
                     ->live(),
                 ComponentsSelect::make('geo_id')
-                    ->label(__('City'))
+                    ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
                     ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')?->pluck('name', 'id'))
@@ -89,7 +104,7 @@ class Location extends BaseAttributeType
                             ->pluck('name', 'id');
                     })
                     ->live()
-                    ->placeholder(__('City'))
+                    ->placeholder(__('filament.labels.city'))
             ]);
     }
 }

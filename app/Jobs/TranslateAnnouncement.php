@@ -32,25 +32,34 @@ class TranslateAnnouncement implements ShouldQueue
     {
         if ($this->announcement->status->isAwaitTranslation()) {
 
-            if (!$this->announcement->translated_title) {
-                $this->announcement->update([
-                    'translated_title' => [
-                        'en' => Deepl::translateText($this->announcement->title, null, 'en-US')->text,
-                        'ru' => Deepl::translateText($this->announcement->title, null, 'RU')->text,
-                        'cz' => Deepl::translateText($this->announcement->title, null, 'CS')->text,
-                    ],
+            foreach ($this->announcement->features->where('attribute.translatable', true) as $feature) {
+                $feature->update([
+                    'translated_value' => [
+                        'original' => $feature->translated_value['original'],
+                        ...Deepl::translate($feature->translated_value['original'])
+                    ]
                 ]);
             }
 
-            if (!$this->announcement->translated_description) {
-                $this->announcement->update([
-                    'translated_description' => [
-                        'en' => Deepl::translateText($this->announcement->description, null, 'en-US')->text,
-                        'ru' => Deepl::translateText($this->announcement->description, null, 'RU')->text,
-                        'cz' => Deepl::translateText($this->announcement->description, null, 'CS')->text,
-                    ],
-                ]);
-            }
+            // if (!$this->announcement->translated_title) {
+            //     $this->announcement->update([
+            //         'translated_title' => [
+            //             'en' => Deepl::translateText($this->announcement->title, null, 'en-US')->text,
+            //             'ru' => Deepl::translateText($this->announcement->title, null, 'RU')->text,
+            //             'cz' => Deepl::translateText($this->announcement->title, null, 'CS')->text,
+            //         ],
+            //     ]);
+            // }
+
+            // if (!$this->announcement->translated_description) {
+            //     $this->announcement->update([
+            //         'translated_description' => [
+            //             'en' => Deepl::translateText($this->announcement->description, null, 'en-US')->text,
+            //             'ru' => Deepl::translateText($this->announcement->description, null, 'RU')->text,
+            //             'cz' => Deepl::translateText($this->announcement->description, null, 'CS')->text,
+            //         ],
+            //     ]);
+            // }
 
             
     
@@ -71,6 +80,6 @@ class TranslateAnnouncement implements ShouldQueue
 
     public function failed(Throwable $exception): void
     {
-        $this->announcement->translationFailed($exception);
+        $this->announcement->translationFailed(['info' => $exception->getMessage()]);
     }
 }

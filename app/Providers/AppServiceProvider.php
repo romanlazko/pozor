@@ -18,9 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // $this->app->bind('deepl', function () {
-        //     return new Translator(env('DEEPL_API_KEY'));
-        // });
+        $this->app->bind('deepl', function () {
+            return new Translator(env('DEEPL_API_KEY'));
+        });
 
         $this->app->bind('bot', function () {
             return new Bot(env('TELEGRAM_BOT_TOKEN', TelegramBot::first()->token));

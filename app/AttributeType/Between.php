@@ -13,14 +13,14 @@ class Between extends BaseAttributeType
 {
     public function apply($query)
     {
-        $max = $this->data[$this->attribute->name]['max'];
-        $min = $this->data[$this->attribute->name]['min'];
+        $from = $this->data[$this->attribute->name]['from'];
+        $to = $this->data[$this->attribute->name]['to'];
 
-        $query->when(!empty($min) OR !empty($max), function ($query) use ($min, $max){
-            $query->whereHas('features', function ($query) use ($min, $max){
+        $query->when(!empty($min) OR !empty($max), function ($query) use ($from, $to){
+            $query->whereHas('features', function ($query) use ($from, $to){
                 $query->where('attribute_id', $this->attribute->id)
-                    ->when(!empty($min), fn ($query) => $query->where('translated_value->original', '>=', (integer)$min))
-                    ->when(!empty($max), fn ($query) => $query->where('translated_value->original', '<=', (integer)$max));
+                    ->when(!empty($min), fn ($query) => $query->where('translated_value->original', '>=', (integer)$from))
+                    ->when(!empty($max), fn ($query) => $query->where('translated_value->original', '<=', (integer)$to));
             });
         });
 
@@ -30,12 +30,12 @@ class Between extends BaseAttributeType
     public function getFilterComponent(Get $get = null)
     {   
         return Cluster::make([
-            TextInput::make('attributes.'.$this->attribute->name.'.min')
-                ->placeholder('min')
+            TextInput::make('attributes.'.$this->attribute->name.'.from')
+                ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default(''),
-            TextInput::make('attributes.'.$this->attribute->name.'.max')
-                ->placeholder('max')
+            TextInput::make('attributes.'.$this->attribute->name.'.to')
+                ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
                 ->default(''),
             ])

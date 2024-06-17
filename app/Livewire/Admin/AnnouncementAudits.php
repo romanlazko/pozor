@@ -69,7 +69,7 @@ class AnnouncementAudits extends Component implements HasForms, HasTable
             ])
             ->headerActions([
                 Action::make('back')
-                    ->url(route('admin.announcement'))
+                    // ->url(route('admin.announcement'))
             ])
             ->paginationPageOptions([25, 50, 100]);
     }

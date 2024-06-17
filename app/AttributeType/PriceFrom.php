@@ -16,7 +16,7 @@ class PriceFrom extends BaseAttributeType
     public function apply($query)
     {
         $query->whereHas('features', function ($query) {
-            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer)$this->data[$this->attribute->name]['min']);
+            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer)$this->data[$this->attribute->name]['from']);
         });
 
         return $query;
@@ -48,8 +48,8 @@ class PriceFrom extends BaseAttributeType
 
     public function getFilterComponent(Get $get = null)
     {   
-        return ComponentsTextInput::make('attributes.'.$this->attribute->name.'.min')
-                ->placeholder(__('from'))
+        return ComponentsTextInput::make('attributes.'.$this->attribute->name.'.from')
+                ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default('')
                 ->label($this->attribute->label)
@@ -60,30 +60,36 @@ class PriceFrom extends BaseAttributeType
 
     public function getCreateComponent(Get $get = null)
     {
-        return Cluster::make([
-            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount.from')
-                ->placeholder(__('from'))
-                ->numeric()
-                ->default('')
-                ->required($this->attribute->required)
-                ->numeric()
-                ->columnSpan(2),
-            ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount.to')
-                ->placeholder(__('to'))
-                ->numeric()
-                ->default('')
-                ->required($this->attribute->required)
-                ->numeric()
-                ->columnSpan(2),
-            Select::make('attributes.'.$this->attribute->name.'.currency')
-                ->options(Currency::class)
-                ->required($this->attribute->required)
-                ->columnSpan(['default' => 4, 'sm' => 1, 'md' => 1, 'lg' => 1, 'xl' => 1, 'xxl' => 1]),
-        ])
-        ->label($this->attribute->label)
-        ->columnSpanFull()
-        ->columns(['default' => 4, 'sm' => 5, 'md' => 5, 'lg' => 5, 'xl' => 5, 'xxl' => 5])
-        ->visible(fn (Get $get) => $this->isVisible($get))
-        ->hidden(fn (Get $get) => $this->isHidden($get));
+        return Grid::make(2)
+            ->schema([
+                Cluster::make([
+                        ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount.from')
+                            ->placeholder(__('filament.placeholders.from'))
+                            ->numeric()
+                            ->default('')
+                            ->required($this->attribute->required)
+                            ->numeric()
+                            ->columnSpan(1),
+                        ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount.to')
+                            ->placeholder(__('filament.placeholders.to'))
+                            ->numeric()
+                            ->default('')
+                            ->required($this->attribute->required)
+                            ->numeric()
+                            ->columnSpan(1),
+                    ])
+                    ->label($this->attribute->label)
+                    ->columnSpan(2)
+                    ->columns(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 2, 'xl' => 2, 'xxl' => 2])
+                    ->visible(fn (Get $get) => $this->isVisible($get))
+                    ->hidden(fn (Get $get) => $this->isHidden($get)),
+
+                Select::make('attributes.'.$this->attribute->name.'.currency')
+                    ->options(Currency::class)
+                    ->hiddenLabel()
+                    ->placeholder(__('filament.placeholders.currency'))
+                    ->required($this->attribute->required)
+                    ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 1, 'lg' => 1, 'xl' => 1, 'xxl' => 1]),
+            ]);
     }
 }

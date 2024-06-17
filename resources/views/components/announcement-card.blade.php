@@ -1,14 +1,13 @@
-<div class="announcement-card group transition ease-in-out duration-150 w-full sm:flex space-x-0 sm:space-x-3 sm:space-y-0" >
-    
-    <div class="w-full sm:flex space-x-0 sm:space-x-3 sm:space-y-0 bg-white rounded-lg shadow-lg p-3">
-        <div class="w-full sm:w-1/3 rounded-lg overflow-hidden order-1 sm:order-1 h-min">
+<div class="announcement-card group transition ease-in-out duration-150 w-full sm:flex space-x-0 sm:space-x-3 sm:space-y-0">
+    <div {{ $attributes->merge(['class' => "w-full sm:flex space-x-0 sm:space-x-3 sm:space-y-0 bg-white border p-3 hover:border-gray-900"]) }} >
+        <div class="w-full sm:w-1/3 rounded-lg overflow-hidden h-min">
             <x-slider :medias="$announcement->getMedia('announcements')" :h="250" :thumb="false"/>
         </div>
     
-        <div class="w-full sm:w-2/3 order-3 sm:order-2 p-1 flex">
+        <a href="{{ route('announcement.show', $announcement) }}" class="w-full sm:w-2/3 flex py-2">
             <div class="flex flex-col w-full">
                 <div class="flex-1 ">
-                    <a class="" href="{{ route('announcement.show', $announcement) }}">
+                    <div>
                         <p class="sm:text-xl sm:font-bold text-indigo-700 hover:text-indigo-800 hover:underline" >
                             {{ $announcement->getFeatureByName('title')->value }}
                         </p>
@@ -18,7 +17,7 @@
                         <p class="text-xs block text-gray-500 md:hidden">
                             {{ $announcement->user?->name }}
                         </p>
-                    </a>
+                    </div>
             
                     <div class="overflow-hidden max-h-20">
                         <x-markdown class="text-xs text-gray-600 hidden sm:block">
@@ -45,10 +44,8 @@
                     </p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 w-max">
-                <livewire:components.like-dislike :announcement="$announcement"/>
-            </div>
-        </div>
+            <livewire:components.like-dislike :announcement="$announcement"/>
+        </a>
     </div>
     
     

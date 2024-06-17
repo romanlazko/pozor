@@ -7,8 +7,9 @@
         <x-profile-nav/>
     </x-slot>
 
-    <x-slot name="header">
-        <a href="{{ route('profile.message.index') }}"  class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
+    <div class="w-full items-center justify-between flex space-x-3 sticky top-0 z-30 bg-white p-2 md:p-0 border-b lg:border-none">
+
+        <a href="{{ route('profile.message.index') }}" class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <div class="flex w-full">
@@ -28,14 +29,13 @@
                 
             </div>
         </div>
-    </x-slot>
+    </div>
     
     <div class="grid grid-cols-1 gap-2 p-2" x-init="window.scrollTo(0,document.body.scrollHeight)">
         @foreach ($messages as $message)
             <div class="w-full">
                 <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>
-                    
-                    <div @class(['p-2 shadow-sm rounded-lg space-y-2', 'bg-blue-100' => auth()->user()->id == $message->user_id, 'bg-white' => auth()->user()->id != $message->user_id])>
+                    <div @class(['p-2 shadow-sm rounded-lg space-y-2', 'bg-blue-100' => auth()->user()->id == $message->user_id, 'bg-gray-100' => auth()->user()->id != $message->user_id])>
                         <div class="h-6 flex items-center space-x-2">
                             <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="min-w-6 min-h-6 w-6 h-6 rounded-full object-cover">
                             <p class="text-xs text-gray-500">{{ $message->user->name }}</p>
@@ -61,10 +61,7 @@
             <div class="flex items-end space-x-2">
                 @livewire('components.textarea')
                 <x-buttons.primary type="submit">
-                    <i class="fa-solid fa-paper-plane sm:mr-2"></i>
-                    <span class="hidden sm:block">
-                        {{ __('Send') }}
-                    </span>
+                    <i class="fa-solid fa-paper-plane"></i>
                 </x-buttons.primary>
             </div>
         </form>

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Attribute;
 use App\Models\Category;
+use App\Models\TelegramChat;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Section;
@@ -49,7 +50,7 @@ class Categories extends Component implements HasForms, HasTable
     {
         return $table
             ->heading($this->category?->name ?? "All categories")
-            ->query(Category::where('parent_id', $this->category?->id ?? null))
+            ->query(Category::where('parent_id', $this->category?->id ?? null)->with('children', 'attributes', 'channels'))
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')
                     ->collection('categories')
@@ -61,11 +62,18 @@ class Categories extends Component implements HasForms, HasTable
                     ->state(function (Category $record) {
                         return $record->children->pluck('name');
                     })
-                    ->badge(),
+                    ->badge()
+                    ->color('success'),
                 TextColumn::make('attributes')
                     ->state(function (Category $record) {
                         return $record->attributes->pluck('label');
                     })
+                    ->badge(),
+                TextColumn::make('channels')
+                    ->state(function (Category $record) {
+                        return $record->channels->pluck('title');
+                    })
+                    ->color('warning')
                     ->badge(),
             ])
             ->headerActions([
@@ -169,6 +177,13 @@ class Categories extends Component implements HasForms, HasTable
                                         ])
                                 ])
                                 ->columns(1),
+                            Section::make()
+                                ->schema([
+                                    Select::make('channels')
+                                        ->relationship('channels')
+                                        ->multiple()
+                                        ->options(TelegramChat::where('type', 'channel')->pluck('title', 'id'))
+                                ])
                         ])
                         ->slideOver()
                         ->closeModalByClickingAway(false),

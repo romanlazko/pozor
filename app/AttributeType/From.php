@@ -44,7 +44,7 @@ class From extends BaseAttributeType
     public function getFilterComponent(Get $get = null)
     {   
         return TextInput::make('attributes.'.$this->attribute->name)
-                ->placeholder(__('from'))
+                ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default('')
                 ->label($this->attribute->label)
@@ -57,11 +57,11 @@ class From extends BaseAttributeType
     {
         return Cluster::make([
             TextInput::make('attributes.'.$this->attribute->name.'.from')
-                ->placeholder(__('from'))
+                ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default(''),
             TextInput::make('attributes.'.$this->attribute->name.'.to')
-                ->placeholder(__('to'))
+                ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
                 ->default(''),
             ])

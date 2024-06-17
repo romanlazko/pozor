@@ -7,20 +7,27 @@
         <x-profile-nav/>
     </x-slot>
 
+
     @if (isset($header))
-        <x-slot name="header">
-            <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
-                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+        <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-0 z-30 bg-white p-2 md:p-0 border-b lg:border-none">
             <div class="flex items-center justify-between space-x-3">
                 {{ $header }}
             </div>
-        </x-slot>
-    @endif
+            <div x-data="{ dropdownOpen: false }"  class="relative lg:hidden">
+                <button @click="dropdownOpen = ! dropdownOpen" class="text-gray-900 hover:text-indigo-700 text-xl ">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
     
-    {{ $slot }}
+                <div x-cloak x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 z-10 w-full h-full"></div>
+    
+                <x-profile-nav x-cloak x-show="dropdownOpen" class="absolute right-0 z-20 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border"/>
+            </div>
+        </div>
+    @endif
+
+    <div class="space-y-6 px-2 lg:px-0">
+        {{ $slot }}
+    </div>
 
     <x-slot name="footerNavigation">
         @include('layouts.footer')

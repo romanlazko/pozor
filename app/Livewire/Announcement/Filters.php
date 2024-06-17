@@ -10,9 +10,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -52,14 +49,14 @@ class Filters extends Component implements HasForms
         return $form
             ->schema([
                 Select::make('sort')
-                    ->label(__('Sorting'))
+                    ->label(__('filament.labels.sorting'))
                     ->options(Sort::class)
                     ->selectablePlaceholder(false)
                     ->hintAction(
                         Action::make('reset')
                             ->icon('heroicon-m-x-mark')
                             ->action(fn () => $this->reset('data'))
-                            ->label(__('Reset filters'))
+                            ->label(__('filament.labels.reset_filters'))
                     ),
                 Grid::make()
                     ->schema($this->fields)
@@ -103,7 +100,7 @@ class Filters extends Component implements HasForms
     {
         $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
 
-        // return Cache::remember($cacheKey, 360, function () {
+        return Cache::remember($cacheKey, 360, function () {
             return Attribute::select('id', 'name', 'filterable', 'search_type', 'is_feature', 'visible', 'column_span', 'order_number', 'attribute_section_id', 'alterlabels')
                 ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'section:id,order_number')
                 ->when($this->category, function ($query) {
@@ -118,9 +115,8 @@ class Filters extends Component implements HasForms
                 ->when(!$this->category, function ($query) { 
                     $query->where('always_required', true);
                 })
-                
                 ->get();
-        // });
+        });
     }
 }
 

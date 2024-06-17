@@ -29,9 +29,11 @@ class ConnectCommand extends Command
 
         User::firstWhere('telegram_token', $matches[3])?->notify(new VerifyTelegramConnection($telegram_chat->id));
 
-        return BotApi::sendMessage([
+        return BotApi::returnInline([
             'chat_id' => $updates->getChat()->getId(),
             'text' => "На ваш эмейл было отправлено письмо для подтверждения связи с ботом. Пожалуйста, подтвердите связь с ботом, нажав на кнопку в письме.",
+            'parse_mode'    =>  'Markdown',
+            'message_id'    =>  $updates->getCallbackQuery()?->getMessage()->getMessageId(),
         ]);
     }
 }

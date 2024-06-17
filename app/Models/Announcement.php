@@ -3,41 +3,43 @@
 namespace App\Models;
 
 use Akuechler\Geoly;
-use App\Enums\Sort;
 use App\Enums\Status;
-use App\Models\Attribute;
-use App\Models\Traits\AnnouncementTrait;
-use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Auditable as AuditingAuditable;
 use OwenIt\Auditing\Contracts\Auditable;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Romanlazko\Telegram\Models\TelegramChat;
+use App\Models\TelegramChat;
+use App\Models\Traits\AnnouncementSearch;
+use App\Models\Traits\AnnouncementStatus;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
-use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Announcement extends Model implements HasMedia, Auditable
 {
-    use HasSlug, HasFactory; use SoftDeletes; use Geoly; use InteractsWithMedia; use AuditingAuditable; use AnnouncementTrait; use HasSEO;
+    use HasSlug, HasFactory; 
+    use SoftDeletes;
+    use InteractsWithMedia; 
+    use AuditingAuditable; 
+    use HasSEO; 
+    use AnnouncementSearch;
+    use AnnouncementStatus; 
 
     protected $guarded = [];
 
-    protected $casts = [
-        'translated_title' => 'array',
-        'description_description' => 'array',
-        'location' => 'array',
-        'status' => Status::class,
-    ];
-
     protected $with = ['media'];
+
+    protected static function booted(): void
+    {
+        static::created(function (Announcement $announcement) {
+            $announcement->statuses()->create(['status' => Status::created]);
+        });
+    }
 
     public function getSlugOptions() : SlugOptions
     {
@@ -76,11 +78,6 @@ class Announcement extends Model implements HasMedia, Auditable
         return $this->belongsTo(User::class);
     }
 
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
-    }
-
     public function features()
     {
         return $this->hasMany(Feature::class);
@@ -89,6 +86,26 @@ class Announcement extends Model implements HasMedia, Auditable
     public function geo()
     {
         return $this->belongsTo(Geo::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    public function userVotes()
+    {
+        return $this->votes()->one()->where('user_id', auth()->id());
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function channels()
+    {
+        return $this->hasMany(AnnouncementChannel::class, 'announcement_id', 'id');
     }
 
     public function getFeatureByName($name)
@@ -105,82 +122,6 @@ class Announcement extends Model implements HasMedia, Auditable
         }
         
         return $feature ?? null;
-    }
-
-    public function attribute_options()
-    {
-        return $this->attributes()->with('attribute_options');
-    }
-
-    public function scopeCategories($query, Category|null $category)
-    {
-        return $query->when($category, fn ($query) => 
-            $query->whereHas('categories', fn ($query) 
-                => $query->where('category_id', $category->id)->select('categories.id')
-        ));
-    }
-
-    public function scopeFeatures($query, Category|null $category, array|null $attributes)
-    {
-        return 
-            $query->where(function ($query) use ($attributes, $category) {
-
-                $category_attributes = 
-                // Cache::remember($category->slug.'_search_attributes', 3600, function () use ($category) {
-                    Attribute::select('id', 'visible', 'name', 'search_type')
-                        ->withCount('attribute_options')
-                        ->when($category, function ($query) use ($category) {
-                            $categoryIds = $category
-                                ->getParentsAndSelf()
-                                ->pluck('id')
-                                ->toArray();
-                            
-                            $query->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categoryIds ?? [])->select('categories.id'));
-                        })
-                        
-                        ->when(!$category, function ($query) { 
-                            $query->where('always_required', true);
-                        })
-                        ->where('filterable', true)
-                        ->get();
-                // });
-
-
-                foreach ($category_attributes as $attribute) {
-                    if (isset($attributes[$attribute->name]) AND !empty($attributes[$attribute->name]) AND $attributes[$attribute->name] != null) {
-                        $className = "App\\AttributeType\\".str_replace('_', '', ucwords($attribute->search_type, '_'));
-
-                        $attributeType = new $className($attribute, $attributes);
-
-                        if ($attributeType->isVisible()) {
-                            $attributeType->apply($query);
-                        }
-                    }
-                }
-            });
-    }
-
-    // public function isVisible(array $attributes, Attribute $attribute)
-    // {
-    //     if (empty($attribute->visible_condition)) {
-    //         return true;
-    //     }
-
-    //     foreach ($attribute->visible_condition as $condition) {
-    //         if ($attributes[$condition['attribute_name']] == $condition['value']) return true;
-    //     }
-
-    //     return false;
-    // }
-
-    public function scopeSort($query, Sort $sort = null)
-    {
-        return $query->when($sort, fn ($query) => $query->orderBy($sort->orderBy(), $sort->type()));
-    }
-
-    public function scopeIsPublished($query)
-    {
-        return $query->where('status', Status::published);
     }
 
     public function getMetaAttribute()
@@ -221,30 +162,5 @@ class Announcement extends Model implements HasMedia, Auditable
             section: $this->categories->pluck('name')->implode(', '),
             tags: $this->categories->pluck('name')->toArray(),
         );
-    }
-
-    // public function getTitleAttribute()
-    // {
-    //     return $this->getFeatureByName('title')?->value;
-    // }
-
-    // public function getCurrentPriceAttribute()
-    // {
-    //     return $this->getFeatureByName('current_price')?->value['amount'] . ' ' . $this->getFeatureByName('current_price')?->value['currency'];
-    // }
-
-    // public function getSalaryAttribute()
-    // {
-    //     return $this->getFeatureByName('salary')?->value;
-    // }
-
-    public function votes()
-    {
-        return $this->hasMany(Vote::class);
-    }
-
-    public function userVotes()
-    {
-        return $this->votes()->one()->where('user_id', auth()->id());
     }
 }

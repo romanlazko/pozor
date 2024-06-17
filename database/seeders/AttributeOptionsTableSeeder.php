@@ -23,7 +23,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 1,
                 'attribute_id' => 3,
-                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'alternames' => '{"cz": null, "en": "CZK", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:37:31',
@@ -34,7 +34,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 2,
                 'attribute_id' => 3,
-                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'alternames' => '{"cz": null, "en": "EUR", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:37:31',
@@ -45,7 +45,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 3,
                 'attribute_id' => 3,
-                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'alternames' => '{"cz": null, "en": "USD", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:37:31',
@@ -56,7 +56,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 4,
                 'attribute_id' => 7,
-                'alternames' => '{"cs": "Prodej", "en": "Sale", "ru": "Продажа"}',
+                'alternames' => '{"cz": "Prodej", "en": "Sale", "ru": "Продажа"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:49:37',
@@ -67,7 +67,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 5,
                 'attribute_id' => 7,
-                'alternames' => '{"cs": "Pronájem", "en": "Rent", "ru": "Аренда"}',
+                'alternames' => '{"cz": "Pronájem", "en": "Rent", "ru": "Аренда"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:49:37',
@@ -78,7 +78,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 6,
                 'attribute_id' => 8,
-                'alternames' => '{"cs": "1+KK", "en": "1+KK", "ru": "1+KK"}',
+                'alternames' => '{"cz": "1+KK", "en": "1+KK", "ru": "1+KK"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:31:00',
@@ -89,7 +89,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 7,
                 'attribute_id' => 8,
-                'alternames' => '{"cs": "2+KK", "en": "2+KK", "ru": "2+KK"}',
+                'alternames' => '{"cz": "2+KK", "en": "2+KK", "ru": "2+KK"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:31:00',
@@ -100,7 +100,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 8,
                 'attribute_id' => 8,
-                'alternames' => '{"cs": "3+KK", "en": "3+KK", "ru": "3+KK"}',
+                'alternames' => '{"cz": "3+KK", "en": "3+KK", "ru": "3+KK"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:31:00',
@@ -115,7 +115,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:41:59',
-                'updated_at' => '2024-06-05 13:50:26',
+                'updated_at' => '2024-06-06 13:18:20',
                 'deleted_at' => NULL,
             ),
             9 => 
@@ -126,7 +126,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:41:59',
-                'updated_at' => '2024-06-05 13:50:26',
+                'updated_at' => '2024-06-06 13:18:20',
                 'deleted_at' => NULL,
             ),
             10 => 
@@ -137,7 +137,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:41:59',
-                'updated_at' => '2024-06-05 13:50:26',
+                'updated_at' => '2024-06-06 13:18:20',
                 'deleted_at' => NULL,
             ),
             11 => 
@@ -148,7 +148,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:41:59',
-                'updated_at' => '2024-06-05 13:50:26',
+                'updated_at' => '2024-06-06 13:18:20',
                 'deleted_at' => NULL,
             ),
             12 => 
@@ -159,7 +159,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:41:59',
-                'updated_at' => '2024-06-05 13:50:26',
+                'updated_at' => '2024-06-06 13:18:20',
                 'deleted_at' => NULL,
             ),
             13 => 
@@ -199,7 +199,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 17,
                 'attribute_id' => 13,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:50:35',
@@ -210,7 +210,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 18,
                 'attribute_id' => 13,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:50:35',
@@ -221,7 +221,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 19,
                 'attribute_id' => 14,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:51:39',
@@ -232,7 +232,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 20,
                 'attribute_id' => 14,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:51:40',
@@ -243,7 +243,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 21,
                 'attribute_id' => 15,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:53:35',
@@ -254,7 +254,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 22,
                 'attribute_id' => 15,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 18:53:35',
@@ -265,7 +265,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 23,
                 'attribute_id' => 17,
-                'alternames' => '{"cs": "1 SIM karta", "en": "1 SIM card", "ru": "1 сим карта"}',
+                'alternames' => '{"cz": "1 SIM karta", "en": "1 SIM card", "ru": "1 сим карта"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-23 18:48:58',
@@ -276,7 +276,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 24,
                 'attribute_id' => 17,
-                'alternames' => '{"cs": "2 SIM karty", "en": "2 SIM card", "ru": "2 сим карты"}',
+                'alternames' => '{"cz": "2 SIM karty", "en": "2 SIM card", "ru": "2 сим карты"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-23 18:48:58',
@@ -287,7 +287,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 25,
                 'attribute_id' => 19,
-                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'alternames' => '{"cz": null, "en": "CZK", "ru": null}',
                 'is_default' => 1,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 09:50:31',
@@ -298,7 +298,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 26,
                 'attribute_id' => 19,
-                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'alternames' => '{"cz": null, "en": "EUR", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 09:50:31',
@@ -309,7 +309,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 27,
                 'attribute_id' => 19,
-                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'alternames' => '{"cz": null, "en": "USD", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 09:50:31',
@@ -320,7 +320,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 28,
                 'attribute_id' => 21,
-                'alternames' => '{"cs": "Za měsíc", "en": "Per month", "ru": "За месяц"}',
+                'alternames' => '{"cz": "Za měsíc", "en": "Per month", "ru": "За месяц"}',
                 'is_default' => 1,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 16:48:19',
@@ -331,7 +331,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 29,
                 'attribute_id' => 21,
-                'alternames' => '{"cs": "Za den", "en": "Per day", "ru": "За день"}',
+                'alternames' => '{"cz": "Za den", "en": "Per day", "ru": "За день"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 16:48:19',
@@ -342,7 +342,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 30,
                 'attribute_id' => 21,
-                'alternames' => '{"cs": "Za hodinu", "en": "Per hour", "ru": "За час"}',
+                'alternames' => '{"cz": "Za hodinu", "en": "Per hour", "ru": "За час"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 16:48:19',
@@ -353,7 +353,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 31,
                 'attribute_id' => 21,
-                'alternames' => '{"cs": "Za provedenou práci", "en": "For work performed", "ru": "За выполненную работу"}',
+                'alternames' => '{"cz": "Za provedenou práci", "en": "For work performed", "ru": "За выполненную работу"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-24 16:48:19',
@@ -364,7 +364,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 32,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": "1 GB nebo méně", "en": "1 GB and less", "ru": "1 GB и менее"}',
+                'alternames' => '{"cz": "1 GB nebo méně", "en": "1 GB and less", "ru": "1 GB и менее"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -375,7 +375,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 33,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "2 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "2 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -386,7 +386,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 34,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "3 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "3 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -397,7 +397,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 35,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "4 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "4 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -408,7 +408,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 36,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "6 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "6 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -419,7 +419,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 37,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "8 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "8 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -430,7 +430,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 38,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "12 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "12 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -441,7 +441,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 39,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "14 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "14 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -452,7 +452,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 40,
                 'attribute_id' => 22,
-                'alternames' => '{"cs": null, "en": "16 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "16 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 14:58:39',
@@ -463,7 +463,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 41,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": "16 GB nebo méně", "en": "16 GB and less", "ru": "16 GB и менее"}',
+                'alternames' => '{"cz": "16 GB nebo méně", "en": "16 GB and less", "ru": "16 GB и менее"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -474,7 +474,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 42,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": null, "en": "32 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "32 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -485,7 +485,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 43,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": null, "en": "64 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "64 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -496,7 +496,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 44,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": null, "en": "128 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "128 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -507,7 +507,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 45,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": null, "en": "256 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "256 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -518,7 +518,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 46,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": null, "en": "512 GB", "ru": null}',
+                'alternames' => '{"cz": null, "en": "512 GB", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -529,7 +529,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 47,
                 'attribute_id' => 23,
-                'alternames' => '{"cs": "1 TB nebo více", "en": "1 TB and more", "ru": "1 TB и более"}',
+                'alternames' => '{"cz": "1 TB nebo více", "en": "1 TB and more", "ru": "1 TB и более"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:08:54',
@@ -540,7 +540,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 48,
                 'attribute_id' => 24,
-                'alternames' => '{"cs": "4,4 nebo méně", "en": "4,4 and less", "ru": "4,4 и менее"}',
+                'alternames' => '{"cz": "4,4 nebo méně", "en": "4,4 and less", "ru": "4,4 и менее"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:15:31',
@@ -551,7 +551,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 49,
                 'attribute_id' => 24,
-                'alternames' => '{"cs": null, "en": "4,5 - 5,4", "ru": null}',
+                'alternames' => '{"cz": null, "en": "4,5 - 5,4", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:15:31',
@@ -562,7 +562,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 50,
                 'attribute_id' => 24,
-                'alternames' => '{"cs": null, "en": "5,5 - 5,9", "ru": null}',
+                'alternames' => '{"cz": null, "en": "5,5 - 5,9", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:15:31',
@@ -573,7 +573,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 51,
                 'attribute_id' => 24,
-                'alternames' => '{"cs": null, "en": "6 - 6,4", "ru": null}',
+                'alternames' => '{"cz": null, "en": "6 - 6,4", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:15:31',
@@ -584,7 +584,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 52,
                 'attribute_id' => 24,
-                'alternames' => '{"cs": "6,5 nebo více", "en": "6,5 and more", "ru": "6,5 и более"}',
+                'alternames' => '{"cz": "6,5 nebo více", "en": "6,5 and more", "ru": "6,5 и более"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:15:31',
@@ -595,7 +595,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 53,
                 'attribute_id' => 25,
-                'alternames' => '{"cs": null, "en": "OLED", "ru": null}',
+                'alternames' => '{"cz": null, "en": "OLED", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:17:15',
@@ -606,7 +606,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 54,
                 'attribute_id' => 25,
-                'alternames' => '{"cs": null, "en": "QLED", "ru": null}',
+                'alternames' => '{"cz": null, "en": "QLED", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:17:15',
@@ -617,7 +617,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 55,
                 'attribute_id' => 25,
-                'alternames' => '{"cs": null, "en": "LED", "ru": null}',
+                'alternames' => '{"cz": null, "en": "LED", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:17:15',
@@ -628,7 +628,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 56,
                 'attribute_id' => 25,
-                'alternames' => '{"cs": null, "en": "NanoCell", "ru": null}',
+                'alternames' => '{"cz": null, "en": "NanoCell", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:17:15',
@@ -639,7 +639,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 57,
                 'attribute_id' => 25,
-                'alternames' => '{"cs": null, "en": "IPS", "ru": null}',
+                'alternames' => '{"cz": null, "en": "IPS", "ru": null}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-25 15:17:15',
@@ -650,7 +650,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 58,
                 'attribute_id' => 14,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 11:59:51',
@@ -672,7 +672,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 60,
                 'attribute_id' => 14,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 12:00:56',
@@ -683,7 +683,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 61,
                 'attribute_id' => 14,
-                'alternames' => '{"cs": "Nevadí", "en": "No metter", "ru": "Не важно"}',
+                'alternames' => '{"cz": "Nevadí", "en": "No metter", "ru": "Не важно"}',
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-05-26 12:06:52',
@@ -694,7 +694,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 62,
                 'attribute_id' => 15,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 13:06:00',
@@ -705,7 +705,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 63,
                 'attribute_id' => 15,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 13:06:00',
@@ -716,7 +716,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 64,
                 'attribute_id' => 15,
-                'alternames' => '{"cs": "Nevadí", "en": "No metter", "ru": "Не важно"}',
+                'alternames' => '{"cz": "Nevadí", "en": "No metter", "ru": "Не важно"}',
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-05-26 13:06:00',
@@ -727,7 +727,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 65,
                 'attribute_id' => 13,
-                'alternames' => '{"cs": "Ano", "en": "Yes", "ru": "Да"}',
+                'alternames' => '{"cz": "Ano", "en": "Yes", "ru": "Да"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-06-04 10:48:09',
@@ -738,7 +738,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 66,
                 'attribute_id' => 13,
-                'alternames' => '{"cs": "Ne", "en": "No", "ru": "Нет"}',
+                'alternames' => '{"cz": "Ne", "en": "No", "ru": "Нет"}',
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-06-04 10:48:09',
@@ -749,7 +749,7 @@ class AttributeOptionsTableSeeder extends Seeder
             array (
                 'id' => 67,
                 'attribute_id' => 13,
-                'alternames' => '{"cs": "Nevadi", "en": "No metter", "ru": "Неважно"}',
+                'alternames' => '{"cz": "Nevadi", "en": "No metter", "ru": "Неважно"}',
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-06-04 10:48:09',

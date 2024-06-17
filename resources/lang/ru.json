@@ -71,10 +71,6 @@
         "Similar announcements": "Похожие объявления",
         "Show more": "Показать больше",
         "User announcements": "Объявления пользователя",
-        "From": "От",
-        "To": "До",
-        "from": "от",
-        "to": "до",
 
         "Main page": "Главная страница",
         "Filters": "Фильтры",
@@ -85,16 +81,6 @@
         "Messages": "Сообщения",
         "You: ": "Вы: ",
         "No messages found.": "Сообщения не найдены.",
-
-    "FILTERS":"FILTERS",
-
-        "Show results": "Показать результаты",
-        "Country": "Страна",
-        "City": "Город",
-        "Search": "Поиск",
-        "Full text search": "Полнотекстовый поиск",
-        "Sorting": "Сортировка",
-        "Reset filters": "Сбросить фильтры",
 
     "LAYOUTS-SIDEBAR.BLADE": "LAYOUTS-SIDEBAR.BLADE",
 

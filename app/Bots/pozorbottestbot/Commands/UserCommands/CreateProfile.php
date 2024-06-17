@@ -27,8 +27,7 @@ class CreateProfile extends Command
         $telegram_chat = DB::getChat($updates->getChat()->getId());
 
         $notes = $this->getConversation()->notes;
-
-        $password = Str::random(8);
+        
         $telegram_token = Str::random(8);
 
         $user = User::create([
@@ -36,7 +35,6 @@ class CreateProfile extends Command
             'email' => $notes['email'],
             'phone' => $notes['phone'],
             'telegram_chat_id' => $telegram_chat->id,
-            'password' => Hash::make($password),
             'telegram_token' => $telegram_token,
         ]);
 

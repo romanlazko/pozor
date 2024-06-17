@@ -21,6 +21,8 @@ use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
+use App\Livewire\Admin\TelegramBots;
+use App\Livewire\Admin\TelegramChats;
 use App\Livewire\Admin\Users;
 use Illuminate\Http\Request;
 
@@ -61,11 +63,13 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
 });
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
-    Route::resource('telegram_bot', TelegramController::class);
+    // Route::resource('telegram_bot', TelegramController::class);
         
-    Route::resource('telegram_bot.chat', TelegramChatController::class);
-    Route::resource('telegram_bot.advertisement', TelegramAdvertisementController::class);
+    // Route::resource('telegram_bot.chat', TelegramChatController::class);
+    // Route::resource('telegram_bot.advertisement', TelegramAdvertisementController::class);
 
+    Route::get('telegram/bot', TelegramBots::class)->name('telegram.bot.index');
+    Route::get('telegram/bot/{telegram_bot}/chat', TelegramChats::class)->name('telegram.bot.chat.index');
     Route::get('users', Users::class)->name('users');
     Route::get('category/{category?}', Categories::class)->name('categories');
     Route::get('attribute', Attributes::class)->name('attributes');

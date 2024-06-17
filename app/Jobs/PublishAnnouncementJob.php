@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\Status;
 use App\Facades\Deepl;
 use App\Models\Announcement;
+use App\Models\TelegramChat;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,12 +19,14 @@ class PublishAnnouncementJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $announcement;
+
     /**
      * Create a new job instance.
      */
-    public function __construct(private Announcement $announcement)
+    public function __construct($announcement_id)
     {
-        //
+        $this->announcement = Announcement::find($announcement_id);
     }
 
     public function handle(): void
@@ -35,27 +38,45 @@ class PublishAnnouncementJob implements ShouldQueue
 
     private function publishOnTelegram(Announcement $announcement)
     {
-        if ($announcement->should_be_published_in_telegram) {
+        if ($announcement->channels->isEmpty()) {
+            return true;
+        }
+        
+        foreach ($announcement->channels->whereNot('status', Status::published) as $announcement_channel) {
             try {
-                new Bot('5981959980:AAHtBsJcUuXBfuR6FVgFfNh31r2jQwlF8io');
+                $bot = new Bot($announcement_channel->channel->bot->token);
 
-                $response = BotApi::sendMessageWithMedia([
-                    'text'                      => $announcement->prepareForTelegram(),
-                    'chat_id'                   => '@pozor_test',
-                    'media'                     => $announcement->photos()->pluck('src')->map(function($src) {
-                        return env('APP_URL').'/storage/'.$src;
-                    })->toArray() ?? null,
+                $response = $bot::sendMessageWithMedia([
+                    'text'                      => $this->announcement->getFeatureByName('title')?->value,
+                    'chat_id'                   => $announcement_channel->channel->chat_id,
+                    'media'                     => [$this->announcement->getFirstMediaUrl('announcements')],
                     'parse_mode'                => 'HTML',
                     'disable_web_page_preview'  => 'true',
                 ]);
 
-                return $response->getOk();
-            } catch (Exception $e) {
-                $this->announcement->publishingFailed($e);
-                return false;
+                $announcement_channel->update([
+                    'status' => Status::published,
+                    'info' => [
+                        'info' => $response->getDescription()
+                    ],
+                ]);
+            } catch (Exception $exception) {
+                $announcement_channel->update([
+                    'status' => Status::publishing_failed,
+                    'info' => [
+                        'info' => $exception->getMessage(),
+                    ]
+                ]);
+    
+                throw new Exception($exception->getMessage());
             }
         }
 
         return true;
+    }
+
+    public function failed(Exception $exception)
+    {
+        $this->announcement->publishingFailed(['info' => $exception->getMessage()]);
     }
 }

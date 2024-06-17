@@ -5,14 +5,30 @@ namespace App\Models\Traits;
 use App\Enums\Status;
 use App\Jobs\PublishAnnouncementJob;
 use App\Jobs\TranslateAnnouncement;
-use Exception;
+use App\Models\AnnouncementStatus as AnnouncementStatusModel;
 
-trait AnnouncementTrait
+trait AnnouncementStatus
 {
-    public function moderate()
+    public function statuses()
     {
-        $result = $this->update([
+        return $this->hasMany(AnnouncementStatusModel::class);
+    }
+
+    public function currentStatus()
+    {
+        return $this->hasOne(AnnouncementStatusModel::class)->orderBy('id', 'desc')->latestOfMany();
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->currentStatus?->status;
+    }
+
+    public function moderate(array $info = [])
+    {
+        $result = $this->statuses()->create([
             'status' => Status::await_moderation,
+            'info' => $info,
         ]);
 
         if ($result) {
@@ -22,19 +38,21 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function moderationFailed(string $reason = null)
+    public function moderationFailed(array $info = [])
     {
-        $result =  $this->update([
+        $result =  $this->statuses()->create([
             'status' => Status::moderation_failed,
+            'info' => $info,
         ]);
 
         return $result;
     }
 
-    public function moderationNotPassed(string $reason = null)
+    public function moderationNotPassed(array $info = [])
     {
-        $result =  $this->update([
+        $result =  $this->statuses()->create([
             'status' => Status::moderation_not_passed,
+            'info' => $info,
         ]);
 
         // ModerationNotPassedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
@@ -42,10 +60,11 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function reject(string $reason = null)
+    public function reject(array $info = [])
     {
-        $result =  $this->update([
+        $result =  $this->statuses()->create([
             'status' => Status::rejected,
+            'info' => $info,
         ]);
 
         // RejectedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
@@ -53,7 +72,7 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function approve()
+    public function approve(array $info = [])
     {
         $result = $this->approved();
 
@@ -64,19 +83,21 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function approved()
+    public function approved(array $info = [])
     {
-        $result = $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::approved,
+            'info' => $info,
         ]);
 
         return $result;
     }
     
-    public function translate()
+    public function translate(array $info = [])
     {
-        $result = $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::await_translation,
+            'info' => $info,
         ]);
 
         if ($result) {
@@ -87,19 +108,21 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function translationFailed(Exception $e = null)
+    public function translationFailed(array $info = [])
     {
-        $result = $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::translation_failed,
+            'info' => $info,
         ]);
 
         return $result;
     }
 
-    public function translated()
+    public function translated(array $info = [])
     {
-        $result = $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::translated,
+            'info' => $info,
         ]);
 
         if ($result) {
@@ -109,34 +132,37 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function publish()
+    public function publish(array $info = [])
     {
-        $result = $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::await_publication,
+            'info' => $info,
         ]);
 
         if ($result) {
-            PublishAnnouncementJob::dispatch($this);
+            // PublishOnTelegram::dispatch($this);
+            PublishAnnouncementJob::dispatch($this->id);
             // ->delay(now()->addMinutes(5))
         }
         
         return $result;
     }
 
-    public function publishingFailed(Exception $e = null)
+    public function publishingFailed(array $info = [])
     {
-        $result =  $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::publishing_failed,
+            'info' => $info,
         ]);
 
         return $result;
     }
 
-    public function published()
+    public function published(array $info = [])
     {
-        $result =  $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::published,
-            'should_be_published_in_telegram' => false,
+            'info' => $info,
         ]);
 
         // PublishedAnnouncement::dispatch($this)->delay(now()->addMinutes(5));
@@ -144,10 +170,11 @@ trait AnnouncementTrait
         return $result;
     }
 
-    public function sold()
+    public function sold(array $info = [])
     {
-        $result =  $this->update([
+        $result = $this->statuses()->create([
             'status' => Status::sold,
+            'info' => $info,
         ]);
 
         return $result;

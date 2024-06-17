@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Jobs\CreateSeedersJob;
 use App\Models\Attribute;
 use App\Models\Category;
 use Filament\Forms\Components\Grid;
@@ -28,6 +29,8 @@ use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Artisan;
 
 class Attributes extends Component implements HasForms, HasTable
 {
@@ -113,6 +116,24 @@ class Attributes extends Component implements HasForms, HasTable
                     ->grow(false)
             ])
             ->headerActions([
+                Action::make('Create seeder')
+                    ->form([
+                        Select::make('seeders')
+                            ->multiple()
+                            ->options([
+                                'categories' => 'Category',
+                                'attributes' => 'Attribute',
+                                'attribute_category' => 'AttributeCategory',
+                                'attribute_options' => 'AttributeOption',
+                                'attribute_sections' => 'AttributeSection',
+                            ])
+                    ])
+                    ->action(function (array $data) {
+                        CreateSeedersJob::dispatch($data['seeders']);
+                    })
+                    ->hidden(app()->environment('production'))
+                    ->slideOver()
+                    ->closeModalByClickingAway(false),
                 CreateAction::make()
                     ->model(Attribute::class)
                     ->icon('heroicon-o-plus-circle')

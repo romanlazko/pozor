@@ -2,7 +2,7 @@
     <div class="w-full m-auto">
         <div class="flex w-full h-16 sm:px-0 items-center">
             <div class="flex-1 items-center justify-start hidden lg:flex">
-                <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                <x-application-logo class="h-9 w-9" />
             </div>
            
             <div class="flex w-full max-w-lg m-auto justify-between shrink-0 items-center">

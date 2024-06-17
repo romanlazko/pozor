@@ -2,13 +2,10 @@
 
 namespace App\AttributeType;
 
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
-use Filament\Support\Enums\VerticalAlignment;
 
 class Search extends BaseAttributeType
 {
@@ -29,10 +26,10 @@ class Search extends BaseAttributeType
         return Grid::make(1)
             ->schema([
                 ComponentsTextInput::make('attributes.'.$this->attribute->name)
-                    ->label(__('Search'))
+                    ->label(__('filament.labels.search'))
                     ->columnSpanFull(),
                 Checkbox::make('attributes.full_text_search')
-                    ->label(__('Full text search')),
+                    ->label(__('filament.labels.full_text_search')),
                 
             ]);
     }
