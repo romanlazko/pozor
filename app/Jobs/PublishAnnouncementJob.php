@@ -31,7 +31,7 @@ class PublishAnnouncementJob
         $announcement = Announcement::where('id', $this->announcement_id)->with('channels')->first();
 
         dd($announcement->channels->filter(function ($channel) {
-            return ! $channel->status->isPublished();
+            return ! $channel->status?->isPublished();
         }));
 
         if ($announcement->status->isAwaitPublication() AND $this->publishOnTelegram($announcement)) {
