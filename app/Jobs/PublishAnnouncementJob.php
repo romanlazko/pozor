@@ -30,10 +30,6 @@ class PublishAnnouncementJob
     {
         $announcement = Announcement::where('id', $this->announcement_id)->with('channels')->first();
 
-        dd($announcement->channels->filter(function ($channel) {
-            return ! $channel->status?->isPublished();
-        }));
-
         if ($announcement->status->isAwaitPublication() AND $this->publishOnTelegram($announcement)) {
             $announcement->published();
         }
@@ -45,9 +41,11 @@ class PublishAnnouncementJob
             return true;
         }
 
-
+        $announcement_channels = $announcement->channels->filter(function ($channel) {
+            return ! $channel->status?->isPublished();
+        });
         
-        foreach ($announcement->channels as $announcement_channel) {
+        foreach ($announcement_channels as $announcement_channel) {
             try {
                 $bot = new Bot($announcement_channel->channel->bot->token);
 
