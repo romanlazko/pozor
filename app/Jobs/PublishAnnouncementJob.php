@@ -29,7 +29,7 @@ class PublishAnnouncementJob
     public function handle(): void
     {
         $announcement = Announcement::where('id', $this->announcement_id)->with(['channels' => function ($query) {
-            return $query->where('status', '!=', Status::published->value);
+            return $query->whereNull('status');
         }])->first();
 
         dd($announcement->channels);
