@@ -43,8 +43,8 @@ class Users extends Component implements HasForms, HasTable
     {
         return $table
             ->query(User::withCount([
-                'announcements as published_count' => fn ($query) => $query->where('status', Status::published),
-                'announcements as await_moderation_count' => fn ($query) => $query->where('status', Status::await_moderation),
+                'announcements as published_count' => fn ($query) => $query->status(Status::published),
+                'announcements as await_moderation_count' => fn ($query) => $query->status(Status::await_moderation),
             ]))
             ->columns([
                 TextColumn::make('id'),

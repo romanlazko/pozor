@@ -24,6 +24,13 @@ trait AnnouncementStatus
         return $this->currentStatus?->status;
     }
 
+    public function scopeStatus($query, Status $status)
+    {
+        return $query->whereHas('currentStatus', function ($q) use ($status) {
+            $q->where('status', $status);
+        });
+    }
+
     public function moderate(array $info = [])
     {
         $result = $this->statuses()->create([
