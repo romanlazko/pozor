@@ -53,6 +53,8 @@ class CreateAnnouncement extends Command
             return BotApi::returnInline($data);
         }
 
+        app()->setLocale($updates->getFrom()->getLanguageCode());
+
         $url = URL::signedRoute('announcement.telegram-create', ['email' => $user->email, 'telegram_chat_id' => $telegram_chat->id]);
 
         $buttons = BotApi::inlineKeyboardWithLink(

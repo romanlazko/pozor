@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('telegram_token')->nullable();
             $table->json('lang')->nullable();
             $table->string('locale')->default('cs')->nullable();

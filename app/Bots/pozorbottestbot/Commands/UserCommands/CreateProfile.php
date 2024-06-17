@@ -34,6 +34,7 @@ class CreateProfile extends Command
             'name' => $updates->getFrom()->getFirstName() . ' ' . $updates->getFrom()->getLastName(),
             'email' => $notes['email'],
             'phone' => $notes['phone'],
+            'locale' => $updates->getFrom()->getLanguageCode(),
             'telegram_chat_id' => $telegram_chat->id,
             'telegram_token' => $telegram_token,
         ]);
