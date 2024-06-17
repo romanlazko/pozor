@@ -39,6 +39,7 @@ class PublishAnnouncementJob implements ShouldQueue
 
     public function publishOnTelegram($announcement)
     {
+        dd($announcement->channels);
         if ($announcement->channels->isEmpty()) {
             return true;
         }
