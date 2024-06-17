@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\App\BotApi;
 
-class PublishAnnouncementJob implements ShouldQueue
+class PublishAnnouncementJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,6 +32,8 @@ class PublishAnnouncementJob implements ShouldQueue
             return $query->whereNot('status', Status::published);
         }])->first();
 
+        dd($announcement->channels);
+
         if ($announcement->status->isAwaitPublication() AND $this->publishOnTelegram($announcement)) {
             $announcement->published();
         }
@@ -39,7 +41,7 @@ class PublishAnnouncementJob implements ShouldQueue
 
     public function publishOnTelegram($announcement)
     {
-        dd($announcement->channels);
+        
         if ($announcement->channels->isEmpty()) {
             return true;
         }
