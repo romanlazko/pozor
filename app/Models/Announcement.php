@@ -32,7 +32,7 @@ class Announcement extends Model implements HasMedia, Auditable
 
     protected $guarded = [];
 
-    protected $with = ['media'];
+    // protected $with = ['media'];
 
     protected static function booted(): void
     {

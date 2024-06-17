@@ -19,37 +19,38 @@ class PublishAnnouncementJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $announcement;
-
     /**
      * Create a new job instance.
      */
-    public function __construct($announcement_id)
+    public function __construct(public $announcement_id)
     {
-        $this->announcement = Announcement::find($announcement_id);
     }
 
     public function handle(): void
     {
-        if ($this->announcement->status->isAwaitPublication() AND $this->publishOnTelegram($this->announcement)) {
-            $this->announcement->published();
+        $announcement = Announcement::where('id', $this->announcement_id)->with(['channels' => function ($query) {
+            return $query->whereNot('status', Status::published);
+        }])->first();
+
+        if ($announcement->status->isAwaitPublication() AND $this->publishOnTelegram($announcement)) {
+            $announcement->published();
         }
     }
 
-    private function publishOnTelegram(Announcement $announcement)
+    public function publishOnTelegram($announcement)
     {
         if ($announcement->channels->isEmpty()) {
             return true;
         }
         
-        foreach ($announcement->channels->whereNot('status', Status::published) as $announcement_channel) {
+        foreach ($announcement->channels as $announcement_channel) {
             try {
                 $bot = new Bot($announcement_channel->channel->bot->token);
 
                 $response = $bot::sendMessageWithMedia([
-                    'text'                      => $this->announcement->getFeatureByName('title')?->value,
+                    'text'                      => $announcement->getFeatureByName('title')?->value,
                     'chat_id'                   => $announcement_channel->channel->chat_id,
-                    'media'                     => [$this->announcement->getFirstMediaUrl('announcements')],
+                    'media'                     => [$announcement->getFirstMediaUrl('announcements')],
                     'parse_mode'                => 'HTML',
                     'disable_web_page_preview'  => 'true',
                 ]);
@@ -77,6 +78,6 @@ class PublishAnnouncementJob implements ShouldQueue
 
     public function failed(Exception $exception)
     {
-        $this->announcement->publishingFailed(['info' => $exception->getMessage()]);
+        Announcement::find($this->announcement_id)->publishingFailed(['info' => $exception->getMessage()]);
     }
 }

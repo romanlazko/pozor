@@ -79,6 +79,11 @@ class Category extends Model implements HasMedia
         return $this->alternames[app()->getLocale()] ?? $this->alternames['en'] ?? null;
     }
 
+    public function getNameWithAnnouncementCountAttribute()
+    {
+        return $this->name . ' (' . $this->announcements->count() . ')';
+    }
+
     public function getParentsAndSelf()
     {
         return Cache::remember($this?->slug.'_parents_and_self', 3600, fn () => 

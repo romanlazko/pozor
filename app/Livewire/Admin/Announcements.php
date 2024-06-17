@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Enums\Status;
 use App\Livewire\Components\Tables\Columns\ImageGridColumn;
 use App\Models\Announcement;
+use App\Models\AnnouncementStatus;
+use App\Models\Category;
 use App\Models\TelegramChat;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -32,6 +34,8 @@ use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Filament\Forms\Components\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Announcements extends Component implements HasForms, HasTable
 {
@@ -49,7 +53,7 @@ class Announcements extends Component implements HasForms, HasTable
     {
         return $table
             ->heading("All announcements")
-            ->query(Announcement::with('media', 'user.media', 'categories', 'channels', 'geo', 'features', 'currentStatus'))
+            ->query(Announcement::with('media', 'user.media', 'categories', 'channels.channel', 'geo', 'features', 'currentStatus'))
             ->columns([
                 Stack::make([
                     TextColumn::make('status')
@@ -234,22 +238,7 @@ class Announcements extends Component implements HasForms, HasTable
                             ->modalHeading(fn (Announcement $announcement) => "Telegram Channels: {$announcement->getFeatureByName('title')?->value}")
                             ->form(fn (Announcement $announcement) => [
                                 Livewire::make(AnnouncementChannels::class, ['announcement_id' => $announcement->id]),
-                                // Section::make()
-                                //     ->schema([
-                                //         Select::make('channels')
-                                //             ->relationship()
-                                //             ->label(__("Telegram Channel"))
-                                //             ->multiple()
-                                //             ->options(TelegramChat::where('type', 'channel')->get()->pluck('title', 'id'))
-                                //     ])
                             ])
-                            // ->action(function (array $data, Announcement $announcement): void {
-                            //     foreach ($data['telegram_chat_id'] as $key => $value) {
-                            //         $announcement->channels()->updateOrCreate([
-                            //             'telegram_chat_id' => $value
-                            //         ]);
-                            //     }
-                            // })
                             ->icon('heroicon-o-chat-bubble-bottom-center-text')
                             ->slideover(),
 
@@ -280,6 +269,7 @@ class Announcements extends Component implements HasForms, HasTable
                             })
                             ->modalWidth('md')
                             ->slideOver(),
+
                         DeleteAction::make(),
                     ])
                     ->size(ActionSize::ExtraSmall)
@@ -289,10 +279,43 @@ class Announcements extends Component implements HasForms, HasTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(Status::class)
-                    ->default(Status::await_moderation->value),
-                // SelectFilter::make('category')
-                //     ->relationship('categories', 'name'),
+                    ->options(function () {
+                        return DB::table('announcement_statuses as asm')
+                            ->select('asm.status', DB::raw('count(announcements.id) as count'))
+                            ->join('announcements', function($join) {
+                                $join->on('announcements.id', '=', 'asm.announcement_id')
+                                    ->where('asm.id', function($query) {
+                                        $query->select(DB::raw('max(id)'))
+                                            ->from('announcement_statuses as sub_asm')
+                                            ->whereColumn('sub_asm.announcement_id', 'asm.announcement_id');
+                                    })
+                                    ->where('deleted_at', null);
+                            })
+                            ->groupBy('asm.status')
+                            ->get()
+                            ->mapWithKeys(function ($status) {
+                                return [$status->status => Status::from($status->status)->getLabel() . ' (' . $status->count . ')'];
+                            })
+                            ->toArray();
+                    })
+                    ->query(fn ($query, $data) => 
+                        $query->whereHas('currentStatus', fn ($query) => $query->when($data['value'], fn ($query) => $query->where('status', $data['value'])))
+                    )
+                    ->preload(),
+                SelectFilter::make('category')
+                    ->options(fn () => 
+                        Cache::remember('categories_announcement_count', 360, function () {
+                            return Category::select('id', 'alternames', 'slug', 'parent_id')
+                                ->with('announcements:id', 'parent')
+                                ->get()
+                                ->groupBy('parent.name')
+                                ->map
+                                ->pluck('nameWithAnnouncementCount', 'id');
+                        })
+                    )
+                    ->query(fn ($query, $data) => 
+                        $query->categories(Category::find($data['value']))
+                    ),
                 SelectFilter::make('user')
                     ->relationship('user', 'name')
                     ->searchable()
