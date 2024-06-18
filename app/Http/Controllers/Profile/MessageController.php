@@ -7,6 +7,7 @@ use App\Models\Announcement;
 use App\Models\Messanger\Thread;
 use App\Notifications\NewMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class MessageController extends Controller
 {
@@ -38,7 +39,11 @@ class MessageController extends Controller
     public function show(Thread $thread)
     {
         $thread->load('announcement:id', 'announcement.media');
+        
         $thread->messages()->where('user_id', '!=', auth()->id())->whereNull('read_at')->update(['read_at' => now()]);
+
+        Cookie::queue('unreadMessagesCount', auth()->user()?->unreadMessagesCount, 2);
+
         $messages = $thread->messages->load('user:id,name', 'user.media');
 
         return view('profile.message.show', compact('thread', 'messages'));

@@ -57,13 +57,12 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
-        if (!$announcement->status->isPublished() AND $announcement->user?->id != auth()->id()) {
-            abort(404);
-        }
-
         $announcement->load([
-            'user',
             'user.media',
+            'userVotes',
+            'media',
+            'geo',
+            'currentStatus',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
             'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersuffixes,create_type',
             'features.attribute_option:id,alternames',
@@ -71,28 +70,32 @@ class AnnouncementController extends Controller
             'categories:id,slug,alternames',
         ]);
 
+        if (!$announcement->status->isPublished() AND $announcement->user?->id != auth()->id()) {
+            abort(404);
+        }
+
         $similar_announcements = [];
         $user_announcements = [];
 
         // $announcement->user->isPartner()
-        if (false) {
-            $user_announcements = Announcement::isPublished()
-                ->limit(12)
-                ->whereNot('id', $announcement->id)
-                ->where('user_id', $announcement->user?->id)
-                ->get();
-        }
-        else {
-            $similar_announcements = Announcement::select('announcements.*')
-                ->join('announcement_category', 'announcements.id', '=', 'announcement_category.announcement_id')
-                ->where('announcement_category.category_id', $announcement->categories?->last()->id)
-                ->isPublished()
-                ->with('media', 'features.attribute_option','user','user.media')
-                ->orderByDesc('created_at')
-                ->whereNot('announcements.id', $announcement->id)
-                ->limit(12)
-                ->get();
-        }
+        // if (false) {
+        //     $user_announcements = Announcement::isPublished()
+        //         ->limit(12)
+        //         ->whereNot('id', $announcement->id)
+        //         ->where('user_id', $announcement->user?->id)
+        //         ->get();
+        // }
+        // else {
+        //     $similar_announcements = Announcement::select('announcements.*')
+        //         ->join('announcement_category', 'announcements.id', '=', 'announcement_category.announcement_id')
+        //         ->where('announcement_category.category_id', $announcement->categories?->last()->id)
+        //         ->isPublished()
+        //         ->with('media', 'features.attribute_option','user','user.media')
+        //         ->orderByDesc('created_at')
+        //         ->whereNot('announcements.id', $announcement->id)
+        //         ->limit(12)
+        //         ->get();
+        // }
 
         return view('announcement.show', compact('announcement', 'similar_announcements', 'user_announcements'));
     }

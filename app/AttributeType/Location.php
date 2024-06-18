@@ -2,6 +2,7 @@
 
 namespace App\AttributeType;
 
+use App\Models\Geo as ModelsGeo;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -55,12 +56,14 @@ class Location extends BaseAttributeType
                     ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
-                    ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')?->pluck('name', 'id'))
+                    ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')->orderBy('level')->pluck('name', 'id'))
                     ->getSearchResultsUsing(function (string $search, Get $get) {
                         return Geo::where('country', $get('country') ?? 'CZ')
                             ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
+                            ->limit(30)
                             ->pluck('name', 'id');
                     })
+                    // ->afterStateHydrated(fn (string $state) => ModelsGeo::find($state)->name ?? null)
                     ->live()
                     ->placeholder(__('filament.labels.city')),
                 ComponentsSelect::make('attributes.radius')

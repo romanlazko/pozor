@@ -36,7 +36,7 @@ class Announcements extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(auth()->user()->announcements()->getQuery())
+            ->query(auth()->user()->announcements()->with('features.attribute', 'currentStatus', 'media')->getQuery())
             ->columns([
                 Stack::make([
                     TextColumn::make('status')

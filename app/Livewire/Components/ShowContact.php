@@ -12,25 +12,20 @@ class ShowContact extends Component
     
     public $user_id;
 
-    public $contacts;
+    public $user;
 
     public $error;
 
     public function render()
     {
-        $user = User::where('id', $this->user_id)->with('media')->first();
-
-        if ($user?->isProfileFilled()) {
-            return view('components.livewire.show-contact', compact('user'));
-        }
-        return view('components.livewire.empty');
+        return view('components.livewire.show-contact');
     }
 
     public function submit()
     {
         try {
             if ($this->recaptchaPasses()) {
-                $this->contacts = User::find($this->user_id)->phone;
+                $this->user = User::where('id', $this->user_id)->select('phone', 'email', 'telegram_chat_id')->first();
             }
         } catch (\Exception $e) {
             $this->error = $e->getMessage();

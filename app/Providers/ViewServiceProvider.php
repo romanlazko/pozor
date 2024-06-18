@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,9 +24,8 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // View::share('unreadMessagesCount', auth()->user()?->unreadMessagesCount);
         View::composer('*', function ($view) {
-            $view->with('unreadMessagesCount', auth()->user()?->unreadMessagesCount);
+            $view->with('unreadMessagesCount', $this->getUnreadMessagesCount());
         });
         // View::composer('announcement.show', function ($view) {
         //     $announcement = $view->getData()['announcement'];
@@ -54,5 +57,20 @@ class ViewServiceProvider extends ServiceProvider
         //         'date' => $announcement?->create_at,
         //     ]);
         // });
+    }
+
+    private function getUnreadMessagesCount(): int
+    {
+        if (auth()->check()) {
+            $unreadMessagesCount = Cookie::get('unreadMessagesCount');
+
+            if (!$unreadMessagesCount) {
+                $unreadMessagesCount = auth()->user()?->unreadMessagesCount;
+
+                Cookie::queue('unreadMessagesCount', $unreadMessagesCount, 2);
+            }
+        }
+
+        return $unreadMessagesCount ?? 0;
     }
 }

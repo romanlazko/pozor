@@ -8,33 +8,36 @@ use App\Models\Attribute;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\TelegramChat;
+use Illuminate\Support\Facades\DB;
 
 trait AnnouncementCrud
 {
     public function createAnnouncement(object $data)
     {
-        $announcement = auth()->user()->announcements()->create([
-            'geo_id' => $data->geo_id,
-        ]);
-
-        if ($announcement) {
-            $announcement->categories()->sync($data->categories);
-            $announcement->features()->createMany($this->setFeatures($data->categories, $data->attributes));
-            $announcement->channels()->createMany($this->setChannels($announcement));
-            
-            if (isset($data->attachments) AND !empty($data->attachments)) {
-                foreach ($data->attachments as $attachment) {
-                    $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
+        return DB::transaction(function () use ($data) {
+            $announcement = auth()->user()->announcements()->create([
+                'geo_id' => $data->geo_id,
+            ]);
+    
+            if ($announcement) {
+                $announcement->categories()->sync($data->categories);
+                $announcement->features()->createMany($this->getFeatures($data->categories, $data->attributes));
+                $announcement->channels()->createMany($this->getChannels($announcement));
+                
+                if (isset($data->attachments) AND !empty($data->attachments)) {
+                    foreach ($data->attachments as $attachment) {
+                        $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
+                    }
                 }
+    
+                $announcement->moderate();
             }
 
-            $announcement->moderate();
-        }
-
-        return $announcement;
+            return $announcement;
+        });
     }
 
-    private function setFeatures($categories, $attributes)
+    private function getFeatures($categories, $attributes)
     {
         $features = [];
         
@@ -55,7 +58,7 @@ trait AnnouncementCrud
         return $features;
     }
 
-    private function setChannels($announcement)
+    private function getChannels($announcement)
     {
         $channels = [];
 

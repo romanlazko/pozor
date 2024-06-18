@@ -1,47 +1,11 @@
 <x-body-layout>
     <x-slot name="meta">
-        {{-- @if(isset($announcement?->meta['description']))
-            <meta name="description" content="{{ $announcement?->meta['description'] }}" data-rh="true">
-            <meta name="mrc__share_title" content="{{ $announcement?->meta['description'] }}" data-rh="true">
-            <meta property="og:description" content="{{ $announcement?->meta['description'] }}" data-rh="true">
-        @endif
-
-        @if(isset($announcement?->meta['meta_title']))
-            <meta name="mrc__share_title" content="{{ $announcement?->meta['meta_title'] }}" data-rh="true">
-            <meta property="og:title" content="{{ $announcement?->meta['meta_title'] }}" data-rh="true">
-        @endif
-
-        @if(isset($announcement?->meta['image_url']) AND isset($announcement?->meta['image_alt']))
-            <meta property="og:image" content="{{ $announcement?->meta['image_url'] }}" data-rh="true">
-            <meta property="og:image:alt" content="{{ $announcement?->meta['image_alt'] }}" data-rh="true">
-        @endif
-        
-        
-        <meta property="og:url" content="{{ route('announcement.show', $announcement->slug) }}" data-rh="true">
-        @if(isset($announcement?->meta['price']) AND isset($announcement?->meta['currency']))
-            <meta property="product:price:amount" content="{{ $announcement?->meta['price']}}" data-rh="true">
-            <meta property="product:price:currency" content="{{ $announcement?->meta['currency'] }}" data-rh="true">
-        @endif --}}
-        {{-- {!!  !!} --}}
-
-        {{-- @dump($announcement?->seo ?? null) --}}
-
-        {!! seo()->for($announcement) !!}
+        {!! seo($announcement->getDynamicSEOData()) !!}
     </x-slot>
 
     <x-slot name="headerNavigation">
         @include('layouts.header')
     </x-slot>
-
-    {{-- <x-slot name="header">
-        <x-buttons.back 
-            onclick="if (document.referrer == '' && !document.referrer.includes('announcement') && '{{ redirect()->back()->getTargetUrl() }}' != '{{ route('announcement.index') }}') { window.location.href = '{{ route('announcement.index') }}'; } else { window.history.back(); }"
-        />
-
-        <div class="flex space-x-3">
-            <livewire:components.like-dislike :announcement="$announcement"/>
-        </div>
-    </x-slot> --}}
 
     <div class="space-y-6">
         <section class="lg:flex w-full mx-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
@@ -95,7 +59,6 @@
                                 <ul class="w-full list-inside list-disc">
                                     @foreach ($feature_section->sortBy('attribute.section.order_number') as $feature)
                                         <li class="w-full grid grid-cols-2 space-x-2 text-base ">
-                                            
                                             <span class="text-gray-500 inline-block">• {{ $feature->label }}:</span>
                                             <span class="">
                                                 {{ $feature->value }} {{ $feature->suffix }}
@@ -155,12 +118,26 @@
     </div>
     
     <x-modal name="send-message">
-        <x-send-message :announcement="$announcement"/>
+        <x-white-block>
+            <div class="w-full space-y-6">
+                <div class="space-y-2">
+                    <x-user-card :user="$announcement?->user" />
+                </div>
+                <x-send-message :announcement_id="$announcement->id"/>
+            </div>
+        </x-white-block>
     </x-modal>
 
     @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
         <x-modal name="show-contact">
-            <livewire:components.show-contact :user_id="$announcement->user->id"/>
+            <x-white-block>
+                <div class="w-full space-y-6">
+                    <div class="space-y-2">
+                        <x-user-card :user="$announcement?->user" />
+                    </div>
+                    <livewire:components.show-contact :user_id="$announcement->user->id"/>
+                </div>
+            </x-white-block>
         </x-modal>
     @endif
 

@@ -298,7 +298,7 @@ class Announcements extends Component implements HasForms, HasTable
                             })
                             ->toArray();
                     })
-                    ->query(fn ($query, $data) => 
+                    ->query(fn ($query, $data) =>
                         $query->whereHas('currentStatus', fn ($query) => $query->when($data['value'], fn ($query) => $query->where('status', $data['value'])))
                     )
                     ->preload(),
@@ -322,7 +322,6 @@ class Announcements extends Component implements HasForms, HasTable
                     ->preload()
             ])
             ->persistFiltersInSession()
-            
             ->contentGrid([
                 'md' => 2,
                 'xl' => 3,
