@@ -654,7 +654,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 11:59:51',
-                'updated_at' => '2024-05-26 12:49:22',
+                'updated_at' => '2024-07-15 12:38:19',
                 'deleted_at' => NULL,
             ),
             58 => 
@@ -676,7 +676,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 12:00:56',
-                'updated_at' => '2024-05-26 12:49:22',
+                'updated_at' => '2024-07-15 12:38:19',
                 'deleted_at' => NULL,
             ),
             60 => 
@@ -687,7 +687,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-05-26 12:06:52',
-                'updated_at' => '2024-05-26 12:49:22',
+                'updated_at' => '2024-07-15 12:38:19',
                 'deleted_at' => NULL,
             ),
             61 => 
@@ -754,6 +754,116 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_null' => 1,
                 'created_at' => '2024-06-04 10:48:09',
                 'updated_at' => '2024-06-04 10:48:09',
+                'deleted_at' => NULL,
+            ),
+            67 => 
+            array (
+                'id' => 68,
+                'attribute_id' => 30,
+                'alternames' => '{"cs": "Dům", "en": "House", "ru": "Дом"}',
+                'is_default' => 1,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:31:43',
+                'updated_at' => '2024-07-15 12:57:20',
+                'deleted_at' => NULL,
+            ),
+            68 => 
+            array (
+                'id' => 69,
+                'attribute_id' => 30,
+                'alternames' => '{"cs": "Letní dům", "en": "Summer house", "ru": "Дача"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:31:43',
+                'updated_at' => '2024-07-15 12:57:20',
+                'deleted_at' => NULL,
+            ),
+            69 => 
+            array (
+                'id' => 70,
+                'attribute_id' => 30,
+                'alternames' => '{"cs": "Chata", "en": "Cottage", "ru": "Коттедж"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:31:43',
+                'updated_at' => '2024-07-15 12:57:20',
+                'deleted_at' => NULL,
+            ),
+            70 => 
+            array (
+                'id' => 71,
+                'attribute_id' => 30,
+                'alternames' => '{"cs": "Městský dům", "en": "Townhouse", "ru": "Таунхаус"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:31:43',
+                'updated_at' => '2024-07-15 12:57:20',
+                'deleted_at' => NULL,
+            ),
+            71 => 
+            array (
+                'id' => 72,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "1 pokoj", "en": "1 room", "ru": "1 комната"}',
+                'is_default' => 1,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
+                'deleted_at' => NULL,
+            ),
+            72 => 
+            array (
+                'id' => 73,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "2 pokoje", "en": "2 rooms", "ru": "2 комнаты"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
+                'deleted_at' => NULL,
+            ),
+            73 => 
+            array (
+                'id' => 74,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "3 pokoje", "en": "3 rooms", "ru": "3 комнаты"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
+                'deleted_at' => NULL,
+            ),
+            74 => 
+            array (
+                'id' => 75,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "4 pokoje", "en": "4 rooms", "ru": "4 комнаты"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
+                'deleted_at' => NULL,
+            ),
+            75 => 
+            array (
+                'id' => 76,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "5 pokoje", "en": "5 rooms", "ru": "5 комнаты"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
+                'deleted_at' => NULL,
+            ),
+            76 => 
+            array (
+                'id' => 77,
+                'attribute_id' => 31,
+                'alternames' => '{"cs": "6 a více", "en": "6 and more", "ru": "6 и более"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-07-15 12:36:20',
+                'updated_at' => '2024-07-15 13:58:42',
                 'deleted_at' => NULL,
             ),
         ));

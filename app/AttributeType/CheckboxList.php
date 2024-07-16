@@ -4,6 +4,7 @@ namespace App\AttributeType;
 
 use Filament\Forms\Components\CheckboxList as ComponentsCheckboxList;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class CheckboxList extends BaseAttributeType
 {
@@ -21,10 +22,8 @@ class CheckboxList extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-
         return ComponentsCheckboxList::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))

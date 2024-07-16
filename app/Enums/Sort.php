@@ -49,18 +49,18 @@ enum Sort: string implements HasLabel
                 'cs' => 'Najstarsi',
                 default => 'Oldest',
             },
-            self::cheapest => match (App::getLocale()) {
-                'ru' => 'Самые дешёвые',
-                'en' => 'Cheapest',
-                'cs' => 'Najlevnejsi',
-                default => 'Cheapest',
-            },
-            self::mostExpensive => match (App::getLocale()) {
-                'ru' => 'Самые дорогие',
-                'en' => 'Most Expensive',
-                'cs' => 'Najskrátnejsi',
-                default => 'Most Expensive',
-            },
+            // self::cheapest => match (App::getLocale()) {
+            //     'ru' => 'Самые дешёвые',
+            //     'en' => 'Cheapest',
+            //     'cs' => 'Najlevnejsi',
+            //     default => 'Cheapest',
+            // },
+            // self::mostExpensive => match (App::getLocale()) {
+            //     'ru' => 'Самые дорогие',
+            //     'en' => 'Most Expensive',
+            //     'cs' => 'Najskrátnejsi',
+            //     default => 'Most Expensive',
+            // },
             default => 'Newest',
         };
     }

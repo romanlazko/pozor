@@ -68,7 +68,7 @@ class LikeDislike extends Component
     private function validateAccess()
     {
         if (auth()->guest()) {
-            $this->redirectRoute('login');
+            $this->redirectIntended('login');
             return false;
         }
         return true;

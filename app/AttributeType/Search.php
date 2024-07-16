@@ -6,6 +6,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class Search extends BaseAttributeType
 {
@@ -21,7 +22,7 @@ class Search extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(1)
             ->schema([

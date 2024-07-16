@@ -2,6 +2,7 @@
 
 namespace App\AttributeType;
 
+use App\Models\Attribute;
 use App\Models\Geo as ModelsGeo;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
@@ -11,6 +12,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\ViewComponent;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Support\Facades\Cache;
 
@@ -18,7 +20,7 @@ class Location extends BaseAttributeType
 {
     private $countries;
 
-    public function __construct(public $attribute, public $data = [])
+    public function __construct(public Attribute $attribute, public $data = [])
     {
         $this->countries = Cache::rememberForever('countries', fn () => Geo::select('name', 'country')->where('level', 'PCLI')->get());
 
@@ -29,17 +31,15 @@ class Location extends BaseAttributeType
     {
         $query->whereHas('geo', function ($query) {
             $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 
-                $query->radius($location->latitude, $location->longitude, (integer) $this->data['radius'] ?? 30)
+                $query->radius($location->latitude, $location->longitude, (integer) $this->data['radius'] == 0 ? 30 : (integer) $this->data['radius'])
             );
         });
 
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-
         return Grid::make(2)
             ->schema([
                 ComponentsSelect::make('country')
@@ -63,7 +63,6 @@ class Location extends BaseAttributeType
                             ->limit(30)
                             ->pluck('name', 'id');
                     })
-                    // ->afterStateHydrated(fn (string $state) => ModelsGeo::find($state)->name ?? null)
                     ->live()
                     ->placeholder(__('filament.labels.city')),
                 ComponentsSelect::make('attributes.radius')
@@ -82,7 +81,7 @@ class Location extends BaseAttributeType
             ]);
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(2)
             ->schema([

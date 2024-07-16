@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\AttributeType\AttributeFactory;
 use App\Facades\Deepl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,17 +26,17 @@ class Feature extends Model
     {
         static::creating(function (Feature $feature) {
             
-            // if ($feature->attribute->translatable) {
-            //     $values = [
-            //         'original' => $feature->translated_value['original']
-            //     ];
+            if ($feature->attribute->translatable) {
+                $values = [
+                    'original' => $feature->translated_value['original']
+                ];
 
-            //     $values['en'] = Deepl::translateText($feature->translated_value['original'], null, 'en-US')->text;
-            //     $values['ru'] = Deepl::translateText($feature->translated_value['original'], null, 'RU')->text;
-            //     $values['cz'] = Deepl::translateText($feature->translated_value['original'], null, 'CS')->text;
+                $values['en'] = Deepl::translateText($feature->translated_value['original'], null, 'en-US')->text;
+                $values['ru'] = Deepl::translateText($feature->translated_value['original'], null, 'RU')->text;
+                $values['cs'] = Deepl::translateText($feature->translated_value['original'], null, 'CS')->text;
 
-            //     $feature->translated_value = $values;
-            // }
+                $feature->translated_value = $values;
+            }
         });
     }
 
@@ -56,37 +57,7 @@ class Feature extends Model
 
     public function getValueAttribute()
     {
-        // $attribute_option = $this->attribute_option;
-        
-        // if ($attribute_option) {
-        //     return $attribute_option->name;
-        // }
-
-        // $value = ($this->translated_value[app()->getLocale()] ?? $this->translated_value['original']);
-
-        // if ($this->attribute->create_type == "between") {
-        //     if (is_array($value)) {
-        //         $value = $value['min'] . ' - ' . $value['max'];
-        //     }
-        // }
-
-        // if ($this->attribute->create_type == "toggle") {
-        //     $value = $this->attribute->label;
-        // }
-
-        // if ($this->attribute->create_type == "from") {
-            
-        //     if (is_array($value)) {
-        //         $value = $value['from'] . ' - ' . $value['to'];
-        //     }
-        // }
-
-        $class = "App\\AttributeType\\" . str_replace('_', '', ucwords($this->attribute->create_type, '_'));
-        if (class_exists($class)) {
-            return (new $class($this->attribute))->getValueByFeature($this);
-        }
-
-        return null;
+        return AttributeFactory::getValueByFeature($this->attribute, $this);
     }
 
     public function getLabelAttribute()
@@ -98,15 +69,4 @@ class Feature extends Model
     {
         return $this->attribute->suffix;
     }
-
-    // public function getTranslatedValueAttribute()
-    // {
-    //     $attribute_options = $this->attribute->attribute_options;
-
-    //     if ($attribute_options->isNotEmpty()) {
-    //         return $attribute_options->find($this->value)?->name;
-    //     }
-
-    //     return json_decode($this->attributes['translated_value'], true)[app()->getLocale()] ?? $this->value;
-    // }
 }

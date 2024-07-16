@@ -4,6 +4,7 @@ namespace App\AttributeType;
 
 use Filament\Forms\Components\Select as ComponentsSelect;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class Select extends BaseAttributeType
 {
@@ -21,10 +22,8 @@ class Select extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-
         return ComponentsSelect::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))
@@ -33,7 +32,7 @@ class Select extends BaseAttributeType
             ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsSelect::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)

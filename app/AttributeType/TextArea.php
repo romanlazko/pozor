@@ -11,6 +11,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\ToggleButtons as ComponentsToggleButtons;
+use Filament\Support\Components\ViewComponent;
 
 class TextArea extends BaseAttributeType
 {
@@ -23,7 +24,7 @@ class TextArea extends BaseAttributeType
         return $query;
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsTextarea::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)

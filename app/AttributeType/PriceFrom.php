@@ -8,7 +8,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Support\Components\ViewComponent;
 use Guava\FilamentClusters\Forms\Cluster;
 
 class PriceFrom extends BaseAttributeType
@@ -16,7 +16,7 @@ class PriceFrom extends BaseAttributeType
     public function apply($query)
     {
         $query->whereHas('features', function ($query) {
-            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer)$this->data[$this->attribute->name]['from']);
+            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer) $this->data[$this->attribute->name]['from']);
         });
 
         return $query;
@@ -30,7 +30,7 @@ class PriceFrom extends BaseAttributeType
         return ($value['amount']['from'] ?? "") . " - " . ($value['amount']['to'] ?? "")  . " " . ($value['currency'] ?? "");
     }
 
-    public function create()
+    public function getCreateSchema(): array
     {
         return [
             'attribute_id' => $this->attribute->id,
@@ -46,7 +46,7 @@ class PriceFrom extends BaseAttributeType
         ];
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {   
         return ComponentsTextInput::make('attributes.'.$this->attribute->name.'.from')
                 ->placeholder(__('filament.placeholders.from'))
@@ -58,7 +58,7 @@ class PriceFrom extends BaseAttributeType
                 ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(2)
             ->schema([

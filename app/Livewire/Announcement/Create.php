@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Announcement;
 
+use App\AttributeType\AttributeFactory;
 use App\Livewire\Components\Forms\Components\Wizard;
 use App\Livewire\Traits\AnnouncementCrud;
 use App\Models\Attribute;
@@ -20,6 +21,8 @@ use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
@@ -46,7 +49,7 @@ class Create extends Component implements HasForms
 
     protected $categories = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->parent_categories = Category::where('parent_id', null)->get()->pluck('name', 'id');
     }
@@ -117,27 +120,26 @@ class Create extends Component implements HasForms
         return view('livewire.announcement.create');
     }
 
-    public function getFormSchema()
+    public function getFormSchema(): array
     {
-        $schema = [];
-
-        $sections = $this->getCategoryAttributes()?->sortBy('section.order_number')?->groupBy('section.name') ?? [];
-
-        foreach ($sections as $section_name => $section) {
-            $schema[] = Section::make($section_name)->schema([
-                Grid::make([
-                    'default' => 1,
-                    'sm' => 2,
-                    'md' => 2,
-                    'lg' => 2,
-                    'xl' => 2,
-                    '2xl' => 2,
-                ])
-                ->schema($this->getFields($section))
-            ]);
-        }
-
-        return $schema;
+        return $this->getCategoryAttributes()
+            ?->sortBy('section.order_number')
+            ?->groupBy('section.name')
+            ?->map(function($section, $section_name) {
+                return Section::make($section_name)->schema([
+                    Grid::make([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 2,
+                        'lg' => 2,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ])
+                    ->schema($this->getFields($section))
+                ]);
+            })
+            ?->filter()
+            ?->toArray();
     }
 
     public function getSubcategories(Get $get, Set $set, int $currentLevel = 0): array
@@ -162,25 +164,20 @@ class Create extends Component implements HasForms
         return [];
     }
 
-    public function getFields($section)
+    public function getFields($section): array
     {
-        $fields = [];
-
-        foreach ($section->sortBy('order_number') as $attribute) {
-            $class = "App\\AttributeType\\" . str_replace('_', '', ucwords($attribute->create_type, '_'));
-            if (class_exists($class)) {
-                $fields[] = (new $class($attribute))->getCreateComponent();
-            }
-        }
-
-        return $fields;
+        return $section->sortBy('order_number')->map(function ($attribute) {
+                return AttributeFactory::getCreateComponent($attribute);
+            })
+            ->filter()
+            ->toArray();
     }
 
     public function getCategoryAttributes(): Collection
     {
         $cacheKey = implode('_', $this->data['categories']) . '_create_attributes';
 
-        return Cache::remember($cacheKey, 360, function () {
+        return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Attribute::select(
                 'id',
                 'name',
@@ -198,7 +195,7 @@ class Create extends Component implements HasForms
                 'altersuffixes'
             )
                 ->with([
-                    'attribute_options' => function ($query) {
+                    'attribute_options' => function (HasMany $query) {
                         return $query->select(
                             'attribute_id',
                             'id',
@@ -214,11 +211,11 @@ class Create extends Component implements HasForms
         });
     }
 
-    public function getCategories()
+    public function getCategories(): SupportCollection
     {
         $cacheKey = implode('_', $this->data['categories']) . '_create_categories';
 
-        return Cache::remember($cacheKey, 360, function () {
+        // return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Category::whereIn('id', $this->data['categories'])
                 ->select('id', 'alternames', 'parent_id')
                 ->with('children:alternames,id,parent_id')
@@ -228,6 +225,6 @@ class Create extends Component implements HasForms
                     'id' => $category->id,
                     'children' => $category->children,
                 ]));
-        });
+        // });
     }
 }

@@ -2,17 +2,16 @@
 
 namespace App\Livewire\Traits;
 
-use App\Enums\Status;
+use App\AttributeType\AttributeFactory;
 use App\Models\Announcement;
 use App\Models\Attribute;
-use Igaster\LaravelCities\Geo;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\TelegramChat;
 use Illuminate\Support\Facades\DB;
 
 trait AnnouncementCrud
 {
-    public function createAnnouncement(object $data)
+    public function createAnnouncement(object $data): ?Announcement
     {
         return DB::transaction(function () use ($data) {
             $announcement = auth()->user()->announcements()->create([
@@ -37,54 +36,40 @@ trait AnnouncementCrud
         });
     }
 
-    private function getFeatures($categories, $attributes)
+    private function getFeatures(array $categories, array $attributes) : array
     {
-        $features = [];
-        
-        if (isset($attributes) AND !empty($attributes)) {
-            $availableAttributes = Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))->get();
-
-            foreach ($availableAttributes as $availableAttribute) {
-                if (isset($attributes[$availableAttribute->name]) && !empty($attributes[$availableAttribute->name])) {
-                    $className = "App\\AttributeType\\".str_replace('_', '', ucwords($availableAttribute?->create_type, '_'));
-
-                    if (class_exists($className)) {
-                        $features[] = (new $className($availableAttribute, $attributes))->create();
-                    }
-                }
-            }
+        if (empty($attributes)) {
+            return [];
         }
 
-        return $features;
+        return Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))
+            ->get()
+            ->map(function ($attribute) use ($attributes) {
+                return empty($attributes[$attribute->name]) 
+                    ? null 
+                    : AttributeFactory::getCreateSchema($attribute, $attributes);
+            })
+            ->filter()
+            ->all();
     }
 
-    private function getChannels($announcement)
+    private function getChannels($announcement) : array
     {
-        $channels = [];
+        $categoryChannelIds = $announcement->categories->pluck('channels')->flatten()->pluck('id');
 
-        $channelsByCategory = $announcement->categories
-            ->pluck('channels')->flatten();
-
-        $channelsByLocation = TelegramChat::whereIn('id', $channelsByCategory->pluck('id'))
+        $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)
             ->whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
             ->get();
 
-        if ($channelsByLocation->count() === 0) {
-            $channelsByLocation = TelegramChat::whereIn('id', $channelsByCategory->pluck('id'))->get();
+        if ($locationChannels->isEmpty()) {
+            $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)->get();
         }
 
-        foreach ($channelsByLocation as $channel) {
-            $channels[] = [
-                'telegram_chat_id' => $channel->id,
-            ];
-        }
-
-        return $channels;
+        return $locationChannels->map(fn ($channel) => ['telegram_chat_id' => $channel->id])->all();
     }
+}
 
-
-
-    // public function updateAnnouncement(object $data)
+// public function updateAnnouncement(object $data)
     // {
     //     $location = Geo::find($data->geo_id)?->toArray() ?? [];
 
@@ -124,4 +109,3 @@ trait AnnouncementCrud
 
     //     return $announcement;
     // }
-}

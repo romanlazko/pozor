@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Announcement;
 
+use App\AttributeType\AttributeFactory;
 use App\Enums\Sort;
 use App\Models\Attribute;
 use Filament\Forms\Components\Actions\Action;
@@ -37,14 +38,18 @@ class Filters extends Component implements HasForms
 
     public function form(Form $form): Form
     {
-        foreach ($this->getCategoryAttributes()?->sortBy('section.order_number')?->groupBy('section') ?? [] as $group) {
-            $fields = $this->getFields($group);
-            
-            if (!empty($fields)) {
-                $this->fields[] = Grid::make()
-                    ->schema($fields);
-            }
-        }
+        $this->fields = $this->getCategoryAttributes()
+            ?->sortBy('section.order_number')
+            ?->groupBy('section')
+            ?->map(function ($section) {
+                $fields = $this->getFields($section);
+                
+                if (!empty($fields)) {
+                    return Grid::make()->schema($fields);
+                }
+            })
+            ?->filter()
+            ?->toArray();
 
         return $form
             ->schema([
@@ -81,28 +86,21 @@ class Filters extends Component implements HasForms
 
     public function getFields($group)
     {
-        $fields = [];
-
-        $attributes = $group?->sortBy('order_number');
-
-        foreach ($attributes as $attribute) {
-            $className = "App\\AttributeType\\".str_replace('_', '', ucwords($attribute?->search_type, '_'));
-
-            if ($attribute->filterable AND class_exists($className)) {
-                $fields[] = (new $className($attribute))->getFilterComponent();
-            }
-        }
-
-        return $fields;
+        return $group->sortBy('order_number')->map(function ($attribute) {
+            return AttributeFactory::getFilterComponent($attribute);
+        })
+        ->filter()
+        ->toArray();
     }
 
     public function getCategoryAttributes()
     {
         $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
 
-        return Cache::remember($cacheKey, 360, function () {
+        // return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Attribute::select('id', 'name', 'filterable', 'search_type', 'is_feature', 'visible', 'column_span', 'order_number', 'attribute_section_id', 'alterlabels')
                 ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'section:id,order_number')
+
                 ->when($this->category, function ($query) {
                     $categoryIds = $this->category
                         ->getParentsAndSelf()
@@ -112,11 +110,12 @@ class Filters extends Component implements HasForms
                     $query->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? [])->select('categories.id'));
                 })
                 
-                ->when(!$this->category, function ($query) { 
+                ->when(!$this->category, function (Builder $query) { 
                     $query->where('always_required', true);
                 })
+
                 ->get();
-        });
+        // });
     }
 }
 

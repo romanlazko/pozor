@@ -213,21 +213,99 @@ class AttributeCategoryTableSeeder extends Seeder
             ),
             32 => 
             array (
-                'id' => 48,
+                'id' => 51,
                 'attribute_id' => 29,
-                'category_id' => 2,
+                'category_id' => 8,
             ),
             33 => 
             array (
-                'id' => 49,
-                'attribute_id' => 29,
-                'category_id' => 6,
+                'id' => 52,
+                'attribute_id' => 6,
+                'category_id' => 8,
             ),
             34 => 
             array (
-                'id' => 50,
-                'attribute_id' => 29,
-                'category_id' => 7,
+                'id' => 53,
+                'attribute_id' => 6,
+                'category_id' => 27,
+            ),
+            35 => 
+            array (
+                'id' => 55,
+                'attribute_id' => 1,
+                'category_id' => 1,
+            ),
+            36 => 
+            array (
+                'id' => 56,
+                'attribute_id' => 14,
+                'category_id' => 18,
+            ),
+            37 => 
+            array (
+                'id' => 57,
+                'attribute_id' => 16,
+                'category_id' => 18,
+            ),
+            38 => 
+            array (
+                'id' => 58,
+                'attribute_id' => 9,
+                'category_id' => 18,
+            ),
+            39 => 
+            array (
+                'id' => 59,
+                'attribute_id' => 10,
+                'category_id' => 18,
+            ),
+            40 => 
+            array (
+                'id' => 60,
+                'attribute_id' => 11,
+                'category_id' => 18,
+            ),
+            41 => 
+            array (
+                'id' => 61,
+                'attribute_id' => 12,
+                'category_id' => 18,
+            ),
+            42 => 
+            array (
+                'id' => 62,
+                'attribute_id' => 13,
+                'category_id' => 18,
+            ),
+            43 => 
+            array (
+                'id' => 63,
+                'attribute_id' => 15,
+                'category_id' => 18,
+            ),
+            44 => 
+            array (
+                'id' => 64,
+                'attribute_id' => 6,
+                'category_id' => 28,
+            ),
+            45 => 
+            array (
+                'id' => 65,
+                'attribute_id' => 6,
+                'category_id' => 29,
+            ),
+            46 => 
+            array (
+                'id' => 67,
+                'attribute_id' => 30,
+                'category_id' => 18,
+            ),
+            47 => 
+            array (
+                'id' => 69,
+                'attribute_id' => 31,
+                'category_id' => 18,
             ),
         ));
         

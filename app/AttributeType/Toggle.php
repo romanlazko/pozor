@@ -5,6 +5,7 @@ namespace App\AttributeType;
 use App\Models\Feature;
 use Filament\Forms\Get;
 use Filament\Forms\Components\Toggle as ComponentsToggle;
+use Filament\Support\Components\ViewComponent;
 
 class Toggle extends BaseAttributeType
 {
@@ -22,10 +23,8 @@ class Toggle extends BaseAttributeType
         return $this->attribute->label;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-        
         return ComponentsToggle::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->columnSpanFull()
@@ -33,7 +32,7 @@ class Toggle extends BaseAttributeType
             ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsToggle::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)

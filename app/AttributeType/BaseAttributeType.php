@@ -2,13 +2,25 @@
 
 namespace App\AttributeType;
 
+use App\Models\Attribute;
 use App\Models\Feature;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class BaseAttributeType
 {
-    public function __construct(public $attribute, public $data = [])
+    public function __construct(public Attribute $attribute, public $data = [])
     {
+    }
+
+    public function applyQuery($query)
+    {
+        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
+            return $this->apply($query);
+        }
+
+        return $query;
     }
 
     public function apply($query)
@@ -18,16 +30,13 @@ class BaseAttributeType
 
     public function getValueByFeature(Feature $feature = null)
     {
-        $attribute_option = $feature->attribute_option;
-        
-        if ($attribute_option) {
-            return $attribute_option->name;
-        }
-
-        return $feature->translated_value[app()->getLocale()] ?? $feature->translated_value['original'] ?? null;
+        return $feature->attribute_option?->name
+            ?? $feature->translated_value[app()->getLocale()]
+            ?? $feature->translated_value['original']
+            ?? null;
     }
 
-    public function create()
+    public function getCreateSchema(): array
     {
         if ($this->attribute->attribute_options->isNotEmpty()) {
             return [
@@ -35,55 +44,76 @@ class BaseAttributeType
                 'attribute_option_id' => $this->data[$this->attribute->name],
             ];
         }
-        else {
-            return [
-                'attribute_id' => $this->attribute->id,
-                'translated_value'        => [
-                    'original' => $this->data[$this->attribute->name]
-                ],
-            ];
+
+        return [
+            'attribute_id' => $this->attribute->id,
+            'translated_value'        => [
+                'original' => $this->data[$this->attribute->name]
+            ],
+        ];
+    }
+
+    public function getCreateComponent(Get $get = null): ?ViewComponent
+    {
+        return $this->getFilamentCreateComponent($get);
+    }
+
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
+    {
+        return null;
+    }
+
+    public function getFilterComponent(Get $get = null): ?ViewComponent
+    {
+        if (!$this->attribute->filterable) {
+            return null;
         }
+
+        return $this->getFilamentFilterComponent($get);
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return null;
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function isVisible(Get $get = null): bool
     {
-        return null;
+        if (empty($this->attribute->visible)) {
+            return true;
+        }
+
+        if ($this->checkCondition($get, $this->attribute->visible)) {
+            return true;
+        }
+
+        return false;
     }
 
-    public function isVisible(Get $get = null)
+    public function isHidden(Get $get = null): bool
     {
-        if (!empty($this->attribute->visible)) {
-            foreach ($this->attribute->visible as $condition) {
-                if ($get) {
-                    if ($get($condition['attribute_name']) == $condition['value'] OR $get('attributes.'.$condition['attribute_name']) == $condition['value']) return true;
-                }
-                else {
-                    if (data_get($this->data, $condition['attribute_name']) == $condition['value'] OR data_get($this->data, 'attributes.'.$condition['attribute_name']) == $condition['value']) return true;
-                }
-            }
+        if (empty($this->attribute->hidden)) {
             return false;
         }
+
+        if ($this->checkCondition($get, $this->attribute->hidden)) {
+            return true;
+        }
+
         return true;
     }
 
-    public function isHidden(Get $get = null)
+    private function checkCondition(Get $get, $conditions): bool
     {
-        if (!empty($this->attribute->hidden)) {
-            foreach ($this->attribute->hidden as $condition) {
-                if ($get) {
-                    if ($get($condition['attribute_name']) == $condition['value'] OR $get('attributes.'.$condition['attribute_name']) == $condition['value']) return true;
-                }
-                else {
-                    if (data_get($this->data, $condition['attribute_name']) == $condition['value'] OR data_get($this->data, 'attributes.'.$condition['attribute_name']) == $condition['value']) return true;
-                }
+        foreach ($conditions as $condition) {
+            $value = $get ? $get($condition['attribute_name']) : data_get($this->data, $condition['attribute_name']);
+            $altValue = $get ? $get('attributes.' . $condition['attribute_name']) : data_get($this->data, 'attributes.' . $condition['attribute_name']);
+            
+            if ($value == $condition['value'] || $altValue == $condition['value']) {
+                return true;
             }
-            return true;
         }
+
         return false;
     }
 }

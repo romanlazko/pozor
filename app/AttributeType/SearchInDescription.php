@@ -5,6 +5,7 @@ namespace App\AttributeType;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class SearchInDescription extends BaseAttributeType
 {
@@ -17,7 +18,7 @@ class SearchInDescription extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return Checkbox::make('attributes.search_in_description')->columnSpanFull();
     }

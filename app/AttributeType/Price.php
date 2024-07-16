@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Support\Components\ViewComponent;
 use Guava\FilamentClusters\Forms\Cluster;
 
 class Price extends BaseAttributeType
@@ -18,11 +19,11 @@ class Price extends BaseAttributeType
         $from = $this->data[$this->attribute->name]['from'] ?? null;
         $to = $this->data[$this->attribute->name]['to'] ?? null;
 
-        $query->when(!empty($min) OR !empty($max), function ($query) use ($to, $from){
+        $query->when(!empty($from) OR !empty($to), function ($query) use ($to, $from){
             $query->whereHas('features', function ($query) use ($to, $from){
                 $query->where('attribute_id', $this->attribute->id)
-                    ->when(!empty($min), fn ($query) => $query->where('translated_value->original->amount', '>=', (integer)$to))
-                    ->when(!empty($max), fn ($query) => $query->where('translated_value->original->amount', '<=', (integer)$from));
+                    ->when(!empty($from), fn ($query) => $query->where('translated_value->original->amount', '>=', (integer) $from))
+                    ->when(!empty($to), fn ($query) => $query->where('translated_value->original->amount', '<=', (integer) $to));
             });
         });
 
@@ -36,7 +37,7 @@ class Price extends BaseAttributeType
         return ($value['amount'] ?? "") . " " . ($value['currency'] ?? "");
     }
 
-    public function create()
+    public function getCreateSchema(): array
     {
         return [
             'attribute_id' => $this->attribute->id,
@@ -49,7 +50,7 @@ class Price extends BaseAttributeType
         ];
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return Cluster::make([
                 ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount')
@@ -70,7 +71,7 @@ class Price extends BaseAttributeType
         
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {   
         return Cluster::make([
             ComponentsTextInput::make('attributes.'.$this->attribute->name.'.from')

@@ -8,6 +8,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\ViewComponent;
 
 class From extends BaseAttributeType
 {
@@ -28,7 +29,7 @@ class From extends BaseAttributeType
         return ($value['from'] ?? "") . " - " . ($value['to'] ?? "");
     }
 
-    public function create()
+    public function getCreateSchema(): array
     {
         return [
             'attribute_id' => $this->attribute->id,
@@ -41,7 +42,7 @@ class From extends BaseAttributeType
         ];
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {   
         return TextInput::make('attributes.'.$this->attribute->name)
                 ->placeholder(__('filament.placeholders.from'))
@@ -53,7 +54,7 @@ class From extends BaseAttributeType
                 ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return Cluster::make([
             TextInput::make('attributes.'.$this->attribute->name.'.from')

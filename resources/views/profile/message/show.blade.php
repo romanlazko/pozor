@@ -7,7 +7,7 @@
         <x-profile-nav/>
     </x-slot>
 
-    <div class="w-full items-center justify-between flex space-x-3 sticky top-0 z-30 bg-white p-2 md:p-0 border-b lg:border-none">
+    <div class="w-full items-center justify-between flex space-x-3 sticky top-0 z-30 bg-gray-50 p-2 md:p-0 border-b lg:border-none">
 
         <a href="{{ route('profile.message.index') }}" class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
             <i class="fa-solid fa-arrow-left"></i>

@@ -21,7 +21,8 @@ class Category extends Model implements HasMedia
     protected $guarded = [];
 
     protected $casts = [
-        'alternames' => 'array' 
+        'alternames' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public function getSlugOptions() : SlugOptions
@@ -86,17 +87,18 @@ class Category extends Model implements HasMedia
 
     public function getParentsAndSelf()
     {
-        return Cache::remember($this?->slug.'_parents_and_self', 3600, fn () => 
+        return 
+        // Cache::remember($this?->slug.'_parents_and_self', config('cache.ttl'), fn () => 
             collect([
                 $this,
                 ...$this->parent?->getParentsAndSelf() ?? []
-            ])
-        );
+            ]);
+        // );
     }
 
-    public function scopeIsActive()
+    public function scopeIsActive($query)
     {
-        return $this->where('is_active', true);
+        return $query->where('is_active', true);
     }
 
     public function getDynamicSEOData(): SEOData

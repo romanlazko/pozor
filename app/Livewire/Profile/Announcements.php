@@ -49,7 +49,7 @@ class Announcements extends Component implements HasForms, HasTable
                         ->defaultImageUrl(fn ($record) => $record->getFirstMedia('announcements')?->getUrl())
                         ->extraImgAttributes(['class' => 'rounded-xl border-2 border-white hover:border-indigo-600'])
                         ->height(200)
-                        ->url(fn ($record) => route('announcement.show', $record))
+                        // ->url(fn ($record) => route('announcement.show', ($record ?? 1)))
                         ->extraAttributes(['class' => 'py-2']),
                     // TextColumn::make('title')
                     //     ->description(fn ($record) => $record->current_price . ' ' . $record->currency->name)

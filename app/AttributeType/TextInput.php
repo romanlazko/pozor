@@ -4,10 +4,11 @@ namespace App\AttributeType;
 
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Forms\Get;
+use Filament\Support\Components\ViewComponent;
 
 class TextInput extends BaseAttributeType
 {
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsTextInput::make('attributes.'.$this->attribute->name)
                 ->label($this->attribute->label)

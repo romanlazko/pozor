@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Akuechler\Geoly;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,8 +30,6 @@ class Announcement extends Model implements HasMedia, Auditable
     use AnnouncementStatus; 
 
     protected $guarded = [];
-
-    // protected $with = ['media'];
 
     protected static function booted(): void
     {
@@ -114,39 +111,6 @@ class Announcement extends Model implements HasMedia, Auditable
     public function getFeatureByName($name)
     {
         return $this->features->firstWhere('attribute.name', $name);
-    }
-
-    public function getFeatureByNameAndPull($name)
-    {
-        $feature = $this->getFeatureByName($name);
-
-        if ($feature) {
-            $this->features->forget($this->features->search($feature));
-        }
-        
-        return $feature ?? null;
-    }
-
-    public function getMetaAttribute()
-    {
-        $title = $this->getFeatureByName('title')->value ?? '';
-        $currentPrice = $this->current_price ?? $this->salary ?? '';
-        $currency = $this->getFeatureByName('currency')->value ?? '';
-        $description = $this->getFeatureByName('description')->value ?? '';
-        $categories = $this->categories->pluck('name')->implode(' | ');
-
-        return [
-            'title' => $title,
-            'meta_title' => "$title - $currentPrice $currency | $categories",
-            'description' => "$title - $currentPrice $currency | $categories | $description",
-            'image_url' => $this->getFirstMediaUrl('announcement'),
-            'image_alt' => "$title | $categories",
-            'price' => $currentPrice,
-            'currency' => $currency,
-            'category' => $categories,
-            'author' => $this->user->name ?? '',
-            'date' => $this->created_at ?? '',
-        ];
     }
 
     public function getDynamicSEOData(): SEOData

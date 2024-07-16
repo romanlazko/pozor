@@ -12,18 +12,24 @@
             <div class="w-full lg:w-2/3  overflow-hidden">
                 <x-slider :medias="$announcement->getMedia('announcements')"/>
             </div>
-            <div class="w-full lg:w-1/3 overflow-hidden h-min space-y-6 lg:space-y-12 px-2">
-                <div class="w-full space-y-2 ">
-                    <h1 class="font-bold text-lg lg:text-2xl">
-                        {{ ucfirst($announcement->getFeatureByName('title')?->value) }} 
-                    </h1>
-                    <p class="text-xl text-indigo-600">{{ $announcement->getFeatureByName('current_price')?->value }}</p>
-                    <p class="text-sm text-gray-500">
-                        {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} -
-                        {{ $announcement->created_at->diffForHumans() }}
-                    </p>
+            <div class="w-full lg:w-1/3 overflow-hidden h-min space-y-5 px-2 xl:px-0">
+                <div class="flex">
+                    <div class="w-full space-y-2">
+                        <h1 class="font-bold text-lg lg:text-2xl">
+                            {{ ucfirst($announcement->getFeatureByName('title')?->value) }} 
+                        </h1>
+                        <p class="text-xl text-indigo-600">{{ $announcement->getFeatureByName('current_price')?->value }}</p>
+                        <p class="text-sm text-gray-500">
+                            {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} -
+                            {{ $announcement->created_at->diffForHumans() }}
+                        </p>
+                    </div>
+                    <div class="h-full">
+                        <livewire:components.like-dislike :announcement="$announcement"/>
+                    </div>
                 </div>
-                <x-user-card :user="$announcement->user"/>
+
+
                 <div class="w-full flex space-x-3 items-center justify-between">
                     <x-buttons.primary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'send-message')">
                         {{ __("Message") }}
@@ -33,32 +39,38 @@
                             {{ __("Call") }}
                         </x-buttons.secondary>
                     @endif
-                    <livewire:components.like-dislike :announcement="$announcement"/>
                 </div>
+                <x-user-card :user="$announcement->user"/>
             </div>
         </section>
-        <section class="lg:flex w-full mx-auto space-x-0 space-y-12 lg:space-x-6 lg:space-y-0 px-2">
-            <div class="w-full lg:w-2/3 overflow-hidden space-y-12">
+
+        <section class="lg:flex w-full mx-auto space-x-0 space-y-12 lg:space-x-6 lg:space-y-0 px-2 xl:px-0">
+            <div class="w-full lg:w-2/3 overflow-hidden space-y-4">
+
+                <hr class="lg:hidden">
                 @if ($description = $announcement->getFeatureByName('description'))
                     <div class="space-y-4 ">
-                        <h3 class="font-bold text-2xl">{{ $description->label }}</h3>
+                        <h3 class="font-bold text-xl">{{ $description->label }}</h3>
                         <x-markdown class="html">
                             {{ $description->value }}
                         </x-markdown>
                     </div>
                 @endif
+
                 @if ($announcement->features->where('attribute.is_feature')->isNotEmpty())
                     <hr>
+                    
                     <div class="space-y-3 sm:space-y-0 sm:gap-6 grid grid-cols-1 ">
+                        <h3 class="font-bold text-xl">{{ __("Details") }}</h3>
                         @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.section.order_number')->groupBy('attribute.section.name') as $section_name => $feature_section)
                             <div class="space-y-2">
-                                <h4 class="font-bold text-md">
+                                <h4 class="font-bold text-sm lg:text-base">
                                     {{ $section_name }}:
                                 </h4>
                                 
                                 <ul class="w-full list-inside list-disc">
                                     @foreach ($feature_section->sortBy('attribute.section.order_number') as $feature)
-                                        <li class="w-full grid grid-cols-2 space-x-2 text-base ">
+                                        <li class="w-full grid grid-cols-2 space-x-2 text-sm lg:text-base">
                                             <span class="text-gray-500 inline-block">• {{ $feature->label }}:</span>
                                             <span class="">
                                                 {{ $feature->value }} {{ $feature->suffix }}
@@ -71,6 +83,7 @@
                     </div>
                 @endif
             </div>
+
             <div class="w-full lg:w-1/3 space-y-6 sticky top-0">
                 <div>
                 </div>
@@ -109,9 +122,9 @@
                             {{ __("Show more") }}
                         </x-a-buttons.secondary>
                     </div>
-                @endif 
-    
+                @endif
             </div>
+
             <div class="w-full lg:w-1/3 space-y-6">
             </div>
         </section>

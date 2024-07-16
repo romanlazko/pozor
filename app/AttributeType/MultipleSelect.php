@@ -9,6 +9,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\ViewComponent;
 
 class MultipleSelect extends BaseAttributeType
 {
@@ -26,10 +27,8 @@ class MultipleSelect extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-        
         return Select::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))

@@ -20,7 +20,7 @@
         </div>
     </header>
 
-    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6 max-w-xl">
         @csrf
         @method('patch')
 
@@ -47,7 +47,7 @@
                 {{ __('Select languages you speak') }}
             </p> --}}
             <x-form.label :value="__('Select languages you speak')" :required="true"/>
-            <div class="w-full flex space-x-3 items-center p-3 border rounded-md mt-1">
+            <div class="w-full items-center p-3 border rounded-md mt-1">
                 <x-form.label for="en" class="items-center flex space-x-2">
                     <x-form.checkbox id="en" name="lang[]" value="en" :checked="in_array('en', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">

@@ -16,14 +16,15 @@ class AnnouncementController extends Controller
     {
         $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
 
-        $category = Category::select('id', 'alternames', 'slug', 'parent_id')
+        $category = Category::select('id', 'alternames', 'slug', 'parent_id', 'is_active')
             ->where('slug', $request->category)
+            ->isActive()
             ->withCount(['announcements' => fn ($query) => $query->isPublished()])
             ->with([
                 'children' => fn ($query) => 
-                    $query->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
+                    $query->isActive()->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
                 'siblings' => fn ($query) => 
-                    $query->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
+                    $query->isActive()->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
             ])
             ->first();
 
@@ -31,10 +32,11 @@ class AnnouncementController extends Controller
             ?? ($category?->siblings->isNotEmpty() ? $category->siblings : null) 
             ?? Category::whereNull('parent_id')
                 ->with('media')
+                ->isActive()
                 ->withCount(['announcements' => fn ($query) => $query->isPublished()])
                 ->get();
 
-        $categories = $categories->filter(fn ($category) => $category->announcements_count > 0);
+        // $categories = $categories->filter(fn ($category) => $category->announcements_count > 0)->sortByDesc('announcements_count');
 
         $announcements = Announcement::with([
                 'media',

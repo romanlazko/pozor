@@ -5,14 +5,12 @@
         </h2>
     </x-slot>
 
-    <div class="grid grid-cols-1">
+    <div class="grid grid-cols-1 gap-3">
         @forelse ($threads->sortByDesc('lastMessage.updated_at') ?? [] as $thread)
             <a 
                 href="{{ route('profile.message.show', $thread->id) }}" 
                 @class([
-                    'flex items-center space-x-2 relative p-2 hover:border-gray-900 border', 
-                    'rounded-b-lg' => $loop->last, 
-                    'rounded-t-lg' => $loop->first,
+                    'flex items-center space-x-2 relative p-2 hover:border-indigo-700 border rounded-lg',
                 ])
             >
                 <div class="w-12 h-12 min-w-12 min-h-12 rounded-full overflow-hidden bg-white-300 border ">

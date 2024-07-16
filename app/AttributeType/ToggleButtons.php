@@ -2,15 +2,10 @@
 
 namespace App\AttributeType;
 
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select as ComponentsSelect;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Guava\FilamentClusters\Forms\Cluster;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons as ComponentsToggleButtons;
+use Filament\Support\Components\ViewComponent;
 
 class ToggleButtons extends BaseAttributeType
 {
@@ -25,10 +20,8 @@ class ToggleButtons extends BaseAttributeType
         });
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
-        if (!$this->attribute->filterable) return null;
-        
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))
@@ -44,7 +37,7 @@ class ToggleButtons extends BaseAttributeType
             });
     }
 
-    public function getCreateComponent(Get $get = null)
+    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)

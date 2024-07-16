@@ -43,7 +43,11 @@ class Categories extends Component implements HasForms, HasTable
             $this->category = Category::find($category);
         }
 
-        $this->category_attributes = Attribute::with('section')->get()->groupBy('section.slug')->map->pluck('label', 'id')->toArray();
+        $this->category_attributes = Attribute::with('section')
+            ->when($category, function ($query) {
+                return $query->whereNotIn('id', $this->category->getParentsAndSelf()->pluck('attributes')->flatten()->pluck('id')->toArray());
+            })
+            ->get()->groupBy('section.slug')->map->pluck('label', 'id')->toArray();
     }
     
     public function table(Table $table): Table
@@ -115,7 +119,7 @@ class Categories extends Component implements HasForms, HasTable
                                     ->keyLabel('Lang')
                                     ->default([
                                         'en' => '',
-                                        'cz' => '',
+                                        'cs' => '',
                                         'ru' => '',
                                     ]),
                                 TextInput::make('parent_id')
@@ -166,7 +170,7 @@ class Categories extends Component implements HasForms, HasTable
                                         ->keyLabel('Lang')
                                         ->default([
                                             'en' => '',
-                                            'cz' => '',
+                                            'cs' => '',
                                             'ru' => '',
                                         ]),
                                     TextInput::make('parent_id')

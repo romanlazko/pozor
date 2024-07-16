@@ -3,11 +3,13 @@
 namespace App\AttributeType;
 
 use App\Models\Feature;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Components\ViewComponent;
 
 class Between extends BaseAttributeType
 {
@@ -27,7 +29,7 @@ class Between extends BaseAttributeType
         return $query;
     }
 
-    public function getFilterComponent(Get $get = null)
+    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {   
         return Cluster::make([
             TextInput::make('attributes.'.$this->attribute->name.'.from')

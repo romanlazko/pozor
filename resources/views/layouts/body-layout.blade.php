@@ -29,7 +29,7 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-white min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
+    <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
         <livewire:components.empty-component/>
 
         <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-20 transition-opacity  bg-black opacity-50 lg:hidden"></div>
@@ -40,9 +40,9 @@
             </div>
         @endif
         
-        <div @class(['w-full max-w-7xl mx-auto h-full relative flex flex-1 flex-col', 'pt-0 lg:pt-24' => isset($headerNavigation), 'pb-24 lg:pb-0' => isset($footerNavigation)])>
+        <div @class(['w-full max-w-7xl mx-auto h-full relative flex flex-1 flex-col px-0 lg:px-2', 'pt-0 lg:pt-24' => isset($headerNavigation), 'pb-24 lg:pb-0' => isset($footerNavigation)])>
             @if (isset($header))
-                <div class="flex w-full min-h-10 items-center space-x-2 z-30" x-data="{ headerOpen: false }">
+                <div class="flex w-full min-h-10 items-center space-x-2 z-30 bg-gray-50 px-2 lg:px-0" x-data="{ headerOpen: false }">
                     {{ $header }}
                 </div>
             @endif

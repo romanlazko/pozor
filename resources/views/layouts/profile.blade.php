@@ -9,7 +9,7 @@
 
 
     @if (isset($header))
-        <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-0 z-30 bg-white p-2 md:p-0 border-b lg:border-none">
+        <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-0 z-30 p-2 lg:p-0 border-b lg:border-none bg-gray-50">
             <div class="flex items-center justify-between space-x-3">
                 {{ $header }}
             </div>
