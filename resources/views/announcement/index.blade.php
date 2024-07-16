@@ -22,8 +22,8 @@
         
         <div class="w-full space-y-3">
             <div class="sticky top-0 z-30 bg-gray-50">
-                <div class="w-full">
-                    <div class="space-x-1 text-sm w-full">
+                <div class="w-full overflow-auto">
+                    <div class="space-x-1 text-sm w-full whitespace-nowrap">
                         <a href="{{ route('announcement.index') }}" class="text-blue-500 inline-block">
                             <span class="hover:underline">
                                 {{ __("Main page") }}
