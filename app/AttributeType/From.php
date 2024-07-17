@@ -29,7 +29,7 @@ class From extends BaseAttributeType
         return ($value['from'] ?? "") . " - " . ($value['to'] ?? "");
     }
 
-    public function getCreateSchema(): array
+    public function schema(): array
     {
         return [
             'attribute_id' => $this->attribute->id,

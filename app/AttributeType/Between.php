@@ -13,7 +13,7 @@ use Filament\Support\Components\ViewComponent;
 
 class Between extends BaseAttributeType
 {
-    public function apply($query)
+    protected function apply($query)
     {
         $from = $this->data[$this->attribute->name]['from'];
         $to = $this->data[$this->attribute->name]['to'];
@@ -29,7 +29,7 @@ class Between extends BaseAttributeType
         return $query;
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {   
         return Cluster::make([
             TextInput::make('attributes.'.$this->attribute->name.'.from')

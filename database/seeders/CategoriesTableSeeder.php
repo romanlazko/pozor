@@ -82,8 +82,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'dolgosrocnaia-arenda',
                 'is_active' => 1,
                 'created_at' => '2024-05-30 18:23:16',
-                'updated_at' => '2024-07-14 14:21:50',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 12:18:57',
+                'deleted_at' => '2024-07-16 12:18:57',
             ),
             6 => 
             array (
@@ -93,8 +93,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'prodaza',
                 'is_active' => 1,
                 'created_at' => '2024-05-31 08:58:27',
-                'updated_at' => '2024-07-14 14:22:04',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 12:19:05',
+                'deleted_at' => '2024-07-16 12:19:05',
             ),
             7 => 
             array (
@@ -313,8 +313,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'kratkosrocnaia-arenda',
                 'is_active' => 1,
                 'created_at' => '2024-07-14 14:27:44',
-                'updated_at' => '2024-07-14 14:27:47',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 12:19:01',
+                'deleted_at' => '2024-07-16 12:19:01',
             ),
             27 => 
             array (
@@ -324,8 +324,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'dolgosrocnaia-arenda-1',
                 'is_active' => 1,
                 'created_at' => '2024-07-15 12:05:04',
-                'updated_at' => '2024-07-15 12:05:06',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 11:00:17',
+                'deleted_at' => '2024-07-16 11:00:17',
             ),
             28 => 
             array (
@@ -335,8 +335,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'kratkosrocnaia-arenda-1',
                 'is_active' => 1,
                 'created_at' => '2024-07-15 12:05:54',
-                'updated_at' => '2024-07-15 12:05:57',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 11:00:22',
+                'deleted_at' => '2024-07-16 11:00:22',
             ),
             29 => 
             array (
@@ -346,8 +346,8 @@ class CategoriesTableSeeder extends Seeder
                 'slug' => 'prodaza-1',
                 'is_active' => 1,
                 'created_at' => '2024-07-15 12:06:42',
-                'updated_at' => '2024-07-15 12:06:43',
-                'deleted_at' => NULL,
+                'updated_at' => '2024-07-16 11:00:26',
+                'deleted_at' => '2024-07-16 11:00:26',
             ),
         ));
         

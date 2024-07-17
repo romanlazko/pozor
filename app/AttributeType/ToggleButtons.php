@@ -11,7 +11,7 @@ class ToggleButtons extends BaseAttributeType
 {
     public function apply($query)
     {
-        if ($this->attribute->attribute_options?->find($this->data[$this->attribute->name])->is_null) {
+        if ($attribute_option = $this->attribute->attribute_options?->where('id', $this->data[$this->attribute->name] ?? null)->first() AND $attribute_option?->is_null) {
             return $query;
         }
 
@@ -25,7 +25,7 @@ class ToggleButtons extends BaseAttributeType
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))
-            ->grouped()
+            ->inline($this->attribute->is_grouped ?? true)
             ->live()
             ->columnSpanFull()
             ->visible(fn (Get $get) => $this->isVisible($get))
@@ -42,7 +42,7 @@ class ToggleButtons extends BaseAttributeType
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options->pluck('name', 'id'))
-            ->grouped()
+            ->inline($this->attribute->is_grouped ?? true)
             ->live()
             ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])
             ->columnStart(['default' => '1', 'sm' => $this->attribute->column_start])

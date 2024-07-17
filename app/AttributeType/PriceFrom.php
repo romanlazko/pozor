@@ -30,7 +30,7 @@ class PriceFrom extends BaseAttributeType
         return ($value['amount']['from'] ?? "") . " - " . ($value['amount']['to'] ?? "")  . " " . ($value['currency'] ?? "");
     }
 
-    public function getCreateSchema(): array
+    public function schema(): array
     {
         return [
             'attribute_id' => $this->attribute->id,

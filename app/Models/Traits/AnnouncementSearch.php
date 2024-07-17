@@ -24,6 +24,7 @@ trait AnnouncementSearch
             $category_attributes = Cache::remember($category?->slug.'_search_attributes', config('cache.ttl'), fn () 
                 => Attribute::select('id', 'visible', 'name', 'search_type')
                     ->withCount('attribute_options')
+                    ->with('attribute_options:id,attribute_id,is_default,is_null')
                     ->when($category, function ($query) use ($category) {
                         $categoryIds = $category
                             ->getParentsAndSelf()

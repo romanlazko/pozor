@@ -15,6 +15,7 @@ class Attribute extends Model
     public $casts = [
         'alterlabels' => 'array',
         'visible' => 'array',
+        'hidden' => 'array',
         'rules' => 'array',
         'altersuffixes' => 'array',
     ];

@@ -169,7 +169,6 @@ class Attributes extends Component implements HasForms, HasTable
                                     ->label(__('Has suffix'))
                                     ->live()
                                     ->dehydrated(false)
-                                    
                                     ->columnSpanFull(),
                                 KeyValue::make('altersuffixes')
                                     ->label(__('Suffix'))
@@ -181,7 +180,7 @@ class Attributes extends Component implements HasForms, HasTable
                                         'ru' => '',
                                     ])
                                     ->afterStateHydrated(fn ($state, Set $set) => !empty($state) ? $set('has_suffix', true) : $set('has_suffix', false))
-                                    ->visible(fn (Get $get) => $get('has_suffix')),
+                                    ->visible(fn (Get $get) => $get('has_suffix') == true),
                             ])
                             ->columns(2),
 
@@ -193,12 +192,18 @@ class Attributes extends Component implements HasForms, HasTable
                                 Select::make('search_type')
                                     ->options($this->type_options),
                                 Toggle::make('translatable')
+                                    ->helperText(__("Будет ли переводится этот атрибут автоматически"))
                                     ->live(),
-                                Toggle::make('is_feature'),
-                                Toggle::make('required'),
-                                Toggle::make('searchable'),
-                                Toggle::make('filterable'),
-                                Toggle::make('always_required'),
+                                Toggle::make('is_feature')
+                                    ->helperText(__("Является ли этот атрибут характеристикой")),
+                                Toggle::make('required')
+                                    ->helperText(__("Является ли этот атрибут обязательным")),
+                                Toggle::make('searchable')
+                                    ->helperText(__("Будет ли атрибут показываться в поисковом запросе")),
+                                Toggle::make('filterable')
+                                    ->helperText(__("Можно ли фильовать по этому атрибуту")),
+                                Toggle::make('always_required')
+                                    ->helperText(__("Будет ли этот атрибут всегда обязательным и показываться вне зависимости от фильтрации")),
                                 Select::make('rules')
                                     ->label('Validation rulles')
                                     ->multiple()
@@ -420,7 +425,6 @@ class Attributes extends Component implements HasForms, HasTable
                                         ->label(__('Has suffix'))
                                         ->live()
                                         ->dehydrated(false)
-                                        
                                         ->columnSpanFull(),
                                     KeyValue::make('altersuffixes')
                                         ->label(__('Suffix'))
@@ -450,6 +454,8 @@ class Attributes extends Component implements HasForms, HasTable
                                     Toggle::make('searchable'),
                                     Toggle::make('filterable'),
                                     Toggle::make('always_required'),
+                                    Toggle::make('is_grouped')
+                                        ->visible(fn (Get $get) => $get('create_type') == 'toggle_buttons' OR $get('search_type') == 'toggle_buttons'),
                                     Select::make('rules')
                                         ->label('Validation rulles')
                                         ->multiple()

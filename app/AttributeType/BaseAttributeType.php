@@ -23,7 +23,7 @@ class BaseAttributeType
         return $query;
     }
 
-    public function apply($query)
+    protected function apply($query)
     {
         return $query;
     }
@@ -37,6 +37,15 @@ class BaseAttributeType
     }
 
     public function getCreateSchema(): array
+    {
+        if ($this->isVisible()) {
+            return $this->schema();
+        }
+
+        return null;
+    }
+
+    protected function schema()
     {
         if ($this->attribute->attribute_options->isNotEmpty()) {
             return [
@@ -58,7 +67,7 @@ class BaseAttributeType
         return $this->getFilamentCreateComponent($get);
     }
 
-    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return null;
     }
@@ -72,12 +81,12 @@ class BaseAttributeType
         return $this->getFilamentFilterComponent($get);
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return null;
     }
 
-    public function isVisible(Get $get = null): bool
+    protected function isVisible(Get $get = null): bool
     {
         if (empty($this->attribute->visible)) {
             return true;
@@ -90,7 +99,7 @@ class BaseAttributeType
         return false;
     }
 
-    public function isHidden(Get $get = null): bool
+    protected function isHidden(Get $get = null): bool
     {
         if (empty($this->attribute->hidden)) {
             return false;
@@ -100,10 +109,10 @@ class BaseAttributeType
             return true;
         }
 
-        return true;
+        return false;
     }
 
-    private function checkCondition(Get $get, $conditions): bool
+    private function checkCondition(Get|null $get, $conditions): bool
     {
         foreach ($conditions as $condition) {
             $value = $get ? $get($condition['attribute_name']) : data_get($this->data, $condition['attribute_name']);
