@@ -58,6 +58,15 @@ class Users extends Component implements HasForms, HasTable
                 TextColumn::make('lang')
                     ->badge()
                     ->wrap(true),
+                ToggleColumn::make('verified')
+                    ->state(fn (User $user) => $user->hasVerifiedEmail())
+                    ->updateStateUsing(function (User $user, $state) {
+                        $state 
+                            ? $user->markEmailAsVerified() 
+                            : $user->forceFill([
+                                'email_verified_at' => null,
+                            ])->save();
+                    }),
                 TextColumn::make('published_count')
                     ->sortable(),
                 TextColumn::make('await_moderation_count')

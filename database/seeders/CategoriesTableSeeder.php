@@ -349,6 +349,160 @@ class CategoriesTableSeeder extends Seeder
                 'updated_at' => '2024-07-16 11:00:26',
                 'deleted_at' => '2024-07-16 11:00:26',
             ),
+            30 => 
+            array (
+                'id' => 31,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Nábytek", "en": "Furniture", "ru": "Мебель"}',
+                'slug' => 'mebel',
+                'is_active' => 1,
+                'created_at' => '2024-07-18 11:48:25',
+                'updated_at' => '2024-07-18 11:48:36',
+                'deleted_at' => NULL,
+            ),
+            31 => 
+            array (
+                'id' => 32,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Domácí spotřebiče", "en": "Household appliances", "ru": "Бытовая техника"}',
+                'slug' => 'bytovaia-texnika-1',
+                'is_active' => 1,
+                'created_at' => '2024-07-18 11:55:14',
+                'updated_at' => '2024-07-18 11:55:15',
+                'deleted_at' => NULL,
+            ),
+            32 => 
+            array (
+                'id' => 33,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Rostliny", "en": "Plants", "ru": "Растения"}',
+                'slug' => 'rasteniia',
+                'is_active' => 1,
+                'created_at' => '2024-07-18 11:57:01',
+                'updated_at' => '2024-07-18 11:57:02',
+                'deleted_at' => NULL,
+            ),
+            33 => 
+            array (
+                'id' => 34,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Nádobí a kuchyňské potřeby", "en": "Cookware and kitchen", "ru": "Посуда и кухня"}',
+                'slug' => 'posuda-i-kuxnia',
+                'is_active' => 1,
+                'created_at' => '2024-07-18 11:59:10',
+                'updated_at' => '2024-07-18 11:59:12',
+                'deleted_at' => NULL,
+            ),
+            34 => 
+            array (
+                'id' => 35,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Interiér", "en": "Interior", "ru": "Интерьер"}',
+                'slug' => 'interer',
+                'is_active' => 1,
+                'created_at' => '2024-07-18 12:03:06',
+                'updated_at' => '2024-07-18 12:03:07',
+                'deleted_at' => NULL,
+            ),
+            35 => 
+            array (
+                'id' => 36,
+                'parent_id' => 10,
+                'alternames' => '{"cs": "Dětský nábytek", "en": "Children\'s furniture", "ru": "Детская мебель"}',
+                'slug' => 'detskaia-mebel',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:06:32',
+                'updated_at' => '2024-07-19 09:06:39',
+                'deleted_at' => NULL,
+            ),
+            36 => 
+            array (
+                'id' => 37,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Postele", "en": "Beds", "ru": "Кровати"}',
+                'slug' => 'krovati',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:08:39',
+                'updated_at' => '2024-07-19 09:08:40',
+                'deleted_at' => NULL,
+            ),
+            37 => 
+            array (
+                'id' => 38,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Pohovky", "en": "Sofas", "ru": "Диваны"}',
+                'slug' => 'divany',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:09:34',
+                'updated_at' => '2024-07-19 09:09:36',
+                'deleted_at' => NULL,
+            ),
+            38 => 
+            array (
+                'id' => 39,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Křesla", "en": "Chairs", "ru": "Кресла"}',
+                'slug' => 'kresla',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:10:22',
+                'updated_at' => '2024-07-19 09:10:24',
+                'deleted_at' => NULL,
+            ),
+            39 => 
+            array (
+                'id' => 40,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Skříně", "en": "Сlosets", "ru": "Шкафы"}',
+                'slug' => 'skafy',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:13:22',
+                'updated_at' => '2024-07-19 09:13:24',
+                'deleted_at' => NULL,
+            ),
+            40 => 
+            array (
+                'id' => 41,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Stoly", "en": "Tables", "ru": "Столы"}',
+                'slug' => 'stoly',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:31:58',
+                'updated_at' => '2024-07-19 09:32:00',
+                'deleted_at' => NULL,
+            ),
+            41 => 
+            array (
+                'id' => 42,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Komody", "en": "Commodes", "ru": "Комоды"}',
+                'slug' => 'komody',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:34:10',
+                'updated_at' => '2024-07-19 09:34:12',
+                'deleted_at' => NULL,
+            ),
+            42 => 
+            array (
+                'id' => 43,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Židle", "en": "Chairs", "ru": "Стулья"}',
+                'slug' => 'stulia',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:35:50',
+                'updated_at' => '2024-07-19 09:35:58',
+                'deleted_at' => NULL,
+            ),
+            43 => 
+            array (
+                'id' => 44,
+                'parent_id' => 31,
+                'alternames' => '{"cs": "Regály a regálové jednotky", "en": "Racks and shelving units", "ru": "Стеллажи и этажерки"}',
+                'slug' => 'stellazi-i-etazerki',
+                'is_active' => 1,
+                'created_at' => '2024-07-19 09:38:57',
+                'updated_at' => '2024-07-19 09:38:59',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

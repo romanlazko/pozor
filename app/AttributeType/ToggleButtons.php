@@ -41,7 +41,7 @@ class ToggleButtons extends BaseAttributeType
     {
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
-            ->options($this->attribute->attribute_options->pluck('name', 'id'))
+            ->options($this->attribute->attribute_options->where('is_null', false)->pluck('name', 'id'))
             ->inline($this->attribute->is_grouped ?? true)
             ->live()
             ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])

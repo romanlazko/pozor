@@ -22,7 +22,7 @@
 
          return back()->with([
              'ok' => true,
-             'description' => "A new verification link has been sent to your email address."
+             'description' => __("A new verification link has been sent to your email address.")
          ]);
      }
  }
