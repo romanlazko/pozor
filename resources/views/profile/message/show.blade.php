@@ -7,7 +7,7 @@
         <x-profile-nav/>
     </x-slot>
 
-    <div class="flex flex-col flex-1 overflow-hidden h-60">
+    <div class="flex flex-col flex-1 overflow-hidden h-20">
         <div class="w-full items-center justify-between flex space-x-3 sticky top-0 z-30 p-2 md:p-0 border-b lg:border-none">
             <a href="{{ route('profile.message.index') }}" class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -56,6 +56,16 @@
                 </div>
             @endforeach
         </div>
+        <form action="{{ route('profile.message.update', $thread->id) }}" method="post" class="w-full p-2 bg-white rounded-lg border">
+            @csrf
+            @method('put')
+            <div class="flex items-end space-x-2">
+                @livewire('components.textarea')
+                <x-buttons.primary type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </x-buttons.primary>
+            </div>
+        </form>
     </div>
     
 
@@ -86,7 +96,7 @@
     {{-- </div> --}}
     
     
-    <x-slot name="footer">
+    {{-- <x-slot name="footer">
         <form action="{{ route('profile.message.update', $thread->id) }}" method="post" class="w-full p-2">
             @csrf
             @method('put')
@@ -97,7 +107,7 @@
                 </x-buttons.primary>
             </div>
         </form>
-    </x-slot>
+    </x-slot> --}}
 </x-body-layout>
 
 
