@@ -314,7 +314,7 @@ class Announcements extends Component implements HasForms, HasTable
                         })
                     )
                     ->query(fn ($query, $data) => 
-                        $query->categories(Category::find($data['value']))
+                        $query->category(Category::find($data['value']))
                     ),
                 SelectFilter::make('user')
                     ->relationship('user', 'name')

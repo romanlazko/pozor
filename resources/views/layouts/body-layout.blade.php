@@ -57,7 +57,7 @@
     
                 <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
     
-                    <main id="main-block" class="w-full space-y-4 flex-1 h-full">
+                    <main id="main-block" class="w-full space-y-4 flex-1 flex-col flex">
                         {{ $slot }}
                     </main>
     

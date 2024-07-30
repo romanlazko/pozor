@@ -5,6 +5,7 @@ namespace App\Livewire\Announcement;
 use App\AttributeType\AttributeFactory;
 use App\Enums\Sort;
 use App\Models\Attribute;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -53,16 +54,14 @@ class Filters extends Component implements HasForms
 
         return $form
             ->schema([
-                Select::make('sort')
-                    ->label(__('filament.labels.sorting'))
-                    ->options(Sort::class)
-                    ->selectablePlaceholder(false)
-                    ->hintAction(
-                        Action::make('reset')
-                            ->icon('heroicon-m-x-mark')
-                            ->action(fn () => $this->reset('data'))
-                            ->label(__('filament.labels.reset_filters'))
-                    ),
+                Actions::make([
+                    Action::make('reset')
+                        ->icon('heroicon-m-x-mark')
+                        ->action(fn () => $this->resetData())
+                        ->label(__('filament.labels.reset_filters'))
+                        ->link()
+                        ->color('danger')
+                ]),
                 Grid::make()
                     ->schema($this->fields)
             ])
@@ -81,7 +80,7 @@ class Filters extends Component implements HasForms
 
         Session::put('announcement_search', $data);
 
-        return $this->redirectRoute('announcement.index', ['category' => $this->category?->slug]);
+        return $this->redirectRoute('announcement.index', ['category' => $this->category?->slug, 'search' => $this->data]);
     }
 
     public function getFields($group)
@@ -116,6 +115,12 @@ class Filters extends Component implements HasForms
 
                 ->get();
         // });
+    }
+
+    private function resetData()
+    {
+        $this->reset('data');
+        $this->form->fill();
     }
 }
 

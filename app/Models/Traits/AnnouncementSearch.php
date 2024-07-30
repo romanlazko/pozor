@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 trait AnnouncementSearch
 {
-    public function scopeCategories($query, Category|null $category)
+    public function scopeCategory($query, Category|null $category)
     {
         return $query->when($category, fn ($query) 
             => $query->whereHas('categories', fn ($query) 
@@ -59,8 +59,10 @@ trait AnnouncementSearch
 
     public function scopeSort($query, Sort $sort = null)
     {
-        return $query->when($sort, fn ($query) 
-            => $query->orderBy($sort->orderBy(), $sort->type())
-        );
+        // return $query->when($sort, fn ($query) 
+        //     => $query->orderBy($sort->orderBy(), $sort->type())
+        // );
+
+        return $sort->query($query);
     }
 }

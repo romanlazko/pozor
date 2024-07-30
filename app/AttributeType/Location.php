@@ -66,7 +66,7 @@ class Location extends BaseAttributeType
                     ->live()
                     ->placeholder(__('filament.labels.city')),
                 ComponentsSelect::make('attributes.radius')
-                    ->hiddenLabel()
+                    ->label(__('filament.labels.radius'))
                     ->options([
                         10 => '10 km',
                         20 => '20 km',
@@ -77,6 +77,12 @@ class Location extends BaseAttributeType
                         70 => '70 km',
                     ])
                     ->hidden(fn (Get $get) => $get('attributes.geo_id') == null)
+                    ->afterStateHydrated(function (Get $get, Set $set) {
+                        if ($get('attributes.radius') == null) {
+                            $set('attributes.radius', 30);
+                        }
+                    })
+                    ->selectablePlaceholder(false)
                     ->placeholder(__('filament.labels.radius')),
             ]);
     }

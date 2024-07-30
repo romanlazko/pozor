@@ -1,55 +1,19 @@
-@php
-    $title = $category?->translated_name ?? __("Latest announcements:");
-@endphp
-<x-body-layout :title="$title">
-
-    @if ($category)
-        <x-slot name="meta">
-            {!! seo($category) !!}
-        </x-slot>
-    @endif
+<x-body-layout>
     
 
     <x-slot name="headerNavigation">
         @include('layouts.header')
     </x-slot>
-
-    <x-slot name="sidebar">
-        <livewire:announcement.filters :search="$data" :category="$category"/>
-    </x-slot>
     
     <x-slot name="header">
         
         <div class="w-full space-y-3">
-            <div class="sticky top-0 z-30 bg-gray-50">
-                <div class="w-full overflow-auto">
-                    <div class="space-x-1 text-sm w-full whitespace-nowrap">
-                        <a href="{{ route('announcement.index') }}" class="text-blue-500 inline-block">
-                            <span class="hover:underline">
-                                {{ __("Main page") }}
-                            </span>
-                        </a>
-                        
-                        @foreach ($category?->getParentsAndSelf()->reverse() ?? [] as $parent)
-                            <a href="{{ route('announcement.index', ['category' => $parent->slug]) }}" class="text-gray-500 space-x-1 inline-block">
-                                <span>
-                                    >
-                                </span>
-                                <span class="hover:underline hover:text-blue-500">
-                                    {{ $parent->name }}
-                                </span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
             <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 @foreach ($categories as $child)
                     <a 
                         href="{{ route('announcement.index', ['category' => $child->slug]) }}"
                         @class([
-                            'p-2 bg-white rounded-lg text-sm border hover:border-indigo-700 items-center ', 
-                            'border-indigo-700' => $category?->slug === $child->slug
+                            'p-2 bg-white rounded-lg text-sm border hover:border-indigo-700 items-center ',
                         ])
                     >
                         <div class="flex items-center space-x-2 m-auto h-full">
@@ -77,10 +41,11 @@
         </button>
 
         <div class="w-full text-center lg:text-start">
-            <p class="text-gray-500">{{ $category?->children->isEmpty() ? $category?->parent?->name : '' }}</p>
-            <h2 class="text-xl lg:text-3xl font-bold w-full">
-                {{ $category?->name ?? __("Latest announcements") }} <span class="text-gray-500">{{ $category?->announcements_count }}</span>
-            </h2>
+            <div class="w-full lg:flex items-center lg:justify-between">
+                <h2 class="text-xl lg:text-3xl font-bold ">
+                    {{ __("Latest announcements:") }}
+                </h2>
+            </div>
         </div>
 
         <div x-data="{ dropdownOpen: false }"  class="relative lg:hidden">
@@ -95,11 +60,7 @@
     </div>
 
     <div class="space-y-6 px-2 lg:px-0">
-        <div class="w-full grid grid-cols-1 sm:w-4/5 gap-3" >
-            @foreach ($announcements as $index => $announcement)
-                <x-announcement-card :announcement="$announcement" @class(['rounded-lg'])/>
-            @endforeach
-        </div>
+        <x-announcement-list :announcements="$announcements" />
 
         <div class="p-4">
             {{ $announcements->onEachSide(1)->links() }}

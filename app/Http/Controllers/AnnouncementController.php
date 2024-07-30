@@ -14,7 +14,38 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
+        $categories = Category::whereNull('parent_id')
+                ->with('media')
+                ->isActive()
+                ->withCount(['announcements' => fn ($query) => $query->isPublished()])
+                ->get();
+
+        // $categories = $categories->filter(fn ($category) => $category->announcements_count > 0)->sortByDesc('announcements_count');
+
+        $announcements = Announcement::with([
+                'media',
+                'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
+                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersuffixes,create_type',
+                'features.attribute_option:id,alternames',
+                'user',
+                'geo',
+                'userVotes',
+                'currentStatus'
+            ])
+            ->select('announcements.*')
+            ->isPublished()
+            ->orderBy('created_at', 'desc')
+            ->paginate(30)->withQueryString();
+
+        return view('announcement.index', compact('announcements', 'categories'));
+    }
+
+    public function search(Request $request)
+    {
         $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
+
+        // dump($data);
+
 
         $category = Category::select('id', 'alternames', 'slug', 'parent_id', 'is_active')
             ->where('slug', $request->category)
@@ -48,10 +79,11 @@ class AnnouncementController extends Controller
                 'userVotes',
                 'currentStatus'
             ])
+            ->select('announcements.*')
             ->isPublished()
-            ->categories($category)
-            ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
+            ->category($category)
             ->features($category, $data['attributes'] ?? null)
+            ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
             ->paginate(30)->withQueryString();
 
         return view('announcement.index', compact('announcements', 'category', 'categories', 'data'));
