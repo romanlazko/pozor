@@ -1,5 +1,4 @@
 <form wire:submit="search" class="w-full h-full">
-    {{-- @dump($data) --}}
     <div class="p-4 w-full">
         {{ $this->form }}
     </div>

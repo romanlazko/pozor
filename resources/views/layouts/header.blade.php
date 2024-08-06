@@ -1,11 +1,11 @@
 <header class="flex items-center justify-between bg-gray-900 space-x-3 h-12 max-w-7xl m-auto">
-	<div class="flex-1 items-center justify-start hidden lg:flex space-x-6">
+	<div class="flex-1 items-center justify-start flex space-x-6">
 		<a href="{{ route('announcement.index') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
 		</a>
 	</div>
 
-	<div class="flex items-center space-x-3 text-white">
+	<div class="hidden lg:flex items-center space-x-3 text-white">
 		@auth
 			<a href="{{ route('profile.announcement.wishlist') }}" class="text-white hover:text-indigo-700 relative">
 				<i class="fa-solid fa-heart"></i>

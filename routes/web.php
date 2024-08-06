@@ -24,6 +24,7 @@ use App\Http\Controllers\Profile\MessageController;
 use App\Livewire\Admin\TelegramBots;
 use App\Livewire\Admin\TelegramChats;
 use App\Livewire\Admin\Users;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 /*
@@ -55,7 +56,9 @@ Route::post('/locale', function (Request $request){
 })->name('locale');
 
 Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
-    Route::get('/', 'index')->name('index');
+    Route::get('/all/{category:slug?}', 'index')->name('index');
+    Route::get('/search/{category:slug?}', 'search')->name('search');
+
     Route::get('/show/{announcement:slug}', 'show')->name('show');
     Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
         ->middleware(['signed', 'throttle:6,1'])
@@ -63,11 +66,6 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
 });
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
-    // Route::resource('telegram_bot', TelegramController::class);
-        
-    // Route::resource('telegram_bot.chat', TelegramChatController::class);
-    // Route::resource('telegram_bot.advertisement', TelegramAdvertisementController::class);
-
     Route::get('telegram/bot', TelegramBots::class)->name('telegram.bot.index');
     Route::get('telegram/bot/{telegram_bot}/chat', TelegramChats::class)->name('telegram.bot.chat.index');
     Route::get('users', Users::class)->name('users');

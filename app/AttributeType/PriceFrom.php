@@ -15,8 +15,13 @@ class PriceFrom extends BaseAttributeType
 {
     public function apply($query)
     {
-        $query->whereHas('features', function ($query) {
-            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer) $this->data[$this->attribute->name]['from']);
+        $from = $this->data[$this->attribute->name]['from'] ?? null;
+        $to = $this->data[$this->attribute->name]['to'] ?? null;
+
+        $query->when(!empty($from), function ($query) use ($from){
+            $query->whereHas('features', fn ($query) =>
+                $query->where('attribute_id', $this->attribute->id)->where('translated_value->original->amount->to', '>=', (integer) $from)
+            );
         });
 
         return $query;

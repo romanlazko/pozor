@@ -81,7 +81,8 @@ class Price extends BaseAttributeType
             ComponentsTextInput::make('attributes.'.$this->attribute->name.'.to')
                 ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
-                ->default(''),
+                ->default('')
+                // ->extraAttributes(['name' => 'attributes.'.$this->attribute->name.'.to']),
             ])
             ->label($this->attribute->label)
             ->columnSpanFull()

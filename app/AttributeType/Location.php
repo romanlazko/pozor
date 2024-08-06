@@ -42,7 +42,7 @@ class Location extends BaseAttributeType
     {
         return Grid::make(2)
             ->schema([
-                ComponentsSelect::make('country')
+                ComponentsSelect::make('attributes.country')
                     ->label(__('filament.labels.country'))
                     ->options($this->countries->pluck('name', 'country'))
                     ->searchable()
@@ -56,9 +56,9 @@ class Location extends BaseAttributeType
                     ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
-                    ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')->orderBy('level')->pluck('name', 'id'))
+                    ->options(fn (Get $get) => Geo::where('country', $get('attributes.country') ?? 'CZ')->orderBy('level')->pluck('name', 'id'))
                     ->getSearchResultsUsing(function (string $search, Get $get) {
-                        return Geo::where('country', $get('country') ?? 'CZ')
+                        return Geo::where('country', $get('attributes.country') ?? 'CZ')
                             ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
                             ->limit(30)
                             ->pluck('name', 'id');
@@ -91,13 +91,14 @@ class Location extends BaseAttributeType
     {
         return Grid::make(2)
             ->schema([
-                ComponentsSelect::make('country')
+                ComponentsSelect::make('attributes.country')
                     ->label(__('filament.labels.country'))
                     ->options($this->countries->pluck('name', 'country'))
                     ->searchable()
                     ->afterStateUpdated(function (Set $set) {
                         $set('geo_id', null);
                     })
+                    ->required()
                     ->placeholder(__('filament.labels.country'))
                     ->default('CZ')
                     ->live(),
@@ -105,13 +106,14 @@ class Location extends BaseAttributeType
                     ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
-                    ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')?->pluck('name', 'id'))
+                    ->options(fn (Get $get) => Geo::where('country', $get('attributes.country') ?? 'CZ')?->pluck('name', 'id'))
                     ->getSearchResultsUsing(function (string $search, Get $get) {
-                        return Geo::where('country', $get('country') ?? 'CZ')
+                        return Geo::where('country', $get('attributes.country') ?? 'CZ')
                             ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
                             ->pluck('name', 'id');
                     })
                     ->live()
+                    // ->required()
                     ->placeholder(__('filament.labels.city'))
             ]);
     }

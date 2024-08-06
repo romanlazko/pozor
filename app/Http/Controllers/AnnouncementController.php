@@ -4,51 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Enums\Sort;
 use App\Enums\Status;
+use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AnnouncementController extends Controller
 {
-    public function index(Request $request)
+    public function index(SearchRequest $request)
     {
-        $categories = Category::whereNull('parent_id')
-                ->with('media')
-                ->isActive()
-                ->withCount(['announcements' => fn ($query) => $query->isPublished()])
-                ->get();
-
-        // $categories = $categories->filter(fn ($category) => $category->announcements_count > 0)->sortByDesc('announcements_count');
-
-        $announcements = Announcement::with([
-                'media',
-                'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersuffixes,create_type',
-                'features.attribute_option:id,alternames',
-                'user',
-                'geo',
-                'userVotes',
-                'currentStatus'
-            ])
-            ->select('announcements.*')
-            ->isPublished()
-            ->orderBy('created_at', 'desc')
-            ->paginate(30)->withQueryString();
-
-        return view('announcement.index', compact('announcements', 'categories'));
-    }
-
-    public function search(Request $request)
-    {
-        $data = session('announcement_search') ? unserialize(decrypt(urldecode(session('announcement_search')))) : null;
-
-        // dump($data);
-
-
         $category = Category::select('id', 'alternames', 'slug', 'parent_id', 'is_active')
-            ->where('slug', $request->category)
+            ->where('slug', $request->route('category'))
             ->isActive()
             ->withCount(['announcements' => fn ($query) => $query->isPublished()])
             ->with([
@@ -72,9 +41,7 @@ class AnnouncementController extends Controller
         $announcements = Announcement::with([
                 'media',
                 'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                'features.attribute:id,name,alterlabels,order_number,searchable,is_feature,altersuffixes,create_type',
-                'features.attribute_option:id,alternames',
-                'user',
+                // 'user',
                 'geo',
                 'userVotes',
                 'currentStatus'
@@ -82,11 +49,22 @@ class AnnouncementController extends Controller
             ->select('announcements.*')
             ->isPublished()
             ->category($category)
-            ->features($category, $data['attributes'] ?? null)
-            ->sort(Sort::tryFrom($data['sort'] ?? 'newest'))
+            ->features($category, $request->data['filters']['attributes'] ?? null)
+            ->sort($request->data['sort'])
+            ->search($request->data['search'])
             ->paginate(30)->withQueryString();
 
-        return view('announcement.index', compact('announcements', 'category', 'categories', 'data'));
+        return view('announcement.index', [
+            'announcements' => $announcements,
+            'categories' => $categories,
+            'category' => $category,
+            'data' => $request->data
+        ]);
+    }
+
+    public function search(SearchRequest $request)
+    {
+        return redirect()->route('announcement.index', ['category' => $request->route('category'), 'data' => $request->serializedData()]);
     }
 
     public function show(Announcement $announcement)

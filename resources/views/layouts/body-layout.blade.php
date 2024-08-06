@@ -35,12 +35,12 @@
         <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-20 transition-opacity  bg-black opacity-50 lg:hidden"></div>
 
         @if (isset($headerNavigation))
-            <div class="w-full hidden bg-gray-900 lg:block fixed top-0 h-12 z-40 px-3">
+            <div class="w-full  bg-gray-900 block fixed top-0 h-12 z-40 px-3">
                 {{ $headerNavigation }}
             </div>
         @endif
         
-        <div @class(['w-full max-w-7xl mx-auto h-full relative flex flex-1 flex-col px-0 lg:px-2', 'pt-0 lg:pt-24' => isset($headerNavigation), 'pb-24 lg:pb-0' => isset($footerNavigation)])>
+        <div @class(['w-full max-w-7xl mx-auto h-full relative flex flex-1 flex-col px-0 lg:px-2', 'pt-12 lg:pt-24' => isset($headerNavigation), 'pb-24 lg:pb-0' => isset($footerNavigation)])>
             @if (isset($header))
                 <div class="flex w-full min-h-10 items-center space-x-2 z-30 bg-gray-50 px-2 lg:px-0" x-data="{ headerOpen: false }">
                     {{ $header }}

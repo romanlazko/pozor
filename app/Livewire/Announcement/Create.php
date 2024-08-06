@@ -35,9 +35,9 @@ class Create extends Component implements HasForms
         'geo_id' => null,
         'attachments' => null,
         'attributes' => [
-            'description' => ''
+            'description' => '',
+            'country' => 'CZ',
         ],
-        'country' => 'CZ',
         'categories' => [],
     ];
 

@@ -50,7 +50,7 @@ class PublishAnnouncementJob
                 $bot = new Bot($announcement_channel->channel->bot->token);
 
                 $response = $bot::sendMessageWithMedia([
-                    'text'                      => $announcement->getFeatureByName('title')?->value,
+                    'text'                      => view('telegram.announcement.show', ['announcement' => $announcement])->render(),
                     'chat_id'                   => $announcement_channel->channel->chat_id,
                     'media'                     => [$announcement->getFirstMediaUrl('announcements')],
                     'parse_mode'                => 'HTML',
@@ -74,7 +74,6 @@ class PublishAnnouncementJob
                 throw new Exception($exception->getMessage());
             }
         }
-
         return true;
     }
 

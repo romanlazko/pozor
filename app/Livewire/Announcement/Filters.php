@@ -21,7 +21,7 @@ class Filters extends Component implements HasForms
 {
     use InteractsWithForms;
 
-    public $data = [
+    public $filters = [
     ];
 
     protected $fields = [];
@@ -30,11 +30,11 @@ class Filters extends Component implements HasForms
 
     public $category;
 
-    public function mount($search = null , $category = null)
+    public function mount($filters = null , $category = null)
     {
         $this->category = $category;
 
-        $this->form->fill($search);
+        $this->form->fill($filters);
     }
 
     public function form(Form $form): Form
@@ -65,7 +65,7 @@ class Filters extends Component implements HasForms
                 Grid::make()
                     ->schema($this->fields)
             ])
-            ->statePath('data');
+            ->statePath('filters');
     }
 
 
@@ -76,11 +76,7 @@ class Filters extends Component implements HasForms
 
     public function search()
     {
-        $data = urlencode(encrypt(serialize($this->data))); 
-
-        Session::put('announcement_search', $data);
-
-        return $this->redirectRoute('announcement.index', ['category' => $this->category?->slug, 'search' => $this->data]);
+        return $this->redirectRoute('announcement.search', ['category' => $this->category?->slug, 'filters' => $this->filters]);
     }
 
     public function getFields($group)
@@ -119,7 +115,7 @@ class Filters extends Component implements HasForms
 
     private function resetData()
     {
-        $this->reset('data');
+        $this->reset('filters');
         $this->form->fill();
     }
 }

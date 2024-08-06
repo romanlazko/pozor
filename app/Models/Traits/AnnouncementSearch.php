@@ -9,6 +9,8 @@ use App\Models\Attribute;
 use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 
+use function JmesPath\search;
+
 trait AnnouncementSearch
 {
     public function scopeCategory($query, Category|null $category)
@@ -57,12 +59,22 @@ trait AnnouncementSearch
         );
     }
 
+    public function scopeSearch($query, string $search)
+    {
+        if (!$search) {
+            return $query;
+        }
+        
+        return $query->whereHas('features', fn ($query) =>
+            $query->whereRaw('LOWER(translated_value) LIKE ?', ['%' . mb_strtolower($search) . '%']));
+    }
+
     public function scopeSort($query, Sort $sort = null)
     {
         // return $query->when($sort, fn ($query) 
         //     => $query->orderBy($sort->orderBy(), $sort->type())
         // );
 
-        return $sort->query($query);
+        return $sort?->query($query);
     }
 }
