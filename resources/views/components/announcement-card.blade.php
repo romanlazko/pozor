@@ -49,13 +49,13 @@
     </div>
 </div> --}}
 
-
+@props(['layout' => 'sm', 'announcement' => null])
 
 @if ($layout == 'sm')
     <div class="announcement-card w-full space-x-0">
         <div {{ $attributes->merge(['class' => "w-full bg-white border hover:border-indigo-700 group transition ease-in-out duration-150 p-3 space-x-0 space-y-3"]) }} >
             <div class="w-full rounded-lg overflow-hidden h-min">
-                <x-slider :medias="$announcement->getMedia('announcements')" :h="250" :thumb="false"/>
+                <x-slider :medias="$announcement?->getMedia('announcements')" :h="250" :thumb="false"/>
             </div>
         
             <a href="{{ route('announcement.show', $announcement) }}" class="w-full flex">
@@ -63,17 +63,17 @@
                     <div class="flex-1 space-y-1">
                         <div class="w-full">
                             <p class="sm:text-xl sm:font-bold text-indigo-700 hover:text-indigo-800 hover:underline">
-                                {{ $announcement->getSectionByName('title')->pluck('value')->implode(' ') }}
+                                {{ $announcement?->getSectionByName('title')?->pluck('value')?->implode(' ') }}
                             </p>
                             
                             <p class="font-bold sm:text-2xl w-full">
-                                {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
+                                {{ $announcement?->getSectionByName('price')?->pluck('value')?->implode(' ') }}
                             </p>
                         </div>
                     </div>
                     <div class="">
                         <p class="text-xs text-gray-500">
-                            {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
+                            {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} - {{ $announcement->created_at?->diffForHumans() }}
                         </p>
                     </div>
                 </div>
