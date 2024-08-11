@@ -21,12 +21,12 @@ class AttributeFactory
         return self::getFilterClass($attribute)?->getFilterComponent();
     }
 
-    public static function applyQuery(Attribute $attribute, array|null $data = [], Builder $query = null) : ?Builder
+    public static function applyQuery(Attribute $attribute, ?array $data = [], Builder $query = null) : ?Builder
     {
         return self::getFilterClass($attribute, $data)?->apply($query) ?? $query;
     }
 
-    public static function getCreateSchema(Attribute $attribute, array $data = []) : array
+    public static function getCreateSchema(Attribute $attribute, ?array  $data = []) : array
     {
         return self::getCreateClass($attribute, $data)?->getCreateSchema();
     }
@@ -36,17 +36,17 @@ class AttributeFactory
         return self::getShowClass($attribute)?->getValueByFeature($feature);
     }
 
-    private static function getShowClass(Attribute $attribute, array $data = []) : ?AbstractAttributeType
+    private static function getShowClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
     {
         return self::getClass($attribute->show_layout, $attribute, $data);
     }
 
-    private static function getCreateClass(Attribute $attribute, array $data = []) : ?AbstractAttributeType
+    private static function getCreateClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
     {
         return self::getClass($attribute->create_layout, $attribute, $data);
     }
 
-    private static function getFilterClass(Attribute $attribute, array $data = []) : ?AbstractAttributeType
+    private static function getFilterClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
     {
         return self::getClass($attribute->filter_layout, $attribute, $data);
     }
