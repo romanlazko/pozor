@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\Status;
 use App\Facades\Deepl;
 use App\Models\Announcement;
+use App\Models\AnnouncementChannel;
 use App\Models\TelegramChat;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -14,16 +15,18 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\App\BotApi;
+use Romanlazko\Telegram\App\Entities\Response;
 
-class PublishAnnouncementJob
+class PublishAnnouncementJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(public $announcement_id)
+    public function __construct(public $announcement_id, public $lang = 'ru')
     {
+        
     }
 
     public function handle(): void
@@ -35,7 +38,7 @@ class PublishAnnouncementJob
         }
     }
 
-    public function publishOnTelegram($announcement)
+    public function publishOnTelegram(Announcement $announcement): bool
     {
         if ($announcement->channels->isEmpty()) {
             return true;
@@ -47,28 +50,19 @@ class PublishAnnouncementJob
         
         foreach ($announcement_channels as $announcement_channel) {
             try {
-                $bot = new Bot($announcement_channel->channel->bot->token);
+                $response = $this->publishOnChannel($announcement, $announcement_channel);
 
-                $response = $bot::sendMessageWithMedia([
-                    'text'                      => view('telegram.announcement.show', ['announcement' => $announcement])->render(),
-                    'chat_id'                   => $announcement_channel->channel->chat_id,
-                    'media'                     => [$announcement->getFirstMediaUrl('announcements')],
-                    'parse_mode'                => 'HTML',
-                    'disable_web_page_preview'  => 'true',
-                ]);
-
-                $announcement_channel->update([
-                    'status' => Status::published,
-                    'info' => [
-                        'info' => $response->getDescription()
-                    ],
+                $announcement_channel->published([
+                    'response' => $response->getOk(),
+                    'response_description' => $response->getDescription(),
                 ]);
             } catch (Exception $exception) {
-                $announcement_channel->update([
-                    'status' => Status::publishing_failed,
-                    'info' => [
-                        'info' => $exception->getMessage(),
-                    ]
+                $announcement_channel->publishingFailed([
+                    'exception_message' => $exception->getMessage(),
+                    'exception_trace' => $exception->getTraceAsString(),
+                    'exception_code' => $exception->getCode(),
+                    'exception_file' => $exception->getFile(),
+                    'exception_line' => $exception->getLine(),
                 ]);
     
                 throw new Exception($exception->getMessage());
@@ -77,8 +71,34 @@ class PublishAnnouncementJob
         return true;
     }
 
-    public function failed(Exception $exception)
+    public function publishOnChannel(Announcement $announcement, AnnouncementChannel $channel): Response
     {
-        Announcement::find($this->announcement_id)->publishingFailed(['info' => $exception->getMessage()]);
+        app()->setLocale($this->lang);
+        
+        $bot = new Bot($channel->channel->bot->token);
+
+        $buttons = BotApi::inlineKeyboardWithLink(
+            array('text' => "Посмотреть объявление", 'url' => route('announcement.show', $announcement)),
+        );
+
+        return $bot::sendPhoto([
+            'caption'                   => view('telegram.announcement.show', ['announcement' => $announcement])->render(),
+            'chat_id'                   => $channel->channel->chat_id,
+            'photo'                     => $announcement->getFirstMediaUrl('announcements'),
+            'parse_mode'                => 'HTML',
+            'disable_web_page_preview'  => 'true',
+            'reply_markup'              => $buttons,
+        ]);
+    }
+
+    public function failed(Exception $exception): void
+    {
+        Announcement::find($this->announcement_id)->publishingFailed([
+            'exception_message' => $exception->getMessage(),
+            'exception_trace' => $exception->getTraceAsString(),
+            'exception_code' => $exception->getCode(),
+            'exception_file' => $exception->getFile(),
+            'exception_line' => $exception->getLine(),
+        ]);
     }
 }

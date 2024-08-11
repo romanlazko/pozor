@@ -26,4 +26,20 @@ class AnnouncementChannel extends Model
     {
         return $this->belongsTo(Announcement::class);
     }
+
+    public function published(array $info = [])
+    {
+        return $this->update([
+            'status' => Status::published,
+            'info' => $info,
+        ]);
+    }
+
+    public function publishingFailed(array $info = [])
+    {
+        return $this->update([
+            'status' => Status::publishing_failed,
+            'info' => $info,
+        ]);
+    }
 }

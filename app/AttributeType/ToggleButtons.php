@@ -6,10 +6,11 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Components\ToggleButtons as ComponentsToggleButtons;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class ToggleButtons extends BaseAttributeType
 {
-    public function apply($query)
+    protected function getQuery($query) : Builder
     {
         if ($attribute_option = $this->attribute->attribute_options?->where('id', $this->data[$this->attribute->name] ?? null)->first() AND $attribute_option?->is_null) {
             return $query;
@@ -20,7 +21,7 @@ class ToggleButtons extends BaseAttributeType
         });
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
@@ -37,17 +38,14 @@ class ToggleButtons extends BaseAttributeType
             });
     }
 
-    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options->where('is_null', false)->pluck('name', 'id'))
             ->inline($this->attribute->is_grouped ?? true)
             ->live()
-            ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])
-            ->columnStart(['default' => '1', 'sm' => $this->attribute->column_start])
-            ->visible(fn (Get $get) => $this->isVisible($get))
-            ->hidden(fn (Get $get) => $this->isHidden($get))
+            ->inline()
             ->required($this->attribute->required);
     }
 }

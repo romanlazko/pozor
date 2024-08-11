@@ -2,69 +2,24 @@
 
 namespace App\AttributeType;
 
-use App\Models\Attribute;
-use App\Models\Feature;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Database\Query\Builder;
 
-class BaseAttributeType
+class BaseAttributeType extends AbstractAttributeType
 {
-    public function __construct(public Attribute $attribute, public $data = [])
-    {
-    }
-
-    public function applyQuery($query)
-    {
-        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
-            return $this->apply($query);
-        }
-
-        return $query;
-    }
-
-    protected function apply($query)
+    protected function getQuery($query) : Builder
     {
         return $query;
     }
 
-    public function getValueByFeature(Feature $feature = null)
+    protected function getFeatureValue(null|string|array $translated_value = null): ?string
     {
-        return $feature->attribute_option?->name
-            ?? $feature->translated_value[app()->getLocale()]
-            ?? $feature->translated_value['original']
-            ?? null;
-    }
-
-    public function getCreateSchema(): array
-    {
-        if ($this->isVisible()) {
-            return $this->schema();
+        if (is_array($translated_value)) {
+            return implode('-', array_filter($translated_value));
         }
 
-        return null;
-    }
-
-    protected function schema()
-    {
-        if ($this->attribute->attribute_options->isNotEmpty()) {
-            return [
-                'attribute_id' => $this->attribute->id,
-                'attribute_option_id' => $this->data[$this->attribute->name],
-            ];
-        }
-
-        return [
-            'attribute_id' => $this->attribute->id,
-            'translated_value'        => [
-                'original' => $this->data[$this->attribute->name]
-            ],
-        ];
-    }
-
-    public function getCreateComponent(Get $get = null): ?ViewComponent
-    {
-        return $this->getFilamentCreateComponent($get);
+        return $translated_value;
     }
 
     protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent
@@ -72,57 +27,8 @@ class BaseAttributeType
         return null;
     }
 
-    public function getFilterComponent(Get $get = null): ?ViewComponent
-    {
-        if (!$this->attribute->filterable) {
-            return null;
-        }
-
-        return $this->getFilamentFilterComponent($get);
-    }
-
     protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return null;
-    }
-
-    protected function isVisible(Get $get = null): bool
-    {
-        if (empty($this->attribute->visible)) {
-            return true;
-        }
-
-        if ($this->checkCondition($get, $this->attribute->visible)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function isHidden(Get $get = null): bool
-    {
-        if (empty($this->attribute->hidden)) {
-            return false;
-        }
-
-        if ($this->checkCondition($get, $this->attribute->hidden)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function checkCondition(Get|null $get, $conditions): bool
-    {
-        foreach ($conditions as $condition) {
-            $value = $get ? $get($condition['attribute_name']) : data_get($this->data, $condition['attribute_name']);
-            $altValue = $get ? $get('attributes.' . $condition['attribute_name']) : data_get($this->data, 'attributes.' . $condition['attribute_name']);
-            
-            if ($value == $condition['value'] || $altValue == $condition['value']) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

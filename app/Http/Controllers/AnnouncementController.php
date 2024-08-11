@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Sort;
-use App\Enums\Status;
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
 class AnnouncementController extends Controller
 {
@@ -41,7 +38,7 @@ class AnnouncementController extends Controller
         $announcements = Announcement::with([
                 'media',
                 'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                // 'user',
+                'features.attribute.showSection',
                 'geo',
                 'userVotes',
                 'currentStatus'
@@ -76,9 +73,9 @@ class AnnouncementController extends Controller
             'geo',
             'currentStatus',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
-            'features.attribute:id,name,alterlabels,order_number,attribute_section_id,is_feature,altersuffixes,create_type',
+            'features.attribute:id,name,alterlabels,is_feature,altersuffixes,show_layout',
             'features.attribute_option:id,alternames',
-            'features.attribute.section:id,alternames,order_number', 
+            'features.attribute.showSection:id,alternames,order_number,slug',
             'categories:id,slug,alternames',
         ]);
 

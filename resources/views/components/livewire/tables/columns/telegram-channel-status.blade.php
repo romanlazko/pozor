@@ -1,10 +1,11 @@
-
 <div class="flex space-x-2">
-    @foreach ($channels as $channel)
+    @forelse ($channels as $channel)
         <x-filament::badge
             :color="$channel->status?->filamentColor()"
         >
             {{ $channel->channel->title }}
         </x-filament::badge>
-    @endforeach
+    @empty
+        <i class="fa-brands fa-telegram text-2xl text-blue-600"></i>
+    @endforelse
 </div>

@@ -116,7 +116,37 @@ class AttributeSectionsTableSeeder extends Seeder
                 'alternames' => '{"cz": "Lokace", "en": "Location", "ru": "Расположение"}',
                 'order_number' => 3,
                 'created_at' => '2024-05-28 09:01:11',
-                'updated_at' => '2024-05-28 09:01:11',
+                'updated_at' => '2024-08-11 15:28:58',
+                'deleted_at' => NULL,
+            ),
+            10 => 
+            array (
+                'id' => 11,
+                'slug' => 'title',
+                'alternames' => '{"cs": "Jmeno", "en": "Title", "ru": "Заголовок"}',
+                'order_number' => 1,
+                'created_at' => '2024-08-09 18:51:29',
+                'updated_at' => '2024-08-09 18:51:29',
+                'deleted_at' => NULL,
+            ),
+            11 => 
+            array (
+                'id' => 12,
+                'slug' => 'price',
+                'alternames' => '{"cs": "Cena", "en": "Price", "ru": "Цена"}',
+                'order_number' => 1,
+                'created_at' => '2024-08-09 21:02:22',
+                'updated_at' => '2024-08-09 21:02:22',
+                'deleted_at' => NULL,
+            ),
+            12 => 
+            array (
+                'id' => 13,
+                'slug' => 'type',
+                'alternames' => '{"cs": "Typ", "en": "Type", "ru": "Тип"}',
+                'order_number' => 1,
+                'created_at' => '2024-08-10 17:23:17',
+                'updated_at' => '2024-08-10 17:23:17',
                 'deleted_at' => NULL,
             ),
         ));

@@ -2,18 +2,14 @@
 
 namespace App\AttributeType;
 
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Guava\FilamentClusters\Forms\Cluster;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class MultipleSelect extends BaseAttributeType
 {
-    public function apply($query)
+    protected function getQuery($query) : Builder
     {
         $query->whereHas('features', function ($query) {
             $query->where('attribute_id', $this->attribute->id)->when($this->attribute->attribute_options_count > 0, fn ($query) =>
@@ -27,7 +23,7 @@ class MultipleSelect extends BaseAttributeType
         return $query;
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return Select::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)

@@ -16,9 +16,11 @@
                 <div class="flex">
                     <div class="w-full space-y-2">
                         <h1 class="font-bold text-lg lg:text-2xl">
-                            {{ ucfirst($announcement->getFeatureByName('title')?->value) }} 
+                            {{ $announcement->getSectionByName('title')->pluck('value')->implode(' ') }}
                         </h1>
-                        <p class="text-xl text-indigo-600">{{ $announcement->getFeatureByName('current_price')?->value }}</p>
+                        <p class="text-xl text-indigo-600">
+                            {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
+                        </p>
                         <p class="text-sm text-gray-500">
                             {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} -
                             {{ $announcement->created_at->diffForHumans() }}
@@ -62,14 +64,14 @@
                     
                     <div class="space-y-3 sm:space-y-0 sm:gap-6 grid grid-cols-1 ">
                         <h3 class="font-bold text-xl">{{ __("Details") }}</h3>
-                        @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.section.order_number')->groupBy('attribute.section.name') as $section_name => $feature_section)
+                        @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.showSection.order_number')->groupBy('attribute.showSection.name') as $section_name => $feature_section)
                             <div class="space-y-2">
                                 <h4 class="font-bold text-sm lg:text-base">
                                     {{ $section_name }}:
                                 </h4>
                                 
                                 <ul class="w-full list-inside list-disc">
-                                    @foreach ($feature_section->sortBy('attribute.section.order_number') as $feature)
+                                    @foreach ($feature_section->sortBy('attribute.show_layout.order_number') as $feature)
                                         <li class="w-full grid grid-cols-2 space-x-2 text-sm lg:text-base">
                                             <span class="text-gray-500 inline-block">• {{ $feature->label }}:</span>
                                             <span class="">

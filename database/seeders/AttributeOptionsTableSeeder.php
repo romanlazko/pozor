@@ -60,7 +60,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:49:37',
-                'updated_at' => '2024-07-26 16:37:59',
+                'updated_at' => '2024-08-11 13:42:37',
                 'deleted_at' => NULL,
             ),
             4 => 
@@ -71,7 +71,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-21 17:49:37',
-                'updated_at' => '2024-07-26 16:37:59',
+                'updated_at' => '2024-08-11 13:42:37',
                 'deleted_at' => NULL,
             ),
             5 => 
@@ -654,7 +654,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 11:59:51',
-                'updated_at' => '2024-07-15 12:38:19',
+                'updated_at' => '2024-08-11 13:41:13',
                 'deleted_at' => NULL,
             ),
             58 => 
@@ -676,7 +676,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 12:00:56',
-                'updated_at' => '2024-07-15 12:38:19',
+                'updated_at' => '2024-08-11 13:41:13',
                 'deleted_at' => NULL,
             ),
             60 => 
@@ -687,7 +687,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-05-26 12:06:52',
-                'updated_at' => '2024-07-15 12:38:19',
+                'updated_at' => '2024-08-11 13:41:13',
                 'deleted_at' => NULL,
             ),
             61 => 
@@ -698,7 +698,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 13:06:00',
-                'updated_at' => '2024-05-26 13:06:00',
+                'updated_at' => '2024-08-09 20:38:15',
                 'deleted_at' => NULL,
             ),
             62 => 
@@ -709,7 +709,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-05-26 13:06:00',
-                'updated_at' => '2024-05-26 13:06:00',
+                'updated_at' => '2024-08-09 20:38:15',
                 'deleted_at' => NULL,
             ),
             63 => 
@@ -720,7 +720,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-05-26 13:06:00',
-                'updated_at' => '2024-05-26 13:06:00',
+                'updated_at' => '2024-08-09 20:38:15',
                 'deleted_at' => NULL,
             ),
             64 => 
@@ -731,7 +731,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-06-04 10:48:09',
-                'updated_at' => '2024-06-04 10:48:09',
+                'updated_at' => '2024-08-10 16:59:51',
                 'deleted_at' => NULL,
             ),
             65 => 
@@ -742,7 +742,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-06-04 10:48:09',
-                'updated_at' => '2024-06-04 10:48:09',
+                'updated_at' => '2024-08-10 16:59:51',
                 'deleted_at' => NULL,
             ),
             66 => 
@@ -753,7 +753,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-06-04 10:48:09',
-                'updated_at' => '2024-06-04 10:48:09',
+                'updated_at' => '2024-08-10 16:59:51',
                 'deleted_at' => NULL,
             ),
             67 => 
@@ -874,7 +874,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-16 10:56:40',
-                'updated_at' => '2024-07-26 16:37:59',
+                'updated_at' => '2024-08-11 13:42:37',
                 'deleted_at' => NULL,
             ),
             78 => 
@@ -885,7 +885,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-07-16 12:10:04',
-                'updated_at' => '2024-07-26 16:37:59',
+                'updated_at' => '2024-08-11 13:42:37',
                 'deleted_at' => NULL,
             ),
             79 => 
@@ -896,7 +896,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-07-17 11:32:19',
-                'updated_at' => '2024-07-17 13:16:18',
+                'updated_at' => '2024-08-11 13:48:20',
                 'deleted_at' => NULL,
             ),
             80 => 
@@ -907,7 +907,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 11:32:19',
-                'updated_at' => '2024-07-17 13:16:18',
+                'updated_at' => '2024-08-11 13:48:20',
                 'deleted_at' => NULL,
             ),
             81 => 
@@ -918,7 +918,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 11:32:19',
-                'updated_at' => '2024-07-17 13:16:18',
+                'updated_at' => '2024-08-11 13:48:20',
                 'deleted_at' => NULL,
             ),
             82 => 
@@ -929,7 +929,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-07-17 11:43:59',
-                'updated_at' => '2024-07-17 13:14:47',
+                'updated_at' => '2024-08-11 13:45:06',
                 'deleted_at' => NULL,
             ),
             83 => 
@@ -940,7 +940,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 11:43:59',
-                'updated_at' => '2024-07-17 13:14:47',
+                'updated_at' => '2024-08-11 13:45:06',
                 'deleted_at' => NULL,
             ),
             84 => 
@@ -951,7 +951,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 11:43:59',
-                'updated_at' => '2024-07-17 13:14:47',
+                'updated_at' => '2024-08-11 13:45:06',
                 'deleted_at' => NULL,
             ),
             85 => 
@@ -1083,7 +1083,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 13:06:54',
-                'updated_at' => '2024-07-17 13:08:24',
+                'updated_at' => '2024-08-11 13:35:41',
                 'deleted_at' => NULL,
             ),
             97 => 
@@ -1094,7 +1094,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 0,
                 'is_null' => 0,
                 'created_at' => '2024-07-17 13:06:54',
-                'updated_at' => '2024-07-17 13:08:24',
+                'updated_at' => '2024-08-11 13:35:41',
                 'deleted_at' => NULL,
             ),
             98 => 
@@ -1105,7 +1105,7 @@ class AttributeOptionsTableSeeder extends Seeder
                 'is_default' => 1,
                 'is_null' => 1,
                 'created_at' => '2024-07-17 13:06:54',
-                'updated_at' => '2024-07-17 13:08:24',
+                'updated_at' => '2024-08-11 13:35:41',
                 'deleted_at' => NULL,
             ),
             99 => 
@@ -1140,6 +1140,72 @@ class AttributeOptionsTableSeeder extends Seeder
                 'created_at' => '2024-07-26 12:53:24',
                 'updated_at' => '2024-07-28 10:37:46',
                 'deleted_at' => '2024-07-28 10:37:46',
+            ),
+            102 => 
+            array (
+                'id' => 103,
+                'attribute_id' => 41,
+                'alternames' => '{"cs": "Kc", "en": "CZK", "ru": "CZK"}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 11:38:44',
+                'updated_at' => '2024-08-10 11:38:44',
+                'deleted_at' => NULL,
+            ),
+            103 => 
+            array (
+                'id' => 104,
+                'attribute_id' => 41,
+                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 11:38:44',
+                'updated_at' => '2024-08-10 11:38:44',
+                'deleted_at' => NULL,
+            ),
+            104 => 
+            array (
+                'id' => 105,
+                'attribute_id' => 41,
+                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 11:38:44',
+                'updated_at' => '2024-08-10 11:38:44',
+                'deleted_at' => NULL,
+            ),
+            105 => 
+            array (
+                'id' => 106,
+                'attribute_id' => 42,
+                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 18:07:00',
+                'updated_at' => '2024-08-10 18:07:00',
+                'deleted_at' => NULL,
+            ),
+            106 => 
+            array (
+                'id' => 107,
+                'attribute_id' => 42,
+                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 18:07:00',
+                'updated_at' => '2024-08-10 18:07:00',
+                'deleted_at' => NULL,
+            ),
+            107 => 
+            array (
+                'id' => 108,
+                'attribute_id' => 42,
+                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-10 18:07:00',
+                'updated_at' => '2024-08-10 18:07:00',
+                'deleted_at' => NULL,
             ),
         ));
         

@@ -1,10 +1,35 @@
-<b>#{{ ($announcement->getFeatureByName('real_estate_type') ?? $announcement->getFeatureByName('type'))?->value }}</b>
+<b>{{ 
+    $announcement->getSectionByName('type')
+        ?->pluck('value')
+        ?->map(fn ($value) => str()
+            ->of($value)
+            ->lower()
+            ->replace(' ', '_')
+            ->prepend('#')
+        )
+        ?->implode(' ')
+}}</b>
 
-<b>{{ $announcement->getFeatureByName('title')?->value }}</b>
+<b>{{ 
+    $announcement->getSectionByName('title')
+        ->pluck('value')
+        ->implode(' ')
+}}</b>
 
-<a href="{{ route('announcement.show', $announcement) }}">Посмотреть объявление</a>
+Стоимость: {{ 
+    $announcement->getSectionByName('price')
+        ->pluck('value')
+        ->implode(' ')
+}}
 
-@foreach ($announcement->categories as $category)
-    <b>#{{ $category->name }}</b>
-@endforeach
-
+<b>{{ 
+    $announcement->categories
+        ->pluck('name')
+        ->map(fn ($value) => str()
+            ->of($value)
+            ->lower()
+            ->replace(' ', '_')
+            ->prepend('#')
+        )
+        ->implode(' ')
+}}</b>

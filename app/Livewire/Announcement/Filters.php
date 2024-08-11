@@ -30,7 +30,7 @@ class Filters extends Component implements HasForms
 
     public $category;
 
-    public function mount($filters = null , $category = null)
+    public function mount(null|array $filters = null , $category = null)
     {
         $this->category = $category;
 
@@ -40,13 +40,13 @@ class Filters extends Component implements HasForms
     public function form(Form $form): Form
     {
         $this->fields = $this->getCategoryAttributes()
-            ?->sortBy('section.order_number')
-            ?->groupBy('section')
+            ?->sortBy('filterSection.order_number')
+            ?->groupBy('filterSection')
             ?->map(function ($section) {
                 $fields = $this->getFields($section);
                 
                 if (!empty($fields)) {
-                    return Grid::make()->schema($fields);
+                    return Grid::make()->schema($fields)->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
                 }
             })
             ?->filter()
@@ -81,7 +81,7 @@ class Filters extends Component implements HasForms
 
     public function getFields($group)
     {
-        return $group->sortBy('order_number')->map(function ($attribute) {
+        return $group->sortBy('filter_layout.order_number')->map(function ($attribute) {
             return AttributeFactory::getFilterComponent($attribute);
         })
         ->filter()
@@ -92,25 +92,22 @@ class Filters extends Component implements HasForms
     {
         $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
 
-        // return Cache::remember($cacheKey, config('cache.ttl'), function () {
-            return Attribute::select('id', 'name', 'filterable', 'search_type', 'is_feature', 'visible', 'column_span', 'order_number', 'attribute_section_id', 'alterlabels')
-                ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'section:id,order_number')
+        $category_attributes = Cache::remember($cacheKey, config('cache.ttl'), function () {
+            return Attribute::select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels')
+                    ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
+                    ->whereHas('categories', fn (Builder $query) => 
+                        $query->whereIn('category_id', $this->category
+                                ->getParentsAndSelf()
+                                ->pluck('id')
+                                ->toArray()
+                        )
+                    )
+                    ->get();
+            });
 
-                ->when($this->category, function ($query) {
-                    $categoryIds = $this->category
-                        ->getParentsAndSelf()
-                        ->pluck('id')
-                        ->toArray();
-                    
-                    $query->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categoryIds ?? [])->select('categories.id'));
-                })
-                
-                ->when(!$this->category, function (Builder $query) { 
-                    $query->where('always_required', true);
-                })
+        // dd($category_attributes);
 
-                ->get();
-        // });
+        return $category_attributes;
     }
 
     private function resetData()

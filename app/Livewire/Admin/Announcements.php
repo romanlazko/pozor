@@ -5,13 +5,10 @@ namespace App\Livewire\Admin;
 use App\Enums\Status;
 use App\Livewire\Components\Tables\Columns\ImageGridColumn;
 use App\Models\Announcement;
-use App\Models\AnnouncementStatus;
 use App\Models\Category;
-use App\Models\TelegramChat;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
@@ -23,32 +20,21 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Filament\Forms\Components\Livewire;
+use Filament\Tables\Columns\SelectColumn;
+use App\Livewire\Components\Tables\Columns\StatusSwitcher;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class Announcements extends Component implements HasForms, HasTable
+class Announcements extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-
-    #[Layout('layouts.admin')]
-
-    public function render()
-    {
-        return view('livewire.admin.announcements');
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -56,15 +42,11 @@ class Announcements extends Component implements HasForms, HasTable
             ->query(Announcement::with('media', 'user.media', 'categories', 'channels.channel', 'geo', 'features', 'currentStatus'))
             ->columns([
                 Stack::make([
-                    TextColumn::make('status')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->status)
-                            ->badge()
-                            ->color(fn (Announcement $announcement) => $announcement->status->filamentColor())
-                            ->grow(false)
-                            ->extraAttributes(fn (Announcement $announcement) => ['title' => $announcement->currentStatus->info['info'] ?? null]),
+                    StatusSwitcher::make('currentStatus.status')
+                        ->options(Status::class),
                     TextColumn::make('categories')
-                            ->getStateUsing(fn (Announcement $announcement) => $announcement->categories->pluck('name'))
-                            ->badge(),
+                        ->getStateUsing(fn (Announcement $announcement) => $announcement->categories->pluck('name'))
+                        ->badge(),
                     
                     Panel::make([
                         Split::make([
@@ -102,15 +84,25 @@ class Announcements extends Component implements HasForms, HasTable
                         ->badge()
                         ->color('gray'),
                     TextColumn::make('channels')
-                        ->formatStateUsing(fn (Announcement $announcement): View => view(
+                        ->state(fn (Announcement $announcement): View => view(
                             'components.livewire.tables.columns.telegram-channel-status',
                             [
                                 'channels' => $announcement->channels
-                            ]
-                        )),
+                            ],
+                        ))
+                        ->action(
+                            Action::make("Telegram Channels")
+                                ->modalHeading(fn (Announcement $announcement) => "Telegram Channels: {$announcement->getFeatureByName('title')?->value}")
+                                ->form(fn (Announcement $announcement) => [
+                                    Livewire::make(AnnouncementChannels::class, ['announcement_id' => $announcement->id]),
+                                ])
+                                ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                                ->slideover(),
+                        )
+                        ->grow(false),
                         
                 ])
-                ->extraAttributes(['class' => 'overflow-auto space-y-2'])
+                ->extraAttributes(['class' => 'space-y-2'])
             ])
             
             ->actions([
@@ -234,14 +226,6 @@ class Announcements extends Component implements HasForms, HasTable
                     ->dropdown(false),
 
                     ActionGroup::make([
-                        Action::make("Telegram Channels")
-                            ->modalHeading(fn (Announcement $announcement) => "Telegram Channels: {$announcement->getFeatureByName('title')?->value}")
-                            ->form(fn (Announcement $announcement) => [
-                                Livewire::make(AnnouncementChannels::class, ['announcement_id' => $announcement->id]),
-                            ])
-                            ->icon('heroicon-o-chat-bubble-bottom-center-text')
-                            ->slideover(),
-
                         Action::make('history')
                             ->label(__("View history"))
                             ->form(fn (Announcement $announcement) => [
@@ -250,25 +234,6 @@ class Announcements extends Component implements HasForms, HasTable
                             ->modalSubmitAction(false)
                             ->slideover()
                             ->icon('heroicon-o-clock'),
-                        
-                        Action::make('change_status')
-                            ->label(__("Change Status"))
-                            ->icon('heroicon-c-arrow-path-rounded-square')
-                            ->form(fn (Announcement $announcement) => [
-                                Section::make()
-                                    ->schema([
-                                        Select::make('status')
-                                            ->options(Status::class)
-                                            ->default($announcement->status)
-                                    ])
-                            ])
-                            ->action(function (array $data, Announcement $announcement): void {
-                                $announcement->statuses()->create([
-                                    'status' => $data['status'],
-                                ]);
-                            })
-                            ->modalWidth('md')
-                            ->slideOver(),
 
                         DeleteAction::make(),
                     ])

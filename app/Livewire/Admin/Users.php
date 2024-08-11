@@ -3,42 +3,17 @@
 namespace App\Livewire\Admin;
 
 use App\Enums\Status;
-use App\Models\Attribute;
-use App\Models\Category;
 use App\Models\User;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Users extends Component implements HasForms, HasTable
+class Users extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-    
-    #[Layout('layouts.admin')]
-    public function render()
-    {
-        return view('livewire.admin.users');
-    }
-
     public function table(Table $table): Table
     {
         return $table

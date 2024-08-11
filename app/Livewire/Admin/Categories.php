@@ -11,7 +11,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -21,18 +20,11 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Categories extends Component implements HasForms, HasTable
+class Categories extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-    
-    #[Layout('layouts.admin')]
     public $category;
 
     public $category_attributes;
@@ -195,9 +187,5 @@ class Categories extends Component implements HasForms, HasTable
                         ->record($this->category)
                 ])
             ]);
-    }
-    public function render()
-    {
-        return view('livewire.admin.categories');
     }
 }

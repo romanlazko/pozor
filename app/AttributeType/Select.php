@@ -5,10 +5,11 @@ namespace App\AttributeType;
 use Filament\Forms\Components\Select as ComponentsSelect;
 use Filament\Forms\Get;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class Select extends BaseAttributeType
 {
-    public function apply($query)
+    protected function getQuery($query) : Builder
     {
         $query->whereHas('features', function ($query) {
             $query->where('attribute_id', $this->attribute->id)->when($this->attribute->attribute_options_count > 0, fn ($query) =>
@@ -22,7 +23,7 @@ class Select extends BaseAttributeType
         return $query;
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsSelect::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
@@ -32,15 +33,11 @@ class Select extends BaseAttributeType
             ->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
-    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return ComponentsSelect::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options->pluck('name', 'id'))
-            ->columnSpan(['default' => 'full', 'sm' => $this->attribute->column_span])
-            ->columnStart(['default' => '1', 'sm' => $this->attribute->column_start])
-            ->visible(fn (Get $get) => $this->isVisible($get))
-            ->hidden(fn (Get $get) => $this->isHidden($get))
             ->required($this->attribute->required);
     }
 }

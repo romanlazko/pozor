@@ -62,12 +62,12 @@
                 <div class="flex flex-col w-full space-y-1">
                     <div class="flex-1 space-y-1">
                         <div class="w-full">
-                            <p class="sm:text-xl sm:font-bold text-indigo-700 hover:text-indigo-800 hover:underline" >
-                                {{ $announcement->getFeatureByName('title')?->value }}
+                            <p class="sm:text-xl sm:font-bold text-indigo-700 hover:text-indigo-800 hover:underline">
+                                {{ $announcement->getSectionByName('title')->pluck('value')->implode(' ') }}
                             </p>
                             
                             <p class="font-bold sm:text-2xl w-full">
-                                {{ $announcement->getFeatureByName('current_price')?->value }} <span class="font-light text-gray-400 line-through">{{ $announcement->getFeatureByName('old_price')?->value }}</span>
+                                {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
                             </p>
                         </div>
                     </div>

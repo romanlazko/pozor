@@ -40,4 +40,9 @@ class TelegramChat extends Model implements HasMedia
     {
         return $this->belongsTo(Geo::class);
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_channel', 'telegram_chat_id', 'category_id');
+    }
 }

@@ -25,23 +25,13 @@ use Filament\Support\Enums\ActionSize;
 
 use Filament\Forms\Components\Select;
 
-class AnnouncementChannels extends Component implements HasForms, HasTable
+class AnnouncementChannels extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-
-    #[Layout('layouts.admin')]
-
     public Announcement $announcement;
 
     public function mount($announcement_id)
     {
         $this->announcement = Announcement::find($announcement_id);
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.announcement-channels');
     }
 
     public function table(Table $table): Table
@@ -58,23 +48,24 @@ class AnnouncementChannels extends Component implements HasForms, HasTable
                     ->color(fn ($record) => $record->status->filamentColor())
                     ->badge(),
                 TextColumn::make('info')
-                    ->state(fn ($record) => $record->info['info'] ?? null)
+                    ->badge()
+                    ->state(function ($record) {
+                        $info = [];
+                        foreach ($record->info ?? [] as $key => $value) {
+                            $info[] = "{$key}: {$value}";
+                        }
+                        return $info;
+                    })
             ])
             ->actions([
-                ActionGroup::make([
-                    DeleteAction::make('delete'),
-                ])
-                ->size(ActionSize::ExtraSmall)
-                ->dropdownPlacement('right-start')
-                ->button()
-                ->hiddenLabel()
+                DeleteAction::make('delete'),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->form([
                         Select::make('telegram_chat_id')
                             ->label('Channel')
-                            ->options(TelegramChat::where('type', 'channel')->get()->pluck('title', 'id')),
+                            ->options(TelegramChat::where('type', 'channel')->whereNotIn('id', $this->announcement->channels()->pluck('telegram_chat_id')->toArray())->get()->pluck('title', 'id')),
                     ])
                     ->action(function ($data) {
                         $this->announcement->channels()->updateOrCreate([

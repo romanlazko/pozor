@@ -3,34 +3,19 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Announcement;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use OwenIt\Auditing\Models\Audit;
 
-class AnnouncementAudits extends Component implements HasForms, HasTable
+class AnnouncementAudits extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-
-    #[Layout('layouts.admin')]
-
     public Announcement $announcement;
 
-    public function mount(Announcement $announcement)
+    public function mount($announcement_id)
     {
-        $this->announcement = $announcement;
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.announcement-audits');
+        $this->announcement = Announcement::find($announcement_id);
     }
 
     public function table(Table $table): Table
@@ -66,10 +51,6 @@ class AnnouncementAudits extends Component implements HasForms, HasTable
                     ->bulleted(),
                 TextColumn::make('created_at')
                     ->since()
-            ])
-            ->headerActions([
-                Action::make('back')
-                    // ->url(route('admin.announcement'))
             ])
             ->paginationPageOptions([25, 50, 100]);
     }

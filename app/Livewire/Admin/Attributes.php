@@ -4,9 +4,11 @@ namespace App\Livewire\Admin;
 
 use App\Jobs\CreateSeedersJob;
 use App\Models\Attribute;
+use App\Models\AttributeSection;
 use App\Models\Category;
 use Closure;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -33,15 +35,15 @@ use Livewire\Component;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Builder;
 
-class Attributes extends Component implements HasForms, HasTable
+class Attributes extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-
-    #[Layout('layouts.admin')]
-
+    public $categories;
     public $validation_rules = [
         'numeric' => 'Только число', 
         'string' => 'Только строка',
@@ -57,70 +59,74 @@ class Attributes extends Component implements HasForms, HasTable
             'checkbox_list'   => 'CHECKBOX LIST (список чекбоксов)',
         ],
         'text_fields' => [
-            'price' => 'Цена',
-            'price_from' => 'Цена от',
             'text_input' => 'Текстовое поле',
-            'search' => 'Поиск',
-            'search_in_description' => 'Поиск в описании',
             'text_area' => 'Текстовый блок',
             'between'   => 'Между',
-            'from'  => 'От',
+            'from_to'   => 'From-To',
             'markdown_editor' => 'Markdown Editor',
         ],
         'other' => [
-            'toggle'    => 'Переключатель',
             'location'  => 'Местоположение',
             'hidden'    => 'Скрытое поле',
         ]
     ];
+
+    public function mount(): void
+    {
+        $this->categories = Category::with('parent')->get()->groupBy('parent.name')->map->pluck('name', 'id');
+    }
     
     public function table(Table $table): Table
     {
         return $table
             ->heading("All attributes: " . Attribute::count())
-            ->query(Attribute::with('attribute_options'))
+            ->query(Attribute::with('attribute_options', 'categories', 'filterSection', 'createSection', 'showSection'))
             ->groups([
-                Group::make('section.slug')
-                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->section?->name ?? 'null')
-                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => $attribute?->section?->slug  . ", order: " . $attribute?->section?->order_number)
+                Group::make('filterSection.slug')
+                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->filterSection?->name ?? 'null')
+                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->filterSection?->order_number} - {$attribute?->filterSection?->slug}")
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
-                Group::make('create_type')
-                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $this->getTypeOprions()[$attribute?->create_type])
+                Group::make('createSection.slug')
+                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->createSection?->name ?? 'null')
+                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->filterSection?->order_number} - {$attribute?->filterSection?->slug}")
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
-                Group::make('search_type')
-                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $this->getTypeOprions()[$attribute?->search_type])
+                Group::make('showSection.slug')
+                    ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->showSection?->name ?? 'null')
+                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->filterSection?->order_number} - {$attribute?->filterSection?->slug}")
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
+                
             ])
-            ->defaultSort('order_number')
-            ->defaultGroup('section.slug')
+            ->defaultSort(function () use ($table){
+                return match ($table->getGrouping()?->getRelationshipName()) {
+                    'filterSection' => 'filter_layout->order_number',
+                    'createSection' => 'create_layout->order_number',
+                    'showSection' => 'show_layout->order_number',
+                    default => 'created_at',
+                };
+            })
+            ->defaultGroup('createSection.slug')
             ->columns([
                 TextColumn::make('order_number')
-                    ->label('Order')
-                    ->sortable()
-                    ->grow(false),
+                    ->state(fn (Attribute $attribute) => match ($table->getGrouping()?->getRelationshipName()) {
+                        'filterSection' => $attribute->filter_layout['order_number'] ?? 0,
+                        'createSection' => $attribute->create_layout['order_number'] ?? 0,
+                        'showSection' => $attribute->show_layout['order_number'] ?? 0,
+                        default => null,
+                    }),
                 TextColumn::make('label')
                     ->description(fn (Attribute $attribute): string =>  $attribute?->name . ($attribute?->suffix ? " ({$attribute?->suffix})" : '')),
-                SelectColumn::make('create_type')
-                    ->grow(false)
-                    ->options($this->getTypeOprions())
-                    ->selectablePlaceholder(false),
-                SelectColumn::make('search_type')
-                    ->grow(false)
-                    ->options($this->getTypeOprions())
-                    ->selectablePlaceholder(false),
                 TextColumn::make('attribute_options')
                     ->state(fn (Attribute $record) => $record->attribute_options->pluck('name'))
                     ->badge()
                     ->grow(false),
-                // ToggleColumn::make('searchable')
-                //     ->grow(false),
-                // ToggleColumn::make('filterable')
-                //     ->grow(false),
-                // ToggleColumn::make('is_feature')->disabled()
-                //     ->grow(false)
+                TextColumn::make('categories')
+                    ->state(fn (Attribute $record) => $record->categories->pluck('name'))
+                    ->badge()
+                    ->color('success')
+                    ->grow(false),
             ])
             ->headerActions([
                 Action::make('Create seeder')
@@ -148,469 +154,255 @@ class Attributes extends Component implements HasForms, HasTable
                     ->form([
                         Section::make(__('Categories'))
                             ->schema([
-                                Select::make('categories')
-                                    ->helperText("Категории к которым принадлежит атрибут. (можно выбрать несколько)")
-                                    ->hiddenLabel()
-                                    ->relationship('categories')
-                                    ->multiple()
-                                    ->options(Category::with('parent')->get()->groupBy('parent.name')->map->pluck('name', 'id')),
+                                Grid::make(2)
+                                    ->schema([
+                                        Select::make('categories')
+                                            ->helperText("Категории к которым принадлежит атрибут. (можно выбрать несколько)")
+                                            ->relationship('categories')
+                                            ->multiple()
+                                            ->options($this->categories)
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
                             ]),
 
                         Section::make(__('Name'))
                             ->schema([
-                                KeyValue::make('alterlabels')
-                                    ->label(__('Label'))
-                                    ->helperText("Лейбел атрибута. Будет виден пользователю в виде названия поля.")
-                                    ->keyLabel(__('Language'))
-                                    ->valueLabel(__('Value'))
-                                    ->columnSpan(2)
-                                    ->live(debounce: 500)
-                                    ->default([
-                                        'en' => '',
-                                        'cs' => '',
-                                        'ru' => '',
-                                    ])
-                                    ->required()
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('name', str()->snake($state['en'])))
-                                    ->rules([
-                                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                                            if (!isset($value['en']) OR $value['en'] == '') 
-                                                $fail('The :attribute must contain english translation.');
-                                        },
-                                    ]),
-                                TextInput::make('name')
-                                    ->label(__('Name'))
-                                    ->required()
-                                    ->columnSpanFull(),
-                                Toggle::make('has_suffix')
-                                    ->label(__('Has suffix'))
-                                    ->live()
-                                    ->dehydrated(false)
-                                    ->default(false)
-                                    ->columnSpanFull()
-                                    ->afterStateUpdated(fn ($state, Set $set) => 
-                                        $set('altersuffixes', $state 
-                                            ? [
-                                                'en' => '',
-                                                'cs' => '',
-                                                'ru' => '',
-                                            ] 
-                                            : [])
-                                    ),
-                                KeyValue::make('altersuffixes')
-                                    ->label(__('Suffix'))
-                                    ->keyLabel(__('Language'))
-                                    ->valueLabel(__('Value'))
-                                    ->rules([
-                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            if ($get('has_suffix') AND (!isset($value['en']) OR $value['en'] === '')) 
-                                                $fail('The :attribute must contain english translation.');
-                                        },
-                                    ])
-                                    ->dehydratedWhenHidden('true')
-                                    ->afterStateHydrated(fn ($state, Set $set) => $set('has_suffix', !empty(array_filter($state ?? []))))
-                                    ->visible(fn (Get $get) => $get('has_suffix')),
-                            ])
-                            ->columns(2),
-
-                        Section::make(__('Types'))
-                            ->schema([
-                                Select::make('create_type')
-                                    ->options($this->type_options)
-                                    ->live()
-                                    ->required()
-                                    ->helperText("Тип атрибута при создании объявления."),
-                                Select::make('search_type')
-                                    ->options($this->type_options)
-                                    ->required()
-                                    ->helperText("Тип атрибута при поиске."),
-                                Toggle::make('translatable')
-                                    ->helperText(__("Будет ли переводится этот атрибут автоматически"))
-                                    ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['text_fields']))),
-                                Toggle::make('is_feature')
-                                    ->helperText(__("Является ли этот атрибут характеристикой")),
-                                Toggle::make('required')
-                                    ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
-                                Toggle::make('searchable')
-                                    ->helperText(__("Будет ли атрибут показываться в карточке объявления при поиске")),
-                                Toggle::make('filterable')
-                                    ->helperText(__("Можно ли фильтровать по этому атрибуту")),
-                                Toggle::make('always_required')
-                                    ->helperText(__("Будет ли этот атрибут всегда обязательным и показываться вне зависимости от фильтрации. (Относится к меньшему числу атрибутов, таких как цена, заголовок и т.д.)")),
-                                Select::make('rules')
-                                    ->label('Validation rulles')
-                                    ->multiple()
-                                    ->columnSpanFull()
-                                    ->options($this->validation_rules)
-                                    ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['text_fields']))),
-                            ])
-                            ->columns(2),
-
-                        Section::make(__('Options'))
-                            ->schema([
-                                Repeater::make('attribute_options')
-                                    ->hiddenLabel()
+                                Grid::make(2)
                                     ->schema([
-                                        KeyValue::make('alternames')
+                                        KeyValue::make('alterlabels')
                                             ->label(__('Label'))
+                                            ->helperText("Лейбел атрибута. Будет виден пользователю в виде названия поля.")
                                             ->keyLabel(__('Language'))
                                             ->valueLabel(__('Value'))
+                                            ->columnSpan(2)
+                                            ->live(debounce: 500)
                                             ->default([
                                                 'en' => '',
                                                 'cs' => '',
                                                 'ru' => '',
                                             ])
+                                            ->required()
+                                            ->afterStateUpdated(fn ($state, Set $set) => $set('name', str()->snake($state['en'])))
                                             ->rules([
                                                 fn (): Closure => function (string $attribute, $value, Closure $fail) {
                                                     if (!isset($value['en']) OR $value['en'] == '') 
                                                         $fail('The :attribute must contain english translation.');
                                                 },
-                                            ])
-                                            ->live(debounce: 500),
-                                        Toggle::make('is_default')
-                                            ->fixIndistinctState()
-                                            ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
-                                            ->visible(fn (Get $get) => in_array($get('../../create_type'), [
-                                                'toggle_buttons',
-                                            ])),
-                                        Toggle::make('is_null')
-                                            ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
-                                            ->live()
-                                            ->visible(fn (Get $get) => in_array($get('../../create_type'), [
-                                                'toggle_buttons',
-                                            ])),
+                                            ]),
+                                        TextInput::make('name')
+                                            ->label(__('Slug'))
+                                            ->required()
+                                            ->columnSpanFull()
+                                            ->unique(),
                                     ])
-                                    ->relationship()
-                                    ->reorderable()
-                                    ->reorderableWithButtons()
-                                    ->reorderableWithDragAndDrop(false)
-                                    ->cloneable()
-                                    ->itemLabel(fn (array $state): ?string => ($state['alternames'][app()->getLocale()] ?? null) . ($state['is_default'] == true ? ", DEFAULT" : "") . ($state['is_null'] == true ? ", NULL" : ""))
-                                    ->collapsed()
-                                    ->columnSpanFull()
-                            ])
-                            ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['fields_with_options']))),
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
 
-                        Section::make(__("Layout"))
+                                Grid::make(2)
+                                    ->schema([
+                                        Toggle::make('has_suffix')
+                                            ->label(__('Has suffix'))
+                                            ->live()
+                                            ->dehydrated(false)
+                                            ->default(false)
+                                            ->columnSpanFull()
+                                            ->afterStateUpdated(fn ($state, Set $set) => 
+                                                $set('altersuffixes', $state 
+                                                    ? [
+                                                        'en' => '',
+                                                        'cs' => '',
+                                                        'ru' => '',
+                                                    ] 
+                                                    : [])
+                                            ),
+                                        KeyValue::make('altersuffixes')
+                                            ->label(__('Suffix'))
+                                            ->keyLabel(__('Language'))
+                                            ->valueLabel(__('Value'))
+                                            ->rules([
+                                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                    if ($get('has_suffix') AND (!isset($value['en']) OR $value['en'] === '')) 
+                                                        $fail('The :attribute must contain english translation.');
+                                                },
+                                            ])
+                                            ->dehydratedWhenHidden('true')
+                                            ->afterStateHydrated(fn ($state, Set $set) => $set('has_suffix', !empty(array_filter($state ?? []))))
+                                            ->visible(fn (Get $get) => $get('has_suffix')),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                            ])
+                            ->columns(2),
+
+                        Section::make(__("Create layout"))
                             ->schema([
-                                Select::make('attribute_section_id')
-                                    ->label('Section')
-                                    ->helperText(__('Секция в которой будет находится этот атрибут'))
-                                    ->relationship(name: 'section', titleAttribute: 'slug')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->createOptionForm([
-                                            Section::make()
-                                                ->schema([
-                                                    KeyValue::make('alternames')
-                                                        ->label('Label')
-                                                        ->keyLabel(__('Language'))
-                                                        ->valueLabel(__('Value'))
-                                                        ->columnSpan(2)
-                                                        ->live(debounce: 500)
-                                                        ->default([
-                                                            'en' => '',
-                                                            'cs' => '',
-                                                            'ru' => '',
-                                                        ])
-                                                        ->rules([
-                                                            fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                                                                if (!isset($value['en']) OR $value['en'] == '') 
-                                                                    $fail('The :attribute must contain english translation.');
-                                                            },
-                                                        ])
-                                                        ->required()
-                                                        ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
-                                                    TextInput::make('slug')
-                                                        ->required(),
-                                                    TextInput::make('order_number')
-                                                        ->helperText(__('Порядковый номер секции внутри формы.'))
-                                                        ->numeric()
-                                                        ->required(),
-                                                ])
-                                                ->columns(2),
-                                        ])
-                                        ->editOptionForm([
-                                            Section::make()
-                                                ->schema([
-                                                    KeyValue::make('alternames')
-                                                        ->label('Label')
-                                                        ->keyLabel(__('Language'))
-                                                        ->valueLabel(__('Value'))
-                                                        ->columnSpan(2)
-                                                        ->live(debounce: 500)
-                                                        ->default([
-                                                            'en' => '',
-                                                            'cs' => '',
-                                                            'ru' => '',
-                                                        ])
-                                                        ->rules([
-                                                            fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                                                                if (!isset($value['en']) OR $value['en'] == '') 
-                                                                    $fail('The :attribute must contain english translation.');
-                                                            },
-                                                        ])
-                                                        ->required()
-                                                        ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
-                                                    TextInput::make('slug')
-                                                        ->required(),
-                                                    TextInput::make('order_number')
-                                                        ->helperText(__('Порядковый номер секции внутри формы.'))
-                                                        ->numeric()
-                                                        ->required(),
-                                                ])
-                                                ->columns(2)
-                                        ]),
-                                TextInput::make('column_span')
-                                    ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 2)"))
-                                    ->required(),
-                                TextInput::make('column_start')
-                                    ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 2)"))
-                                    ->required(),
-                                TextInput::make('order_number')
-                                    ->helperText(__("Порядковый номер этого атрибута внутри секции"))
-                                    ->required(),
+                                Grid::make(3)
+                                    ->schema([
+                                        Select::make('create_layout.type')
+                                            ->options($this->type_options)
+                                            ->required()
+                                            ->helperText("Тип атрибута при создании объявления.")
+                                            ->afterStateUpdated(function (Get $get, Set $set, $state) { 
+                                                !$get('filter_layout.type')
+                                                    ? $set('filter_layout.type', $state) 
+                                                    : null;
+                                                $set('show_layout.type', $state);
+                                            })
+                                            ->columnSpanFull()
+                                            ->live(),
+                                        
+                                        Select::make('create_layout.rules')
+                                            ->label('Validation rulles')
+                                            ->multiple()
+                                            ->required()
+                                            ->columnSpanFull()
+                                            ->options($this->validation_rules)
+                                            ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                
+                                Grid::make(3)  
+                                    ->schema([
+                                        Select::make('create_layout.section_id')
+                                            ->label('Section')
+                                            ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                            ->relationship(name: 'createSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                            ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                            ->columnSpanFull()
+                                            ->required()
+                                            ->createOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        KeyValue::make('alternames')
+                                                            ->label('Label')
+                                                            ->keyLabel(__('Language'))
+                                                            ->valueLabel(__('Value'))
+                                                            ->columnSpan(2)
+                                                            ->live(debounce: 500)
+                                                            ->default([
+                                                                'en' => '',
+                                                                'cs' => '',
+                                                                'ru' => '',
+                                                            ])
+                                                            ->rules([
+                                                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                    if (!isset($value['en']) OR $value['en'] == '') 
+                                                                        $fail('The :attribute must contain english translation.');
+                                                                },
+                                                            ])
+                                                            ->required()
+                                                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                        TextInput::make('slug')
+                                                            ->required(),
+                                                        TextInput::make('order_number')
+                                                            ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                            ->numeric()
+                                                            ->required(),
+                                                    ])
+                                                    ->columns(2),
+                                            ])
+                                            ->editOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        KeyValue::make('alternames')
+                                                            ->label('Label')
+                                                            ->keyLabel(__('Language'))
+                                                            ->valueLabel(__('Value'))
+                                                            ->columnSpan(2)
+                                                            ->live(debounce: 500)
+                                                            ->default([
+                                                                'en' => '',
+                                                                'cs' => '',
+                                                                'ru' => '',
+                                                            ])
+                                                            ->rules([
+                                                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                    if (!isset($value['en']) OR $value['en'] == '') 
+                                                                        $fail('The :attribute must contain english translation.');
+                                                                },
+                                                            ])
+                                                            ->required()
+                                                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                        TextInput::make('slug')
+                                                            ->required(),
+                                                        TextInput::make('order_number')
+                                                            ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                            ->numeric()
+                                                            ->required(),
+                                                    ])
+                                                    ->columns(2)
+                                            ])
+                                            ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                !$get('filter_layout.section_id')
+                                                    ? $set('filter_layout.section_id', $get('create_layout.section_id')) 
+                                                    : null
+                                            )
+                                            ->live(),
+                                        TextInput::make('create_layout.column_span')
+                                            ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
+                                            ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                !$get('filter_layout.column_span')
+                                                    ? $set('filter_layout.column_span', $get('create_layout.column_span')) 
+                                                    : null
+                                            )
+                                            ->live()
+                                            ->required(),
+                                        TextInput::make('create_layout.column_start')
+                                            ->helperText(__("В каком месте в линии будет находиться этот атрибут в секции (от 1 до 4)"))
+                                            ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                !$get('filter_layout.column_start')
+                                                    ? $set('filter_layout.column_start', $get('create_layout.column_start')) 
+                                                    : null
+                                            )
+                                            ->live()
+                                            ->required(),
+                                        TextInput::make('create_layout.order_number')
+                                            ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                            ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                !$get('filter_layout.order_number')
+                                                    ? $set('filter_layout.order_number', $get('create_layout.order_number')) 
+                                                    : null
+                                            )
+                                            ->live()
+                                            ->required(),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                
+                                Grid::make(3)
+                                    ->schema([
+                                        Toggle::make('is_feature')
+                                            ->helperText(__("Является ли этот атрибут характеристикой")),
+                                        Toggle::make('translatable')
+                                            ->helperText(__("Будет ли переводится этот атрибут автоматически"))
+                                            ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+                                        Toggle::make('required')
+                                            ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
                             ])
                             ->columns(3),
 
-                        Section::make(__('Visible/Hidden'))
+                        Section::make(__("Filter layout"))
                             ->schema([
-                                Grid::make(1)
+                                Grid::make(3)
                                     ->schema([
-                                        Toggle::make('show_on_condition')
-                                            ->label(__('Show on condition'))
+                                        Select::make('filter_layout.type')
+                                            ->options($this->type_options)
+                                            ->required()
                                             ->live()
-                                            ->dehydrated(false)
+                                            ->helperText("Тип атрибута при поиске.")
                                             ->columnSpanFull(),
-                                        Repeater::make('visible')
-                                            ->schema([
-                                                Select::make('attribute_name')
-                                                    ->label('Attribute')
-                                                    ->options(function (Get $get) {
-                                                        $categories = Category::whereIn('id',$get('../../categories'))->get()->map(function ($category) { 
-                                                            return $category->getParentsAndSelf()->pluck('id'); 
-                                                        })
-                                                        ->flatten();
-
-                                                        return Attribute::with('section')
-                                                            ->whereHas('attribute_options')
-                                                            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
-                                                            ->get()
-                                                            ->groupBy('section.slug')
-                                                            ->map
-                                                            ->pluck('label', 'name');
-                                                    })
-                                                    ->required()
-                                                    ->live(),
-                                                Select::make('value')
-                                                    ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
-                                            ])
-                                            ->visible(fn (Get $get) => $get('show_on_condition'))
-                                            ->defaultItems(1)
-                                            ->hiddenLabel()
-                                            ->columns(1)
                                     ])
-                                    ->columnSpan(1),
-                                Grid::make(1)
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                Grid::make(3)
                                     ->schema([
-                                        Toggle::make('hide_on_condition')
-                                            ->label(__('Hide on condition'))
-                                            ->live()
-                                            ->dehydrated(false),
-                                        Repeater::make('hidden')
-                                            ->schema([
-                                                Select::make('attribute_name')
-                                                    ->label('Attribute')
-                                                    ->options(function (Get $get) {
-                                                        $categories = Category::whereIn('id', $get('../../categories'))->get()->map(function ($category) { 
-                                                            return $category->getParentsAndSelf()->pluck('id'); 
-                                                        })
-                                                        ->flatten();
-
-                                                        return Attribute::with('section')
-                                                            ->whereHas('attribute_options')
-                                                            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
-                                                            ->get()
-                                                            ->groupBy('section.slug')
-                                                            ->map
-                                                            ->pluck('label', 'name');
-                                                    })
-                                                    ->required()
-                                                    ->live(),
-                                                Select::make('value')
-                                                    ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
-                                            ])
-                                            ->visible(fn (Get $get) => $get('hide_on_condition'))
-                                            ->defaultItems(1)
-                                            ->hiddenLabel()
-                                            ->columns(1)
-                                    ])
-                                    ->columnSpan(1)
-                            ])
-                            ->columns(2),
-                    ])
-                    ->slideOver()
-                    ->closeModalByClickingAway(false),
-                
-            ])
-            ->actions([
-                ActionGroup::make([
-                    EditAction::make()
-                        ->form([
-                            Section::make(__('Categories'))
-                                ->schema([
-                                    Select::make('categories')
-                                        ->helperText("Категории к которым принадлежит атрибут. (можно выбрать несколько)")
-                                        ->hiddenLabel()
-                                        ->relationship('categories')
-                                        ->multiple()
-                                        ->options(Category::with('parent')->get()->groupBy('parent.name')->map->pluck('name', 'id')),
-                                ]),
-                                
-                            Section::make(__('Name'))
-                                ->schema([
-                                    KeyValue::make('alterlabels')
-                                        ->label(__('Label'))
-                                        ->helperText("Лейбел атрибута. Будет виден пользователю в виде названия поля.")
-                                        ->keyLabel(__('Language'))
-                                        ->valueLabel(__('Value'))
-                                        ->columnSpan(2)
-                                        ->live(debounce: 500)
-                                        ->default([
-                                            'en' => '',
-                                            'cs' => '',
-                                            'ru' => '',
-                                        ])
-                                        ->required()
-                                        ->afterStateUpdated(fn ($state, Set $set) => $set('name', str()->snake($state['en'])))
-                                        ->rules([
-                                            fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                                                if (!isset($value['en']) OR $value['en'] == '') 
-                                                    $fail('The :attribute must contain english translation.');
-                                            },
-                                        ]),
-                                    TextInput::make('name')
-                                        ->label(__('Name'))
-                                        ->required()
-                                        ->columnSpanFull(),
-                                    Toggle::make('has_suffix')
-                                        ->label(__('Has suffix'))
-                                        ->live()
-                                        ->dehydrated(false)
-                                        ->default(false)
-                                        ->columnSpanFull()
-                                        ->afterStateUpdated(fn ($state, Set $set) => 
-                                            $set('altersuffixes', $state 
-                                                ? [
-                                                    'en' => '',
-                                                    'cs' => '',
-                                                    'ru' => '',
-                                                ] 
-                                                : [])
-                                        ),
-                                    KeyValue::make('altersuffixes')
-                                        ->label(__('Suffix'))
-                                        ->keyLabel(__('Language'))
-                                        ->valueLabel(__('Value'))
-                                        ->rules([
-                                            fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                                if ($get('has_suffix') AND (!isset($value['en']) OR $value['en'] === '')) 
-                                                    $fail('The :attribute must contain english translation.');
-                                            },
-                                        ])
-                                        ->dehydratedWhenHidden('true')
-                                        ->afterStateHydrated(fn ($state, Set $set) => $set('has_suffix', !empty(array_filter($state ?? []))))
-                                        ->visible(fn (Get $get) => $get('has_suffix')),
-                                ])
-                                ->columns(2),
-
-                            Section::make(__('Types'))
-                                ->schema([
-                                    Select::make('create_type')
-                                        ->options($this->type_options)
-                                        ->live()
-                                        ->required()
-                                        ->helperText("Тип атрибута при создании объявления."),
-                                    Select::make('search_type')
-                                        ->options($this->type_options)
-                                        ->required()
-                                        ->helperText("Тип атрибута при поиске."),
-                                    Toggle::make('translatable')
-                                        ->helperText(__("Будет ли переводится этот атрибут автоматически"))
-                                        ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['text_fields']))),
-                                    Toggle::make('is_feature')
-                                        ->helperText(__("Является ли этот атрибут характеристикой")),
-                                    Toggle::make('required')
-                                        ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
-                                    Toggle::make('searchable')
-                                        ->helperText(__("Будет ли атрибут показываться в карточке объявления при поиске")),
-                                    Toggle::make('filterable')
-                                        ->helperText(__("Можно ли фильтровать по этому атрибуту")),
-                                    Toggle::make('always_required')
-                                        ->helperText(__("Будет ли этот атрибут всегда обязательным и показываться вне зависимости от категории. (Относится к меньшему числу атрибутов, таких как цена, заголовок и т.д.)")),
-                                    Select::make('rules')
-                                        ->label('Validation rulles')
-                                        ->multiple()
-                                        ->columnSpanFull()
-                                        ->options($this->validation_rules)
-                                        ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['text_fields']))),
-                                ])
-                                ->columns(2),
-
-                            Section::make(__('Options'))
-                                ->schema([
-                                    Repeater::make('attribute_options')
-                                        ->hiddenLabel()
-                                        ->schema([
-                                            KeyValue::make('alternames')
-                                                ->label(__('Label'))
-                                                ->keyLabel(__('Language'))
-                                                ->valueLabel(__('Value'))
-                                                ->default([
-                                                    'en' => '',
-                                                    'cs' => '',
-                                                    'ru' => '',
-                                                ])
-                                                ->rules([
-                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                                                        if (!isset($value['en']) OR $value['en'] == '') 
-                                                            $fail('The :attribute must contain english translation.');
-                                                    },
-                                                ])
-                                                ->live(debounce: 500),
-                                            Toggle::make('is_default')
-                                                ->fixIndistinctState()
-                                                ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
-                                                ->visible(fn (Get $get) => in_array($get('../../create_type'), [
-                                                    'toggle_buttons',
-                                                ])),
-                                            Toggle::make('is_null')
-                                                ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
-                                                ->live()
-                                                ->visible(fn (Get $get) => in_array($get('../../create_type'), [
-                                                    'toggle_buttons',
-                                                ])),
-                                        ])
-                                        ->relationship()
-                                        ->reorderable()
-                                        ->reorderableWithButtons()
-                                        ->reorderableWithDragAndDrop(false)
-                                        ->cloneable()
-                                        ->itemLabel(fn (array $state): ?string => ($state['alternames'][app()->getLocale()] ?? null) . ($state['is_default'] ? ", DEFAULT" : "") . ($state['is_null'] ? ", NULL" : ""))
-                                        ->collapsed()
-                                        ->columnSpanFull()
-                                ])
-                                ->visible(fn (Get $get) => in_array($get('create_type'), array_keys($this->type_options['fields_with_options']))),
-
-                            Section::make(__("Layout"))
-                                ->schema([
-                                    Select::make('attribute_section_id')
-                                        ->label('Section')
-                                        ->helperText(__('Секция в которой будет находится этот атрибут'))
-                                        ->relationship(name: 'section', titleAttribute: 'slug')
-                                        ->columnSpanFull()
-                                        ->required()
-                                        ->createOptionForm([
+                                        Select::make('filter_layout.section_id')
+                                            ->label('Section')
+                                            ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                            ->relationship(name: 'filterSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                            ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                            ->columnSpanFull()
+                                            ->required()
+                                            ->createOptionForm([
                                                 Section::make()
                                                     ->schema([
                                                         KeyValue::make('alternames')
@@ -672,17 +464,708 @@ class Attributes extends Component implements HasForms, HasTable
                                                     ])
                                                     ->columns(2)
                                             ]),
-                                    TextInput::make('column_span')
-                                        ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 2)"))
-                                        ->required(),
-                                    TextInput::make('column_start')
-                                        ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 2)"))
-                                        ->required(),
-                                    TextInput::make('order_number')
-                                        ->helperText(__("Порядковый номер этого атрибута внутри секции"))
-                                        ->required(),
+                                        TextInput::make('filter_layout.column_span')
+                                            ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
+                                            ->required(),
+                                        TextInput::make('filter_layout.column_start')
+                                            ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 4)"))
+                                            ->required(),
+                                        TextInput::make('filter_layout.order_number')
+                                            ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                            ->required()
+                                    ])
+                                    ->hidden(fn (Get $get) => $get('filter_layout.type') == 'hidden')
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                            ])
+                            ->columns(3),
+
+                        Section::make(__("Show layout"))
+                            ->schema([
+                                Hidden::make('show_layout.type')
+                                    ->required()
+                                    ->live(),
+
+                                Grid::make(3)
+                                    ->schema([
+                                        Select::make('show_layout.section_id')
+                                            ->label('Section')
+                                            ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                            ->relationship(name: 'showSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                            ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                            ->columnSpanFull()
+                                            ->required()
+                                            ->createOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        KeyValue::make('alternames')
+                                                            ->label('Label')
+                                                            ->keyLabel(__('Language'))
+                                                            ->valueLabel(__('Value'))
+                                                            ->columnSpan(2)
+                                                            ->live(debounce: 500)
+                                                            ->default([
+                                                                'en' => '',
+                                                                'cs' => '',
+                                                                'ru' => '',
+                                                            ])
+                                                            ->rules([
+                                                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                    if (!isset($value['en']) OR $value['en'] == '') 
+                                                                        $fail('The :attribute must contain english translation.');
+                                                                },
+                                                            ])
+                                                            ->required()
+                                                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                        TextInput::make('slug')
+                                                            ->required(),
+                                                        TextInput::make('order_number')
+                                                            ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                            ->numeric()
+                                                            ->required(),
+                                                    ])
+                                                    ->columns(2),
+                                            ])
+                                            ->editOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        KeyValue::make('alternames')
+                                                            ->label('Label')
+                                                            ->keyLabel(__('Language'))
+                                                            ->valueLabel(__('Value'))
+                                                            ->columnSpan(2)
+                                                            ->live(debounce: 500)
+                                                            ->default([
+                                                                'en' => '',
+                                                                'cs' => '',
+                                                                'ru' => '',
+                                                            ])
+                                                            ->rules([
+                                                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                    if (!isset($value['en']) OR $value['en'] == '') 
+                                                                        $fail('The :attribute must contain english translation.');
+                                                                },
+                                                            ])
+                                                            ->required()
+                                                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                        TextInput::make('slug')
+                                                            ->required(),
+                                                        TextInput::make('order_number')
+                                                            ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                            ->numeric()
+                                                            ->required(),
+                                                    ])
+                                                    ->columns(2)
+                                            ]),
+                                        TextInput::make('show_layout.order_number')
+                                            ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                            ->required(),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                            ])
+                            ->columns(3),
+
+                        Section::make(__('Options'))
+                            ->schema([
+                                Repeater::make('attribute_options')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        KeyValue::make('alternames')
+                                            ->label(__('Label'))
+                                            ->keyLabel(__('Language'))
+                                            ->valueLabel(__('Value'))
+                                            ->default([
+                                                'en' => '',
+                                                'cs' => '',
+                                                'ru' => '',
+                                            ])
+                                            ->rules([
+                                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                    if (!isset($value['en']) OR $value['en'] == '') 
+                                                        $fail('The :attribute must contain english translation.');
+                                                },
+                                            ])
+                                            ->live(debounce: 500),
+                                        Toggle::make('is_default')
+                                            ->fixIndistinctState()
+                                            ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
+                                            ->visible(fn (Get $get) => in_array($get('../../create_type'), [
+                                                'toggle_buttons',
+                                            ])),
+                                        Toggle::make('is_null')
+                                            ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
+                                            ->live()
+                                            ->visible(fn (Get $get) => in_array($get('../../create_type'), [
+                                                'toggle_buttons',
+                                            ])),
+                                    ])
+                                    ->relationship()
+                                    ->reorderable()
+                                    ->reorderableWithButtons()
+                                    ->reorderableWithDragAndDrop(false)
+                                    ->cloneable()
+                                    ->itemLabel(fn (array $state): ?string => 
+                                        ($state['alternames'][app()->getLocale()] ?? $state['alternames']['en'] ?? null) . ($state['is_default'] ? ", DEFAULT" : "") . ($state['is_null'] ? ", NULL" : "")
+                                    )
+                                    ->collapsed()
+                                    ->columnSpanFull()
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200'])
+                            ])
+                            ->visible(fn (Get $get) => 
+                                in_array($get('filter_layout.type'), array_keys($this->type_options['fields_with_options'])) 
+                                OR in_array($get('create_layout.type'), array_keys($this->type_options['fields_with_options']))
+                            ),
+                        Section::make(__('Visible/Hidden'))
+                            ->schema([
+                                Grid::make(1)
+                                    ->schema([
+                                        Toggle::make('show_on_condition')
+                                            ->label(__('Show on condition'))
+                                            ->live()
+                                            ->dehydrated(false)
+                                            ->columnSpanFull(),
+                                        Repeater::make('visible')
+                                            ->schema([
+                                                Select::make('attribute_name')
+                                                    ->label('Attribute')
+                                                    ->options(function (Get $get) {
+                                                        $categories = Category::whereIn('id',$get('../../categories'))->get()->map(function ($category) { 
+                                                            return $category->getParentsAndSelf()->pluck('id'); 
+                                                        })
+                                                        ->flatten();
+
+                                                        return Attribute::with('section')
+                                                            ->whereHas('attribute_options')
+                                                            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
+                                                            ->get()
+                                                            ->groupBy('section.slug')
+                                                            ->map
+                                                            ->pluck('label', 'name');
+                                                    })
+                                                    ->required()
+                                                    ->live(),
+                                                Select::make('value')
+                                                    ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
+                                            ])
+                                            ->visible(fn (Get $get) => $get('show_on_condition'))
+                                            ->defaultItems(1)
+                                            ->hiddenLabel()
+                                            ->columns(1)
+                                    ])
+                                    ->columnSpan(1)
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                Grid::make(1)
+                                    ->schema([
+                                        Toggle::make('hide_on_condition')
+                                            ->label(__('Hide on condition'))
+                                            ->live()
+                                            ->dehydrated(false),
+                                        Repeater::make('hidden')
+                                            ->schema([
+                                                Select::make('attribute_name')
+                                                    ->label('Attribute')
+                                                    ->options(function (Get $get) {
+                                                        $categories = Category::whereIn('id', $get('../../categories'))->get()->map(function ($category) { 
+                                                            return $category->getParentsAndSelf()->pluck('id'); 
+                                                        })
+                                                        ->flatten();
+
+                                                        return Attribute::with('section')
+                                                            ->whereHas('attribute_options')
+                                                            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
+                                                            ->get()
+                                                            ->groupBy('section.slug')
+                                                            ->map
+                                                            ->pluck('label', 'name');
+                                                    })
+                                                    ->required()
+                                                    ->live(),
+                                                Select::make('value')
+                                                    ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
+                                            ])
+                                            ->visible(fn (Get $get) => $get('hide_on_condition'))
+                                            ->defaultItems(1)
+                                            ->hiddenLabel()
+                                            ->columns(1)
+                                    ])
+                                    ->columnSpan(1)
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200'])
+                            ])
+                            ->columns(2),
+                    ])
+                    ->slideOver()
+                    ->closeModalByClickingAway(false),
+                
+            ])
+            ->actions([
+                ActionGroup::make([
+                    EditAction::make()
+                        ->modalHeading(fn ($record) => $record->label)
+                        ->modalDescription(fn ($record) => $record->name)
+                        ->form([
+                            Section::make(__('Categories'))
+                                ->schema([
+                                    Grid::make(2)
+                                        ->schema([
+                                            Select::make('categories')
+                                                ->helperText("Категории к которым принадлежит атрибут. (можно выбрать несколько)")
+                                                ->relationship('categories')
+                                                ->multiple()
+                                                ->options($this->categories)
+                                                ->columnSpanFull(),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                ]),
+                                
+                            Section::make(__('Name'))
+                                ->schema([
+                                    Grid::make(2)
+                                        ->schema([
+                                            KeyValue::make('alterlabels')
+                                                ->label(__('Label'))
+                                                ->helperText("Лейбел атрибута. Будет виден пользователю в виде названия поля.")
+                                                ->keyLabel(__('Language'))
+                                                ->valueLabel(__('Value'))
+                                                ->columnSpan(2)
+                                                ->live(debounce: 500)
+                                                ->default([
+                                                    'en' => '',
+                                                    'cs' => '',
+                                                    'ru' => '',
+                                                ])
+                                                ->required()
+                                                ->afterStateUpdated(fn ($state, Set $set) => $set('name', str()->snake($state['en'])))
+                                                ->rules([
+                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                            $fail('The :attribute must contain english translation.');
+                                                    },
+                                                ]),
+                                            TextInput::make('name')
+                                                ->label(__('Slug'))
+                                                ->required()
+                                                ->columnSpanFull()
+                                                ->unique(ignoreRecord: true),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+
+                                    Grid::make(2)
+                                        ->schema([
+                                            Toggle::make('has_suffix')
+                                                ->label(__('Has suffix'))
+                                                ->live()
+                                                ->dehydrated(false)
+                                                ->default(false)
+                                                ->columnSpanFull()
+                                                ->afterStateUpdated(fn (Attribute $attribute, Set $set, $state) => 
+                                                    $set('altersuffixes', $state 
+                                                        ? (!empty($attribute->altersuffixes ?? []) ? $attribute->altersuffixes : [
+                                                            'en' => '',
+                                                            'cs' => '',
+                                                            'ru' => '',
+                                                        ])
+                                                        : null)
+                                                ),
+                                            KeyValue::make('altersuffixes')
+                                                ->label(__('Suffix'))
+                                                ->keyLabel(__('Language'))
+                                                ->valueLabel(__('Value'))
+                                                ->rules([
+                                                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                        if ($get('has_suffix') AND (!isset($value['en']) OR $value['en'] === '')) 
+                                                            $fail('The :attribute must contain english translation.');
+                                                    },
+                                                ])
+                                                ->dehydratedWhenHidden('true')
+                                                ->afterStateHydrated(fn ($state, Set $set) => $set('has_suffix', !empty(array_filter($state ?? []))))
+                                                ->visible(fn (Get $get) => $get('has_suffix')),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                ])
+                                ->columns(2),
+
+                            Section::make(__("Create layout"))
+                                ->schema([
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('create_layout.type')
+                                                ->options($this->type_options)
+                                                ->required()
+                                                ->helperText("Тип атрибута при создании объявления.")
+                                                ->afterStateUpdated(function (Get $get, Set $set, $state) { 
+                                                    !$get('filter_layout.type')
+                                                        ? $set('filter_layout.type', $state) 
+                                                        : null;
+                                                    $set('show_layout.type', $state);
+                                                })
+                                                ->columnSpanFull()
+                                                ->live(),
+                                            
+                                            Select::make('create_layout.rules')
+                                                ->label('Validation rulles')
+                                                ->multiple()
+                                                ->required()
+                                                ->columnSpanFull()
+                                                ->options($this->validation_rules)
+                                                ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                    
+                                    Grid::make(3)  
+                                        ->schema([
+                                            Select::make('create_layout.section_id')
+                                                ->label('Section')
+                                                ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                                ->relationship(name: 'createSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                                ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                                ->columnSpanFull()
+                                                ->required()
+                                                ->createOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2),
+                                                ])
+                                                ->editOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2)
+                                                ])
+                                                ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                    !$get('filter_layout.section_id')
+                                                        ? $set('filter_layout.section_id', $get('create_layout.section_id')) 
+                                                        : null
+                                                )
+                                                ->live(),
+                                            TextInput::make('create_layout.column_span')
+                                                ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
+                                                ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                    !$get('filter_layout.column_span')
+                                                        ? $set('filter_layout.column_span', $get('create_layout.column_span')) 
+                                                        : null
+                                                )
+                                                ->live()
+                                                ->required(),
+                                            TextInput::make('create_layout.column_start')
+                                                ->helperText(__("В каком месте в линии будет находиться этот атрибут в секции (от 1 до 4)"))
+                                                ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                    !$get('filter_layout.column_start')
+                                                        ? $set('filter_layout.column_start', $get('create_layout.column_start')) 
+                                                        : null
+                                                )
+                                                ->live()
+                                                ->required(),
+                                            TextInput::make('create_layout.order_number')
+                                                ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                                ->afterStateUpdated(fn (Get $get, Set $set) => 
+                                                    !$get('filter_layout.order_number')
+                                                        ? $set('filter_layout.order_number', $get('create_layout.order_number')) 
+                                                        : null
+                                                )
+                                                ->live()
+                                                ->required(),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                    
+                                    Grid::make(3)
+                                        ->schema([
+                                            Toggle::make('is_feature')
+                                                ->helperText(__("Является ли этот атрибут характеристикой")),
+                                            Toggle::make('translatable')
+                                                ->helperText(__("Будет ли переводится этот атрибут автоматически"))
+                                                ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+                                            Toggle::make('required')
+                                                ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+
                                 ])
                                 ->columns(3),
+
+                            Section::make(__("Filter layout"))
+                                ->schema([
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('filter_layout.type')
+                                                ->options($this->type_options)
+                                                ->required()
+                                                ->helperText("Тип атрибута при поиске.")
+                                                ->columnSpanFull()
+                                                ->live(),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('filter_layout.section_id')
+                                                ->label('Section')
+                                                ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                                ->relationship(name: 'filterSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                                ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                                ->columnSpanFull()
+                                                ->required()
+                                                ->createOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2),
+                                                ])
+                                                ->editOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2)
+                                                ]),
+                                            TextInput::make('filter_layout.column_span')
+                                                ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
+                                                ->required(),
+                                            TextInput::make('filter_layout.column_start')
+                                                ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 4)"))
+                                                ->required(),
+                                            TextInput::make('filter_layout.order_number')
+                                                ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                                ->required()
+                                        ])
+                                        ->hidden(fn (Get $get) => $get('filter_layout.type') == 'hidden')
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                ])
+                                ->columns(3),
+
+                            Section::make(__("Show layout"))
+                                ->schema([
+                                    Hidden::make('show_layout.type')
+                                        ->required()
+                                        ->live(),
+
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('show_layout.section_id')
+                                                ->label('Section')
+                                                ->helperText(__('Секция в которой будет находится этот атрибут'))
+                                                ->relationship(name: 'showSection', modifyQueryUsing: fn (Builder $query) => $query->orderBy('order_number'))
+                                                ->getOptionLabelFromRecordUsing(fn (AttributeSection $record) => "#{$record->order_number} - {$record->name} ({$record->slug})")
+                                                ->columnSpanFull()
+                                                ->required()
+                                                ->createOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2),
+                                                ])
+                                                ->editOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            KeyValue::make('alternames')
+                                                                ->label('Label')
+                                                                ->keyLabel(__('Language'))
+                                                                ->valueLabel(__('Value'))
+                                                                ->columnSpan(2)
+                                                                ->live(debounce: 500)
+                                                                ->default([
+                                                                    'en' => '',
+                                                                    'cs' => '',
+                                                                    'ru' => '',
+                                                                ])
+                                                                ->rules([
+                                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                                            $fail('The :attribute must contain english translation.');
+                                                                    },
+                                                                ])
+                                                                ->required()
+                                                                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+                                                            TextInput::make('slug')
+                                                                ->required(),
+                                                            TextInput::make('order_number')
+                                                                ->helperText(__('Порядковый номер секции внутри формы.'))
+                                                                ->numeric()
+                                                                ->required(),
+                                                        ])
+                                                        ->columns(2)
+                                                ]),
+                                            TextInput::make('show_layout.order_number')
+                                                ->helperText(__("Порядковый номер этого атрибута внутри секции"))
+                                                ->required(),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                ])
+                                ->columns(3),
+
+                            Section::make(__('Options'))
+                                ->schema([
+                                    Repeater::make('attribute_options')
+                                        ->hiddenLabel()
+                                        ->schema([
+                                            KeyValue::make('alternames')
+                                                ->label(__('Label'))
+                                                ->keyLabel(__('Language'))
+                                                ->valueLabel(__('Value'))
+                                                ->default([
+                                                    'en' => '',
+                                                    'cs' => '',
+                                                    'ru' => '',
+                                                ])
+                                                ->rules([
+                                                    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                                        if (!isset($value['en']) OR $value['en'] == '') 
+                                                            $fail('The :attribute must contain english translation.');
+                                                    },
+                                                ])
+                                                ->live(debounce: 500),
+                                            Toggle::make('is_default')
+                                                ->fixIndistinctState()
+                                                ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
+                                                ->visible(fn (Get $get) => in_array($get('../../create_type'), [
+                                                    'toggle_buttons',
+                                                ])),
+                                            Toggle::make('is_null')
+                                                ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
+                                                ->live()
+                                                ->visible(fn (Get $get) => in_array($get('../../create_type'), [
+                                                    'toggle_buttons',
+                                                ])),
+                                        ])
+                                        ->relationship()
+                                        ->reorderable()
+                                        ->reorderableWithButtons()
+                                        ->reorderableWithDragAndDrop(false)
+                                        ->cloneable()
+                                        ->itemLabel(fn (array $state): ?string => 
+                                            ($state['alternames'][app()->getLocale()] ?? $state['alternames']['en'] ?? null) . ($state['is_default'] ? ", DEFAULT" : "") . ($state['is_null'] ? ", NULL" : "")
+                                        )
+                                        ->collapsed()
+                                        ->columnSpanFull()
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200'])
+                                ])
+                                ->visible(fn (Get $get) => 
+                                    in_array($get('filter_layout.type'), array_keys($this->type_options['fields_with_options'])) 
+                                    OR in_array($get('create_layout.type'), array_keys($this->type_options['fields_with_options']))
+                                ),
 
                             Section::make(__('Visible/Hidden'))
                                 ->schema([
@@ -717,12 +1200,13 @@ class Attributes extends Component implements HasForms, HasTable
                                                         ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
                                                 ])
                                                 ->visible(fn (Get $get) => $get('show_on_condition'))
-                                                ->afterStateHydrated(fn ($state, Set $set) => !empty($state) ? $set('show_on_condition', true) : $set('show_on_condition', false))
+                                                ->afterStateHydrated(fn ($state, Set $set) => $set('show_on_condition', !empty($state)))
                                                 ->defaultItems(1)
                                                 ->hiddenLabel()
                                                 ->columns(1)
                                         ])
-                                        ->columnSpan(1),
+                                        ->columnSpan(1)
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
                                     Grid::make(1)
                                         ->schema([
                                             Toggle::make('hide_on_condition')
@@ -759,6 +1243,7 @@ class Attributes extends Component implements HasForms, HasTable
                                                 ->columns(1)
                                         ])
                                         ->columnSpan(1)
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200'])
                                 ])
                                 ->columns(2),
                         ])
@@ -770,22 +1255,11 @@ class Attributes extends Component implements HasForms, HasTable
             ->paginated(false)
             ->filters([
                 SelectFilter::make('category')
-                    ->options(fn () => 
-                        Category::select('id', 'alternames', 'slug', 'parent_id')
-                                ->with('parent')
-                                ->get()
-                                ->groupBy('parent.name')
-                                ->map
-                                ->pluck('name', 'id')
-                    )
+                    ->options($this->categories)
                     ->query(fn ($query, $data) => 
                         $query->when($data['value'], fn ($query) => $query->whereHas('categories', fn ($query) => $query->where('category_id', $data['value'])))
                     )
             ]);
-    }
-    public function render()
-    {
-        return view('livewire.admin.attributes');
     }
 
     private function getTypeOprions()

@@ -123,17 +123,17 @@ class Create extends Component implements HasForms
     public function getFormSchema(): array
     {
         return $this->getCategoryAttributes()
-            ?->sortBy('section.order_number')
-            ?->groupBy('section.name')
+            ?->sortBy('createSection.order_number')
+            ?->groupBy('createSection.name')
             ?->map(function($section, $section_name) {
                 return Section::make($section_name)->schema([
                     Grid::make([
-                        'default' => 1,
-                        'sm' => 2,
-                        'md' => 2,
-                        'lg' => 2,
-                        'xl' => 2,
-                        '2xl' => 2,
+                        'default' => 2,
+                        'sm' => 4,
+                        'md' => 4,
+                        'lg' => 4,
+                        'xl' => 4,
+                        '2xl' => 4,
                     ])
                     ->schema($this->getFields($section))
                 ]);
@@ -166,7 +166,7 @@ class Create extends Component implements HasForms
 
     public function getFields($section): array
     {
-        return $section->sortBy('order_number')->map(function ($attribute) {
+        return $section->sortBy('create_layout->order_number')->map(function ($attribute) {
                 return AttributeFactory::getCreateComponent($attribute);
             })
             ->filter()
@@ -178,24 +178,7 @@ class Create extends Component implements HasForms
         $cacheKey = implode('_', $this->data['categories']) . '_create_attributes';
 
         // return Cache::remember($cacheKey, config('cache.ttl'), function () {
-            return Attribute::select(
-                'id',
-                'name',
-                'alterlabels',
-                'searchable',
-                'create_type',
-                'is_feature',
-                'visible',
-                'hidden',
-                'column_span',
-                'column_start',
-                'order_number',
-                'attribute_section_id',
-                'required',
-                'rules',
-                'altersuffixes'
-            )
-                ->with([
+            return Attribute::with([
                     'attribute_options' => function (HasMany $query) {
                         return $query->select(
                             'attribute_id',
@@ -205,7 +188,7 @@ class Create extends Component implements HasForms
                             'is_null'
                         )->whereNot('is_null', true);
                     },
-                    'section:id,order_number,alternames'
+                    'createSection:id,order_number,alternames'
                 ])
                 ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $this->data['categories']))
                 ->get();
@@ -216,7 +199,7 @@ class Create extends Component implements HasForms
     {
         $cacheKey = implode('_', $this->data['categories']) . '_create_categories';
 
-        // return Cache::remember($cacheKey, config('cache.ttl'), function () {
+        return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Category::whereIn('id', $this->data['categories'])
                 ->select('id', 'alternames', 'parent_id')
                 ->with('children:alternames,id,parent_id')
@@ -226,6 +209,6 @@ class Create extends Component implements HasForms
                     'id' => $category->id,
                     'children' => $category->children,
                 ]));
-        // });
+        });
     }
 }

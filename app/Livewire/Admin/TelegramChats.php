@@ -2,59 +2,30 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\Geo;
 use App\Models\TelegramBot;
 use App\Models\TelegramChat;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use Romanlazko\Telegram\App\Bot;
-use Romanlazko\Telegram\Generators\BotDirectoryGenerator;
-use Spatie\LaravelIgnition\Recorders\DumpRecorder\HtmlDumper;
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper as DumperHtmlDumper;
-use Symfony\Component\VarDumper\VarDumper;
 
-class TelegramChats extends Component implements HasForms, HasTable
+class TelegramChats extends BaseAdminLayout implements HasForms, HasTable
 {
-    use InteractsWithTable;
-    use InteractsWithForms;
-    
-    #[Layout('layouts.admin')]
 
     public TelegramBot $telegram_bot;
 
     public function mount(TelegramBot $telegram_bot)
     {
         $this->telegram_bot = $telegram_bot;
-    }
-    
-    public function render()
-    {
-        return view('livewire.admin.telegram-chats');
     }
 
     public function table(Table $table): Table
@@ -87,6 +58,9 @@ class TelegramChats extends Component implements HasForms, HasTable
                     ->wrap(),
                 TextColumn::make('location')
                     ->state(fn (TelegramChat $telegram_chat) => $telegram_chat->geo?->name),
+                TextColumn::make('categories')
+                    ->state(fn (TelegramChat $telegram_chat) => $telegram_chat->categories->pluck('name'))
+                    ->badge(),
                 TextColumn::make('updated_at')
                     ->sortable()
                     ->label('Последняя активность')
@@ -126,7 +100,14 @@ class TelegramChats extends Component implements HasForms, HasTable
                                         ->live()
                                         ->placeholder(__('City'))
                                 ])
-                                ->columns(2)
+                                ->columns(2),
+                            Section::make()
+                                ->schema([
+                                    Select::make('categories')
+                                        ->relationship('categories')
+                                        ->multiple()
+                                        ->options(Category::with('parent')->get()->groupBy('parent.name')->map->pluck('name', 'id')),
+                                ])
                         ])
                         ->visible(fn (TelegramChat $telegram_chat) => $telegram_chat->type === 'channel')
                         ->slideOver()

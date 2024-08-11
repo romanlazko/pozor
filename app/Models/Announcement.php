@@ -108,9 +108,16 @@ class Announcement extends Model implements HasMedia, Auditable
         return $this->hasMany(AnnouncementChannel::class, 'announcement_id', 'id');
     }
 
-    public function getFeatureByName($name)
+    public function getFeatureByName(string $name)
     {
         return $this->features->firstWhere('attribute.name', $name);
+    }
+
+    public function getSectionByName(string $name)
+    {
+        return $this->features->groupBy('attribute.showSection.slug')
+            ?->get($name)
+            ?->sortBy('attribute.show_layout.order_number');
     }
 
     public function getDynamicSEOData(): SEOData

@@ -3,15 +3,11 @@
 namespace App\AttributeType;
 
 use App\Models\Attribute;
-use App\Models\Geo as ModelsGeo;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select as ComponentsSelect;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Guava\FilamentClusters\Forms\Cluster;
-use Filament\Forms\Components\TextInput;
+use Illuminate\Contracts\Database\Query\Builder;
 use Filament\Support\Components\ViewComponent;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +23,7 @@ class Location extends BaseAttributeType
         parent::__construct($attribute, $data);
     }
 
-    public function apply($query)
+    protected function getQuery($query) : Builder
     {
         $query->whereHas('geo', function ($query) {
             $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 
@@ -38,7 +34,7 @@ class Location extends BaseAttributeType
         return $query;
     }
 
-    public function getFilamentFilterComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(2)
             ->schema([
@@ -87,7 +83,7 @@ class Location extends BaseAttributeType
             ]);
     }
 
-    public function getFilamentCreateComponent(Get $get = null): ?ViewComponent
+    protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(2)
             ->schema([
@@ -113,7 +109,7 @@ class Location extends BaseAttributeType
                             ->pluck('name', 'id');
                     })
                     ->live()
-                    // ->required()
+                    ->required()
                     ->placeholder(__('filament.labels.city'))
             ]);
     }
