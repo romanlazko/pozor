@@ -28,10 +28,10 @@ class Users extends BaseAdminLayout implements HasForms, HasTable
                     ->conversion('thumb')
                     ->rounded(),
                 TextColumn::make('name')
-                    ->description(fn (User $record) => $record->email),
+                    ->description(fn (User $record) => $record?->email),
                 TextColumn::make('chat')
-                    ->state(fn (User $user) => $user->chat->first_name . ' ' . $user->chat->last_name)
-                    ->description(fn (User $record) => $record->chat->username),
+                    ->state(fn (User $user) => $user?->chat?->first_name . ' ' . $user?->chat?->last_name)
+                    ->description(fn (User $record) => $record?->chat?->username),
                 TextColumn::make('lang')
                     ->badge()
                     ->wrap(true),
