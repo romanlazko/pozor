@@ -22,25 +22,24 @@ trait AnnouncementSearch
     }
     public function scopeFeatures($query, Category|null $category, array|null $attributes)
     {
+        if (!$category OR !$attributes) {
+            return $query;
+        }
+
         return $query->where(function ($query) use ($attributes, $category) {
             $category_attributes = 
-            // Cache::remember($category?->slug.'_search_attributes', config('cache.ttl'), fn () => 
-                Attribute::select('id', 'visible', 'name', 'filter_layout')
-                    ->withCount('attribute_options')
-                    ->with('attribute_options:id,attribute_id,is_default,is_null')
-                    ->when($category, function ($query) use ($category) {
-                        $categoryIds = $category
-                            ->getParentsAndSelf()
-                            ->pluck('id')
-                            ->toArray();
-                        
-                        $query->whereHas('categories', fn ($query) 
-                            => $query->whereIn('category_id', $categoryIds ?? [])
-                                ->select('categories.id')
-                        );
-                    })
-                    ->get();
-            // );
+                Cache::remember($category?->slug.'_search_attributes', config('cache.ttl'), fn () => 
+                    Attribute::select('id', 'visible', 'name', 'filter_layout')
+                        ->withCount('attribute_options')
+                        ->with('attribute_options:id,attribute_id,is_default,is_null')
+                        ->whereHas('categories', fn ($query) => 
+                            $query->whereIn('category_id', $category
+                                ->getParentsAndSelf()
+                                ->pluck('id')
+                                ->toArray() ?? [])
+                        )
+                        ->get()
+                );
 
             foreach ($category_attributes as $attribute) {
                 AttributeFactory::applyQuery($attribute, $attributes, $query);
