@@ -62,7 +62,7 @@
     />
     
     <x-filament::badge
-        :color="$getState()->filamentColor()"
+        :color="$getColor($state)"
     >
         <select 
             x-model="state"

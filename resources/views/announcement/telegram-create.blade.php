@@ -2,8 +2,11 @@
     @push('headerScripts')
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
     @endpush
-
-    <livewire:announcement.telegram-create/>
+    
+    <div class="p-2">
+        <livewire:announcement.telegram-create/>
+    </div>
+    
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('announcement-created', (event) => {

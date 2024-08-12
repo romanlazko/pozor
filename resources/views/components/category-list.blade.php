@@ -2,7 +2,8 @@
     <div class="bg-gray-50 w-full py-1 sticky top-12 lg:relative lg:top-0 order-1">
         <form action="{{ route('announcement.search', ['category' => $category?->slug]) }}" class="rounded-lg bg-indigo-600 flex">
             <div class="w-full bg-white rounded-lg items-center flex border-2 border-indigo-600">
-                <input type="search" class="w-full border-none rounded-lg h-full focus:ring-0 border border-indigo-600" placeholder="{{ __('Search...') }}" name="search" value="{{ $data['search'] ?? null }}">
+                <input type="search" class="w-full border-none rounded-lg h-full focus:ring-0 border border-indigo-600" placeholder="{{ __('Search...') }}" name="search" value="{{ $data['search'] ?? null }}"
+                onchange="this.form.submit()">
                 
                 <button @click="sidebarOpen = true" type="button"
                     @class(['text-gray-900 hover:text-indigo-700 text-xl lg:hidden p-3', 'hidden' => !$category])

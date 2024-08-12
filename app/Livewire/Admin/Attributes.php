@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Attributes extends BaseAdminLayout implements HasForms, HasTable
 {
     public $categories;
+
     public $validation_rules = [
         'numeric' => 'Только число', 
         'string' => 'Только строка',
@@ -89,15 +90,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                     ->collapsible(),
                 Group::make('createSection.slug')
                     ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->createSection?->name ?? 'null')
-                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->filterSection?->order_number} - {$attribute?->filterSection?->slug}")
+                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->createSection?->order_number} - {$attribute?->createSection?->slug}")
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
                 Group::make('showSection.slug')
                     ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->showSection?->name ?? 'null')
-                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->filterSection?->order_number} - {$attribute?->filterSection?->slug}")
+                    ->getDescriptionFromRecordUsing(fn (Attribute $attribute): string => "#{$attribute?->showSection?->order_number} - {$attribute?->showSection?->slug}")
                     ->titlePrefixedWithLabel(false)
                     ->collapsible(),
-                
             ])
             ->defaultSort(function () use ($table){
                 return match ($table->getGrouping()?->getRelationshipName()) {
@@ -116,12 +116,15 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                         'showSection' => $attribute->show_layout['order_number'] ?? 0,
                         default => null,
                     }),
+
                 TextColumn::make('label')
                     ->description(fn (Attribute $attribute): string =>  $attribute?->name . ($attribute?->suffix ? " ({$attribute?->suffix})" : '')),
+
                 TextColumn::make('attribute_options')
                     ->state(fn (Attribute $record) => $record->attribute_options->pluck('name'))
                     ->badge()
                     ->grow(false),
+
                 TextColumn::make('categories')
                     ->state(fn (Attribute $record) => $record->categories->pluck('name'))
                     ->badge()
@@ -1260,16 +1263,5 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                         $query->when($data['value'], fn ($query) => $query->whereHas('categories', fn ($query) => $query->where('category_id', $data['value'])))
                     )
             ]);
-    }
-
-    private function getTypeOprions()
-    {
-        $keys = [];
-
-        array_walk_recursive($this->type_options, function($value, $key) use (&$keys) {
-            $keys[$key] = $value;
-        });
-
-        return $keys;
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
 
-class VerifyTelegramConnection extends Notification
+class VerifyTelegramConnection extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -7,7 +7,6 @@ use App\Livewire\Components\Tables\Columns\ImageGridColumn;
 use App\Models\Announcement;
 use App\Models\Category;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\ActionSize;
@@ -26,7 +25,6 @@ use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Filament\Forms\Components\Livewire;
-use Filament\Tables\Columns\SelectColumn;
 use App\Livewire\Components\Tables\Columns\StatusSwitcher;
 
 use Illuminate\Contracts\View\View;
@@ -43,7 +41,9 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
             ->columns([
                 Stack::make([
                     StatusSwitcher::make('currentStatus.status')
-                        ->options(Status::class),
+                        ->options(Status::class)
+                        ->color(fn (Announcement $announcement) => $announcement->currentStatus->status->filamentColor()),
+
                     TextColumn::make('categories')
                         ->getStateUsing(fn (Announcement $announcement) => $announcement->categories->pluck('name'))
                         ->badge(),
@@ -59,7 +59,6 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                                 ->description(fn (Announcement $announcement) => $announcement->user?->email)
                                 ->extraAttributes(['class' => 'text-xs'])
                         ])
-                            
                     ]),
                     
                     ImageGridColumn::make('image')
@@ -79,10 +78,12 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                         ->extraAttributes([
                             'class' => 'html text-xs'
                         ]),
+
                     TextColumn::make('location')
                         ->state(fn (Announcement $announcement) => $announcement->geo->name)
                         ->badge()
                         ->color('gray'),
+
                     TextColumn::make('channels')
                         ->state(fn (Announcement $announcement): View => view(
                             'components.livewire.tables.columns.telegram-channel-status',
@@ -100,7 +101,6 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                                 ->slideover(),
                         )
                         ->grow(false),
-                        
                 ])
                 ->extraAttributes(['class' => 'space-y-2'])
             ])
@@ -197,8 +197,6 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                         $announcement->status?->isApproved() OR $announcement->status?->isAwaitTranslation() OR $announcement->status?->isTranslationFailed()
                     ),
 
-                    
-
                     // PUBLICATION STATUS
                     ActionGroup::make([
                         Action::make('stop_publishing')
@@ -267,6 +265,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                         $query->whereHas('currentStatus', fn ($query) => $query->when($data['value'], fn ($query) => $query->where('status', $data['value'])))
                     )
                     ->preload(),
+
                 SelectFilter::make('category')
                     ->options(fn () => 
                         Cache::remember('categories_announcement_count', 360, function () {
@@ -281,6 +280,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                     ->query(fn ($query, $data) => 
                         $query->category(Category::find($data['value']))
                     ),
+
                 SelectFilter::make('user')
                     ->relationship('user', 'name')
                     ->searchable()
