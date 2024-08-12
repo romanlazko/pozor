@@ -45,7 +45,7 @@ Route::middleware(['guest'])->group(function () {
                 ->name('password.store');
 
     Route::get('telegram-email-verification', [VerifyEmailController::class, 'telegramEmailVerify'])
-                // ->middleware(['signed', 'throttle:6,1'])
+                ->middleware(['signed', 'throttle:6,1'])
                 ->name('telegram.email-verification');
 });
 
