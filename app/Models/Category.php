@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\MediaLibrary\Conversions\Actions\PerformManipulationsAction;
+use Spatie\MediaLibrary\Conversions\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -37,13 +39,23 @@ class Category extends Model implements HasMedia
     {
         $this
             ->addMediaCollection('categories')
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this
-                    ->addMediaConversion('thumb')
-                    ->keepOriginalImageFormat()
-                    ->width(200);
-            });
+            ->singleFile();
+            // ->registerMediaConversions(function (Media $media) {
+            //     $this
+            //         ->addMediaConversion('thumb')
+            //         // ->format('FORMAT_WEBP')
+            //         ->keepOriginalImageFormat()
+            //         ->width(30);
+            // });
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->format('webp')
+            ->width(100)
+            ->height(100);
     }
 
     public function announcements()
