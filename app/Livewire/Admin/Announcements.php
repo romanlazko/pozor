@@ -56,10 +56,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                         for ($i = 0; $i < $buses; $i++) {
                             Announcement::factory(10)->create();
                         }
-                    })
-                    // ->hidden(!auth()->user()->isSuperAdmin() OR app()->environment('production'))
-                    ->slideOver()
-                    ->closeModalByClickingAway(false),
+                    }),
             ])
             ->query(Announcement::with([
                 'media', 
