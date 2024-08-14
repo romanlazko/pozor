@@ -36,31 +36,31 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
-            $url = 'https://picsum.photos/200';
-            $ch = curl_init();
+            // $url = 'https://picsum.photos/200';
+            // $ch = curl_init();
 
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            // curl_setopt($ch, CURLOPT_URL, $url);
+            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-            $contents = curl_exec($ch);
-            if(curl_errno($ch)) {
-                echo 'Error:' . curl_error($ch);
-            }
-            curl_close($ch);
+            // $contents = curl_exec($ch);
+            // if(curl_errno($ch)) {
+            //     echo 'Error:' . curl_error($ch);
+            // }
+            // curl_close($ch);
             
-            $info = pathinfo($url);
-            $file = '/tmp/' . $info['basename'];
-            file_put_contents($file, $contents);
-            $uploaded_file = new UploadedFile($file, $info['basename']);
+            // $info = pathinfo($url);
+            // $file = '/tmp/' . $info['basename'];
+            // file_put_contents($file, $contents);
+            // $uploaded_file = new UploadedFile($file, $info['basename']);
 
 
             $categories = Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf();
             $announcement->categories()->sync($categories->pluck('id')->toArray());
             $announcement->features()->createMany($this->getFeatures($categories->pluck('id')->toArray()));
             $announcement->channels()->createMany($this->getChannels($announcement));
-            $announcement->addMedia($uploaded_file)->toMediaCollection('announcements', 's3');
+            $announcement->addMediaFromUrl('https://picsum.photos/200')->toMediaCollection('announcements', 's3');
             $announcement->publish();
         });
     }
