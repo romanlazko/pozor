@@ -36,9 +36,16 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
+            $context = stream_context_create(
+                array(
+                    "http" => array(
+                        "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+                    )
+                )
+            );
             $url = 'https://picsum.photos/200';
             $info = pathinfo($url);
-            $contents = file_get_contents($url);
+            $contents = file_get_contents($url, false, $context);
             $file = '/tmp/' . $info['basename'];
             file_put_contents($file, $contents);
             $uploaded_file = new UploadedFile($file, $info['basename']);
