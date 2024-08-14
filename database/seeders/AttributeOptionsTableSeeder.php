@@ -1141,6 +1141,105 @@ class AttributeOptionsTableSeeder extends Seeder
                 'updated_at' => '2024-08-10 18:07:00',
                 'deleted_at' => NULL,
             ),
+            102 => 
+            array (
+                'id' => 109,
+                'attribute_id' => 4,
+                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 09:48:33',
+                'updated_at' => '2024-08-14 09:48:33',
+                'deleted_at' => NULL,
+            ),
+            103 => 
+            array (
+                'id' => 110,
+                'attribute_id' => 4,
+                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 09:48:33',
+                'updated_at' => '2024-08-14 09:48:33',
+                'deleted_at' => NULL,
+            ),
+            104 => 
+            array (
+                'id' => 111,
+                'attribute_id' => 4,
+                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 09:48:33',
+                'updated_at' => '2024-08-14 09:48:33',
+                'deleted_at' => NULL,
+            ),
+            105 => 
+            array (
+                'id' => 112,
+                'attribute_id' => 6,
+                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:08:37',
+                'updated_at' => '2024-08-14 10:08:37',
+                'deleted_at' => NULL,
+            ),
+            106 => 
+            array (
+                'id' => 113,
+                'attribute_id' => 6,
+                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:08:37',
+                'updated_at' => '2024-08-14 10:08:37',
+                'deleted_at' => NULL,
+            ),
+            107 => 
+            array (
+                'id' => 114,
+                'attribute_id' => 6,
+                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:08:37',
+                'updated_at' => '2024-08-14 10:08:37',
+                'deleted_at' => NULL,
+            ),
+            108 => 
+            array (
+                'id' => 115,
+                'attribute_id' => 38,
+                'alternames' => '{"cs": null, "en": "CZK", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:11:47',
+                'updated_at' => '2024-08-14 10:11:47',
+                'deleted_at' => NULL,
+            ),
+            109 => 
+            array (
+                'id' => 116,
+                'attribute_id' => 38,
+                'alternames' => '{"cs": null, "en": "USD", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:11:47',
+                'updated_at' => '2024-08-14 10:11:47',
+                'deleted_at' => NULL,
+            ),
+            110 => 
+            array (
+                'id' => 117,
+                'attribute_id' => 38,
+                'alternames' => '{"cs": null, "en": "EUR", "ru": null}',
+                'is_default' => 0,
+                'is_null' => 0,
+                'created_at' => '2024-08-14 10:11:47',
+                'updated_at' => '2024-08-14 10:11:47',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

@@ -405,81 +405,243 @@ class AttributeCategoryTableSeeder extends Seeder
             ),
             64 => 
             array (
-                'id' => 94,
-                'attribute_id' => 41,
-                'category_id' => 1,
-            ),
-            65 => 
-            array (
-                'id' => 96,
-                'attribute_id' => 41,
-                'category_id' => 4,
-            ),
-            66 => 
-            array (
-                'id' => 97,
-                'attribute_id' => 41,
-                'category_id' => 9,
-            ),
-            67 => 
-            array (
-                'id' => 98,
-                'attribute_id' => 41,
-                'category_id' => 10,
-            ),
-            68 => 
-            array (
-                'id' => 99,
-                'attribute_id' => 41,
-                'category_id' => 11,
-            ),
-            69 => 
-            array (
-                'id' => 100,
-                'attribute_id' => 41,
-                'category_id' => 12,
-            ),
-            70 => 
-            array (
-                'id' => 101,
-                'attribute_id' => 41,
-                'category_id' => 13,
-            ),
-            71 => 
-            array (
-                'id' => 102,
-                'attribute_id' => 41,
-                'category_id' => 14,
-            ),
-            72 => 
-            array (
-                'id' => 103,
-                'attribute_id' => 41,
-                'category_id' => 15,
-            ),
-            73 => 
-            array (
-                'id' => 104,
-                'attribute_id' => 41,
-                'category_id' => 16,
-            ),
-            74 => 
-            array (
-                'id' => 105,
-                'attribute_id' => 41,
-                'category_id' => 17,
-            ),
-            75 => 
-            array (
                 'id' => 106,
                 'attribute_id' => 42,
                 'category_id' => 3,
             ),
-            76 => 
+            65 => 
             array (
                 'id' => 107,
                 'attribute_id' => 32,
                 'category_id' => 4,
+            ),
+            66 => 
+            array (
+                'id' => 108,
+                'attribute_id' => 32,
+                'category_id' => 9,
+            ),
+            67 => 
+            array (
+                'id' => 109,
+                'attribute_id' => 32,
+                'category_id' => 10,
+            ),
+            68 => 
+            array (
+                'id' => 110,
+                'attribute_id' => 32,
+                'category_id' => 11,
+            ),
+            69 => 
+            array (
+                'id' => 111,
+                'attribute_id' => 32,
+                'category_id' => 12,
+            ),
+            70 => 
+            array (
+                'id' => 112,
+                'attribute_id' => 32,
+                'category_id' => 13,
+            ),
+            71 => 
+            array (
+                'id' => 113,
+                'attribute_id' => 32,
+                'category_id' => 14,
+            ),
+            72 => 
+            array (
+                'id' => 114,
+                'attribute_id' => 32,
+                'category_id' => 15,
+            ),
+            73 => 
+            array (
+                'id' => 115,
+                'attribute_id' => 32,
+                'category_id' => 16,
+            ),
+            74 => 
+            array (
+                'id' => 116,
+                'attribute_id' => 32,
+                'category_id' => 17,
+            ),
+            75 => 
+            array (
+                'id' => 117,
+                'attribute_id' => 2,
+                'category_id' => 9,
+            ),
+            76 => 
+            array (
+                'id' => 118,
+                'attribute_id' => 2,
+                'category_id' => 10,
+            ),
+            77 => 
+            array (
+                'id' => 119,
+                'attribute_id' => 2,
+                'category_id' => 11,
+            ),
+            78 => 
+            array (
+                'id' => 120,
+                'attribute_id' => 2,
+                'category_id' => 12,
+            ),
+            79 => 
+            array (
+                'id' => 121,
+                'attribute_id' => 2,
+                'category_id' => 13,
+            ),
+            80 => 
+            array (
+                'id' => 122,
+                'attribute_id' => 2,
+                'category_id' => 14,
+            ),
+            81 => 
+            array (
+                'id' => 123,
+                'attribute_id' => 2,
+                'category_id' => 15,
+            ),
+            82 => 
+            array (
+                'id' => 124,
+                'attribute_id' => 2,
+                'category_id' => 16,
+            ),
+            83 => 
+            array (
+                'id' => 125,
+                'attribute_id' => 2,
+                'category_id' => 17,
+            ),
+            84 => 
+            array (
+                'id' => 127,
+                'attribute_id' => 4,
+                'category_id' => 9,
+            ),
+            85 => 
+            array (
+                'id' => 128,
+                'attribute_id' => 4,
+                'category_id' => 10,
+            ),
+            86 => 
+            array (
+                'id' => 129,
+                'attribute_id' => 4,
+                'category_id' => 11,
+            ),
+            87 => 
+            array (
+                'id' => 130,
+                'attribute_id' => 4,
+                'category_id' => 12,
+            ),
+            88 => 
+            array (
+                'id' => 131,
+                'attribute_id' => 4,
+                'category_id' => 13,
+            ),
+            89 => 
+            array (
+                'id' => 132,
+                'attribute_id' => 4,
+                'category_id' => 14,
+            ),
+            90 => 
+            array (
+                'id' => 133,
+                'attribute_id' => 4,
+                'category_id' => 15,
+            ),
+            91 => 
+            array (
+                'id' => 134,
+                'attribute_id' => 4,
+                'category_id' => 16,
+            ),
+            92 => 
+            array (
+                'id' => 135,
+                'attribute_id' => 4,
+                'category_id' => 17,
+            ),
+            93 => 
+            array (
+                'id' => 136,
+                'attribute_id' => 29,
+                'category_id' => 3,
+            ),
+            94 => 
+            array (
+                'id' => 137,
+                'attribute_id' => 29,
+                'category_id' => 4,
+            ),
+            95 => 
+            array (
+                'id' => 138,
+                'attribute_id' => 29,
+                'category_id' => 9,
+            ),
+            96 => 
+            array (
+                'id' => 139,
+                'attribute_id' => 29,
+                'category_id' => 10,
+            ),
+            97 => 
+            array (
+                'id' => 140,
+                'attribute_id' => 29,
+                'category_id' => 11,
+            ),
+            98 => 
+            array (
+                'id' => 141,
+                'attribute_id' => 29,
+                'category_id' => 12,
+            ),
+            99 => 
+            array (
+                'id' => 142,
+                'attribute_id' => 29,
+                'category_id' => 13,
+            ),
+            100 => 
+            array (
+                'id' => 143,
+                'attribute_id' => 29,
+                'category_id' => 14,
+            ),
+            101 => 
+            array (
+                'id' => 144,
+                'attribute_id' => 29,
+                'category_id' => 15,
+            ),
+            102 => 
+            array (
+                'id' => 145,
+                'attribute_id' => 29,
+                'category_id' => 16,
+            ),
+            103 => 
+            array (
+                'id' => 146,
+                'attribute_id' => 29,
+                'category_id' => 17,
             ),
         ));
         
