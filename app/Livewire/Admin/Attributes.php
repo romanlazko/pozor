@@ -15,7 +15,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -23,22 +22,12 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Builder;
 
 class Attributes extends BaseAdminLayout implements HasForms, HasTable
@@ -58,6 +47,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
             'multiple_select' => 'MULTIPLE SELECT (выбор нескольких элементов из списка)',
             'toggle_buttons' => 'TOGGLE BUTTONS (выбор переключателей)',
             'checkbox_list'   => 'CHECKBOX LIST (список чекбоксов)',
+            'price' => 'PRICE (цена)',
         ],
         'text_fields' => [
             'text_input' => 'Текстовое поле',
@@ -74,14 +64,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
 
     public function mount(): void
     {
-        $this->categories = Category::with('parent')->get()->groupBy('parent.name')->map->pluck('name', 'id');
+        $this->categories = Category::all()->groupBy('parent.name')->map->pluck('name', 'id');
     }
     
     public function table(Table $table): Table
     {
         return $table
             ->heading("All attributes: " . Attribute::count())
-            ->query(Attribute::with('attribute_options', 'categories', 'filterSection', 'createSection', 'showSection'))
+            ->query(Attribute::query())
             ->groups([
                 Group::make('filterSection.slug')
                     ->getTitleFromRecordUsing(fn (Attribute $attribute): string => $attribute?->filterSection?->name ?? 'null')
@@ -109,7 +99,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
             })
             ->defaultGroup('createSection.slug')
             ->columns([
-                TextColumn::make('order_number')
+                TextColumn::make('order')
                     ->state(fn (Attribute $attribute) => match ($table->getGrouping()?->getRelationshipName()) {
                         'filterSection' => $attribute->filter_layout['order_number'] ?? 0,
                         'createSection' => $attribute->create_layout['order_number'] ?? 0,
@@ -119,6 +109,22 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
 
                 TextColumn::make('label')
                     ->description(fn (Attribute $attribute): string =>  $attribute?->name . ($attribute?->suffix ? " ({$attribute?->suffix})" : '')),
+
+                TextColumn::make('Layout type')
+                    ->state(function (Attribute $attribute) use ($table) {
+                        return match ($table->getGrouping()?->getRelationshipName()) {
+                            'filterSection' => $attribute->filter_layout['type'] ?? null,
+                            'createSection' => $attribute->create_layout['type'] ?? null,
+                            'showSection' => $attribute->show_layout['type'] ?? null,
+                            default => null,
+                        };
+                    })
+                    ->badge()
+                    ->color('warning'),
+                TextColumn::make('create_layout.rules')
+                    ->label('Rules')
+                    ->badge()
+                    ->color('danger'),
 
                 TextColumn::make('attribute_options')
                     ->state(fn (Attribute $record) => $record->attribute_options->pluck('name'))
@@ -701,7 +707,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
             ])
             ->actions([
                 ActionGroup::make([
-                    EditAction::make()
+                    EditAction::make('Edit')
                         ->modalHeading(fn ($record) => $record->label)
                         ->modalDescription(fn ($record) => $record->name)
                         ->form([
@@ -800,6 +806,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         : null;
                                                     $set('show_layout.type', $state);
                                                 })
+                                                ->afterStateHydrated(fn ($state, Set $set) => $set('show_layout.type', $state))
                                                 ->columnSpanFull()
                                                 ->live(),
                                             
@@ -1036,7 +1043,9 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
 
                             Section::make(__("Show layout"))
                                 ->schema([
-                                    Hidden::make('show_layout.type')
+                                    Select::make('show_layout.type')
+                                        ->options($this->type_options)
+                                        // ->disabled()
                                         ->required()
                                         ->live(),
 

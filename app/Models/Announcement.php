@@ -31,6 +31,10 @@ class Announcement extends Model implements HasMedia, Auditable
 
     protected $guarded = [];
 
+    protected $casts = [
+        'current_status' => Status::class,
+    ];
+
     protected static function booted(): void
     {
         static::created(function (Announcement $announcement) {
@@ -42,7 +46,7 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function ($model) {
-                return $model->getFeatureByName('title')->translated_value['original'];
+                return $model->getFeatureByName('title')?->translated_value['original'] ?? $model->uuid;
             })
             ->skipGenerateWhen(function () {
                 return $this->features->isEmpty();

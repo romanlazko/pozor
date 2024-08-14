@@ -5,7 +5,11 @@ namespace Database\Factories;
 use App\Enums\Status;
 use App\Models\Announcement;
 use App\Models\Attribute;
+use App\Models\Category;
+use App\Models\Geo;
+use App\Models\TelegramChat;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 /**
@@ -20,28 +24,10 @@ class AnnouncementFactory extends Factory
      */
     public function definition(): array
     {
-        $title = $this->faker->sentence;
-        $dascription = $this->faker->paragraph;
-
         return [
             'user_id'           => 1,
-            // 'title'             => $title,
-            // 'translated_title'  => [
-            //     'ru' => $title,
-            //     'en' => $title,
-            //     'cz' => $title,
-            // ],
-            // 'description'       => $dascription,
-            // 'translated_description'             => json_encode([
-            //     'ru' => $dascription,
-            //     'en' => $dascription,
-            //     'cz' => $dascription,
-            // ]),
-            // 'current_price'     => rand(1000, 1000000),
-            // 'currency_id'       => 3,
-        
-            'should_be_published_in_telegram' => false,
-            'status'            => Status::published,
+            'geo_id'            => Geo::inRandomOrder()->first()->id,
+            'slug'              => fake()->slug,
             'created_at'        => now(),
             'updated_at'        => now(),
         ];
@@ -49,79 +35,104 @@ class AnnouncementFactory extends Factory
 
     public function configure(): static
     {
-        $data = (object) [
-            "categories" => [
-                0 => "1",
-                1 => "6",
-            ],
-            'attachments' => [
-                'https://xiaomi-sib.ru/media/cache/thumb_540_600/media/product_variant_image/425//3c009b9b9ad97d260cb431daa056e4d66111cbeb.jpg',
-                'https://mobikoff.com.ua/pub/media/magefan_blog/best-laptops.jpg',
-                'https://virtual-sim.ru/wp-content/uploads/2021/03/Lenovo-ThinkPad-X1-Nano-5G.jpg',
-            ]
-        ];
-
-        return $this->afterCreating(function (Announcement $announcement) use ($data) {
-            $announcement->categories()->sync($data->categories);
-            $announcement->features()->createMany($this->setFeatures($data->categories));
-
-            // $announcement->addMediaFromUrl($data->attachments[rand(0,2)])->toMediaCollection('announcements', 's3');
+        return $this->afterCreating(function (Announcement $announcement) {
+            $categories = Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf();
+            $announcement->categories()->sync($categories->pluck('id')->toArray());
+            $announcement->features()->createMany($this->getFeatures($categories->pluck('id')->toArray()));
+            $announcement->channels()->createMany($this->getChannels($announcement));
+            // $announcement->addMedia(UploadedFile::fake()->image('avatar.jpg', 300, 300)->size(100))->toMediaCollection('announcements', 's3');
+            $announcement->publish();
         });
     }
 
-    private function setFeatures($categories)
+    private function getFeatures(array $categories) : array
     {
-        $features = [];
-        
-        $availableAttributes = Attribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories))->withCount('attribute_options')->get();
+        $type_options = [
+            'fields_with_options' => [
+                'select' => 'SELECT (выбор одного элемента из списка)',
+                'multiple_select' => 'MULTIPLE SELECT (выбор нескольких элементов из списка)',
+                'toggle_buttons' => 'TOGGLE BUTTONS (выбор переключателей)',
+                'checkbox_list'   => 'CHECKBOX LIST (список чекбоксов)',
+                'price' => 'PRICE (цена)',
+            ],
+            'text_fields' => [
+                'text_input' => 'Текстовое поле',
+                'text_area' => 'Текстовый блок',
+                'between'   => 'Между',
+                'from_to'   => 'From-To',
+                'markdown_editor' => 'Markdown Editor',
+            ],
+            'other' => [
+                'location'  => 'Местоположение',
+                'hidden'    => 'Скрытое поле',
+            ]
+        ];
 
-        foreach ($availableAttributes as $availableAttribute) {
-            if ($availableAttribute->is_feature) {
-                if ($availableAttribute->attribute_options_count) {
-                    $features[] = [
-                        'attribute_id' => $availableAttribute->id,
-                        'attribute_option_id' => $availableAttribute->attribute_options()->inRandomOrder()->first()->id,
+        return Attribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories))
+            ->get()
+            ->map(function ($attribute) use ($type_options) {
+                if ($attribute->create_layout['type'] == 'from_to') {
+                    return [
+                        'attribute_id' => $attribute->id,
+                        'translated_value' => [
+                            'original' => [
+                                'from' => fake()->numberBetween(100, 500),
+                                'to' => fake()->numberBetween(500, 1000),
+                            ],
+                        ],
                     ];
                 }
-                else {
-                    
-                    if ($availableAttribute->create_type == 'text_input' AND $availableAttribute->search_type == 'between') {
-                        $features[] = [
-                            'attribute_id' => $availableAttribute->id,
-                            'translated_value'        => [
-                                'original' => rand(1000, 1000000),
-                            ],
-                        ];
-                    }
-                    else if ($availableAttribute->create_type == 'textarea') {
-                        $value = $this->faker->paragraph;
-                        $features[] = [
-                            'attribute_id' => $availableAttribute->id,
-                            'translated_value'        => [
-                                'original' => $value,
-                                'ru' => $value,
-                                'en' => $value,
-                                'cz' => $value,
-                            ],
-                        ];
-                    }
-                    else {
-                        $value = $this->faker->sentence;
-                        $features[] = [
-                            'attribute_id' => $availableAttribute->id,
-                            'translated_value'        => [
-                                'original' => $value,
-                                'ru' => $value,
-                                'en' => $value,
-                                'cz' => $value,
-                            ],
-                        ];
-                    }
-                    
+
+                if (in_array($attribute->create_layout['type'], array_keys($type_options['text_fields']))) {
+                    return [
+                        'attribute_id' => $attribute->id,
+                        'translated_value' => [
+                            'original' => match (($attribute->create_layout['rules'] ?? null)? $attribute->create_layout['rules'][0]:null) {
+                                'numeric' => fake()->numberBetween(0, 100),
+                                default => fake()->sentence(12),
+                            },
+                        ]
+                    ];
                 }
-            }
+
+                if ($attribute->create_layout['type'] == 'price') {
+                    return [
+                        'attribute_id' => $attribute->id,
+                        'translated_value' => [
+                            'original' => fake()->numberBetween(0, 100000),
+                        ],
+                        'attribute_option_id' => $attribute->attribute_options->where('is_null', '!=' ,true)->random()->id,
+                    ];
+                }
+
+                if (in_array($attribute->create_layout['type'], array_keys($type_options['fields_with_options']))) {
+                    return [
+                        'attribute_id' => $attribute->id,
+                        'attribute_option_id' => $attribute->attribute_options->where('is_null', '!=' ,true)->random()->id,
+                    ];
+                }
+            })
+            ->filter()
+            ->all();
+    }
+
+    public function getCategories() : array
+    {
+        return Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf()->pluck('id')->toArray();
+    }
+
+    private function getChannels($announcement) : array
+    {
+        $categoryChannelIds = $announcement->categories->pluck('channels')->flatten()->pluck('id');
+
+        $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)
+            ->whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
+            ->get();
+
+        if ($locationChannels->isEmpty()) {
+            $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)->get();
         }
 
-        return $features;
+        return $locationChannels->map(fn ($channel) => ['telegram_chat_id' => $channel->id])->all();
     }
 }

@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CacheRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Attribute extends Model
 {
-    use HasFactory; use SoftDeletes; use HasJsonRelationships;
+    use HasFactory; use SoftDeletes; use HasJsonRelationships; use CacheRelationship;
 
     public $guarded = [];
 
@@ -34,6 +36,11 @@ class Attribute extends Model
         return $this->hasMany(AttributeOption::class);
     }
 
+    public function getAttributeOptionsAttribute()
+    {
+        return $this->cacheRelation('attribute_options');
+    }
+
     public function getLabelAttribute()
     {
         return $this->alterlabels[app()->getLocale()] ?? $this->alterlabels['en'] ?? null;
@@ -54,9 +61,9 @@ class Attribute extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function section()
+    public function getCategoriesAttribute()
     {
-        return $this->belongsTo(AttributeSection::class, 'attribute_section_id');
+        return $this->cacheRelation('categories');
     }
 
     public function filterSection()
@@ -64,13 +71,28 @@ class Attribute extends Model
         return $this->belongsTo(AttributeSection::class, 'filter_layout->section_id');
     }
 
+    public function getFilterSectionAttribute()
+    {
+        return $this->cacheRelation('filterSection');
+    }
+
     public function createSection()
     {
         return $this->belongsTo(AttributeSection::class, 'create_layout->section_id');
     }
 
+    public function getCreateSectionAttribute()
+    {
+        return $this->cacheRelation('createSection');
+    }
+
     public function showSection()
     {
         return $this->belongsTo(AttributeSection::class, 'show_layout->section_id');
+    }
+
+    public function getShowSectionAttribute()
+    {
+        return $this->cacheRelation('showSection');
     }
 }

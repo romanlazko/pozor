@@ -36,19 +36,11 @@ class AttributeFactory
         return self::getShowClass($attribute)?->getValueByFeature($feature);
     }
 
-    private static function getShowClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
+    public static function __callStatic($name, $arguments) : ?AbstractAttributeType
     {
-        return self::getClass($attribute->show_layout, $attribute, $data);
-    }
+        $layout =  str_replace('class', '_layout', str_replace('get', '', strtolower($name)));
 
-    private static function getCreateClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
-    {
-        return self::getClass($attribute->create_layout, $attribute, $data);
-    }
-
-    private static function getFilterClass(Attribute $attribute, ?array $data = []) : ?AbstractAttributeType
-    {
-        return self::getClass($attribute->filter_layout, $attribute, $data);
+        return self::getClass($arguments[0]->$layout, $arguments[0], $arguments[1] ?? null);
     }
 
     private static function getClass(?array $layout, Attribute $attribute, ?array $data = []) : ?AbstractAttributeType

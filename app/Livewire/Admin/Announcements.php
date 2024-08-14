@@ -26,6 +26,7 @@ use Illuminate\Support\HtmlString;
 use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Filament\Forms\Components\Livewire;
 use App\Livewire\Components\Tables\Columns\StatusSwitcher;
+use Filament\Forms\Components\Select;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
@@ -37,7 +38,38 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
     {
         return $table
             ->heading("All announcements")
-            ->query(Announcement::with('media', 'user.media', 'categories', 'channels.channel', 'geo', 'features', 'currentStatus'))
+            ->headerActions([
+                Action::make('Generate fake announcements')
+                    ->form([
+                        Select::make('count')
+                            ->options([
+                                10 => 10,
+                                30 => 30,
+                                100 => 100,
+                            ])
+                            ->label('Count of announcements')
+                            ->default(100)
+                    ])
+                    ->action(function (array $data) {
+                        $buses = intdiv($data['count'], 10);
+
+                        for ($i = 0; $i < $buses; $i++) {
+                            Announcement::factory(10)->create();
+                        }
+                    })
+                    ->hidden(app()->environment('production'))
+                    ->slideOver()
+                    ->closeModalByClickingAway(false),
+            ])
+            ->query(Announcement::with([
+                'media', 
+                'user.media', 
+                'categories', 
+                'channels.channel', 
+                'geo', 
+                'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title']))), 
+                'currentStatus'
+            ]))
             ->columns([
                 Stack::make([
                     StatusSwitcher::make('currentStatus.status')

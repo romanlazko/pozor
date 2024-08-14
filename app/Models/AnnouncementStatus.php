@@ -21,12 +21,14 @@ class AnnouncementStatus extends Model
     {
         static::creating(function (AnnouncementStatus $announcement_status) {
             $announcement_status->announcement->update([
+                'current_status' => $announcement_status->status,
                 'updated_at' => now(),
             ]);
         });
 
         static::updating(function (AnnouncementStatus $announcement_status) {
             $announcement_status->announcement->update([
+                'current_status' => $announcement_status->status,
                 'updated_at' => now(),
             ]);
         });

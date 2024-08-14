@@ -50,7 +50,18 @@
                     </button>
                 </div>
 
-                <img x-on:touchstart="handleTouchStart($event)" x-on:touchmove="handleTouchMove($event)" x-on:touchend="handleTouchEnd()" x-bind:srcset="photos[current]['srcset']" x-bind:src="photos[current]['placeholder']" onload="window.requestAnimationFrame(function(){if(!(size=getBoundingClientRect().width))return;onload=null;sizes=Math.ceil(size/window.innerWidth*100)+'vw';});" sizes="1px" alt="" class="object-contain w-full h-full" loading="lazy">
+                <img 
+                    x-on:touchstart="handleTouchStart($event)" 
+                    x-on:touchmove="handleTouchMove($event)" 
+                    x-on:touchend="handleTouchEnd()" 
+                    x-bind:srcset="photos[current]['srcset']" 
+                    x-bind:src="photos[current]['placeholder']"
+                    onload="window.requestAnimationFrame(function(){if(!(size=getBoundingClientRect().width))return;onload=null;sizes=Math.ceil(size/window.innerWidth*100)+'vw';});" 
+                    sizes="1px" 
+                    alt="" 
+                    class="object-contain w-full h-full" 
+                    loading="lazy"
+                >
                 
                 <div class="absolute z-20 right-0 content-center h-full flex items-center px-1">
                     <button x-on:click="next" :class="{ 'hidden': photos.length < 2 }" class="m-auto whitespace-nowrap items-center cursor-pointer grid w-8 h-8" aria-label="next-photo">

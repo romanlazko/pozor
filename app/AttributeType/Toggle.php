@@ -19,7 +19,7 @@ class Toggle extends BaseAttributeType
         return $query;
     }
 
-    public function getValueByFeature(Feature $feature = null)
+    public function getValueByFeature(Feature $feature = null) : ?string
     {
         return $this->attribute->label;
     }

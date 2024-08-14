@@ -159,6 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
+        App\Bots\pozorbottestbot\Providers\PozorbottestbotProvider::class,
         Laravolt\Avatar\ServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Orangehill\Iseed\IseedServiceProvider::class,

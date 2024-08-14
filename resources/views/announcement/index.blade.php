@@ -27,7 +27,7 @@
         <div class="w-full text-start">
             <div class="w-full justify-between">
                 <h2 class="text-xl lg:text-3xl font-bold ">
-                    {{ $category?->name ?? __("All announcements:") }} <span class="text-gray-500">{{ $category?->announcements_count }}</span>
+                    {{ $category?->name ?? __("All announcements:") }} <span class="text-gray-500">{{ $announcements->total() }}</span>
                 </h2>
                 <form action="{{ route('announcement.search', ['category' => $category?->slug]) }}">
                     <select name="sort" class="border-none py-0 pl-0 shadow-none focus:ring-0 text-indigo-700 fotn-light bg-transparent" onchange="this.form.submit()">

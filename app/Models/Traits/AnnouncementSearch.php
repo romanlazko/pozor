@@ -36,7 +36,8 @@ trait AnnouncementSearch
                             $query->whereIn('category_id', $category
                                 ->getParentsAndSelf()
                                 ->pluck('id')
-                                ->toArray() ?? [])
+                                ->toArray()
+                            )
                         )
                         ->get()
                 );
@@ -49,9 +50,7 @@ trait AnnouncementSearch
 
     public function scopeIsPublished($query)
     {
-        return $query->whereHas('currentStatus', fn ($query) 
-            => $query->where('status', Status::published)
-        );
+        return $query->where('current_status', Status::published);
     }
 
     public function scopeSearch($query, string $search)

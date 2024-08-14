@@ -38,9 +38,6 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
-// Route::get('/category/{category:slug?}', [WelcomeController::class, 'search'])->name('search_by_category');
-// Route::post('/search', [WelcomeController::class, 'search'])->name('search');
 Route::get('/', fn () => redirect()->route('announcement.index'));
 
 Route::post('/locale', function (Request $request){
@@ -60,9 +57,7 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     Route::get('/search/{category:slug?}', 'search')->name('search');
 
     Route::get('/show/{announcement:slug}', 'show')->name('show');
-    Route::get('/telegram-create', [AnnouncementController::class, 'telegram_create'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('telegram-create');
+    
 });
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {

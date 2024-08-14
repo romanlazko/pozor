@@ -55,7 +55,7 @@ class CreateAnnouncement extends Command
 
         app()->setLocale($updates->getFrom()->getLanguageCode());
 
-        $url = URL::signedRoute('announcement.telegram-create', ['email' => $user->email, 'telegram_chat_id' => $telegram_chat->id]);
+        $url = URL::signedRoute('pozorbottestbot.announcement.create', ['email' => $user->email, 'telegram_chat_id' => $telegram_chat->id]);
 
         $buttons = BotApi::inlineKeyboardWithLink(
             array('text' => "Опубликовать объявление", 'web_app' => ['url' => $url]),

@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
 use App\Models\Category;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AnnouncementController extends Controller
 {
@@ -16,32 +14,27 @@ class AnnouncementController extends Controller
         $category = Category::select('id', 'alternames', 'slug', 'parent_id', 'is_active')
             ->where('slug', $request->route('category'))
             ->isActive()
-            ->withCount(['announcements' => fn ($query) => $query->isPublished()])
-            ->with([
-                'children' => fn ($query) => 
-                    $query->isActive()->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
-                'siblings' => fn ($query) => 
-                    $query->isActive()->with('media')->withCount(['announcements' => fn ($query) => $query->isPublished()]), 
-            ])
             ->first();
 
-        $categories = ($category?->children->isNotEmpty() ? $category->children : null) 
-            ?? ($category?->siblings->isNotEmpty() ? $category->siblings : null) 
-            ?? Category::whereNull('parent_id')
-                ->with('media')
-                ->isActive()
-                ->withCount(['announcements' => fn ($query) => $query->isPublished()])
-                ->get();
-
-        // $categories = $categories->filter(fn ($category) => $category->announcements_count > 0)->sortByDesc('announcements_count');
+        $categories = Cache::remember($category?->slug.'_categories', config('cache.ttl'), function () use ($category) {
+                return ($category?->children->isNotEmpty() ? $category->children->load('media') : null)
+                    ?? ($category?->siblings->isNotEmpty() ? $category->siblings->load('media') : null)
+                    ?? Category::whereNull('parent_id')
+                        ->isActive()
+                        ->get()
+                        ->load('media');
+            })
+            ->loadCount(['announcements' => fn ($query) => $query->isPublished()])
+            ->filter(fn ($category) => $category->announcements_count > 0)
+            ->sortByDesc('announcements_count');
 
         $announcements = Announcement::with([
                 'media',
-                'features:id,announcement_id,attribute_id,attribute_option_id,translated_value',
-                'features.attribute.showSection',
+                'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title', 'price']))),
+                // 'features.attribute.showSection',
+                'features.attribute_option:id,alternames',
                 'geo',
                 'userVotes',
-                'currentStatus'
             ])
             ->select('announcements.*')
             ->isPublished()
@@ -55,7 +48,7 @@ class AnnouncementController extends Controller
             'announcements' => $announcements,
             'categories' => $categories,
             'category' => $category,
-            'data' => $request->data
+            'data' => $request->data,
         ]);
     }
 
@@ -71,7 +64,6 @@ class AnnouncementController extends Controller
             'userVotes',
             'media',
             'geo',
-            'currentStatus',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
             'features.attribute:id,name,alterlabels,is_feature,altersuffixes,show_layout',
             'features.attribute_option:id,alternames',
@@ -112,19 +104,6 @@ class AnnouncementController extends Controller
     public function create()
     {
         return view('announcement.create');
-    }
-
-    public function telegram_create(Request $request)
-    {
-        $user = User::where('email', $request->email)->where('telegram_chat_id', $request->telegram_chat_id)->first();
-
-        if (!$user) {
-            dd('User not found');
-        }
-
-        Auth::login($user);
-
-        return view('announcement.telegram-create');
     }
 
     public function wishlist()

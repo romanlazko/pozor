@@ -57,7 +57,6 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                // 'fi-ta-image',
                 'overflow-hidden border rounded-lg'
             ])
     }}
@@ -83,7 +82,7 @@
                 ])
             >
                 @foreach ($limitedState as $stateItem)
-                    <a href="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}" >
+                    <a target="_blank" href="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}" >
                         <img
                             src="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}"
                             {{
@@ -98,6 +97,7 @@
                                         "width: {$width}" => $width,
                                     ])
                             }}
+                            loading="lazy"
                         />
                     </a>
                     

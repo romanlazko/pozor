@@ -24,10 +24,6 @@ class Filters extends Component implements HasForms
     public $filters = [
     ];
 
-    protected $fields = [];
-
-    protected $category_attributes = null;
-
     public $category;
 
     public function mount(null|array $filters = null , $category = null)
@@ -39,19 +35,6 @@ class Filters extends Component implements HasForms
 
     public function form(Form $form): Form
     {
-        $this->fields = $this->getCategoryAttributes()
-            ?->sortBy('filterSection.order_number')
-            ?->groupBy('filterSection')
-            ?->map(function ($section) {
-                $fields = $this->getFields($section);
-                
-                if (!empty($fields)) {
-                    return Grid::make()->schema($fields)->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
-                }
-            })
-            ?->filter()
-            ?->toArray();
-
         return $form
             ->schema([
                 Actions::make([
@@ -63,7 +46,21 @@ class Filters extends Component implements HasForms
                         ->color('danger')
                 ]),
                 Grid::make()
-                    ->schema($this->fields)
+                    ->schema(fn () => $this->getCategoryAttributes()
+                        ?->sortBy('filterSection.order_number')
+                        ?->groupBy('filterSection')
+                        ?->map(function ($section) {
+                            $fields = $this->getFields($section);
+                            
+                            if ($fields->isNotEmpty()) {
+                                return Grid::make()
+                                    ->schema($fields->toArray())
+                                    ->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
+                            }
+                        })
+                        ?->filter()
+                        ?->toArray()
+                )
             ])
             ->statePath('filters');
     }
@@ -81,11 +78,10 @@ class Filters extends Component implements HasForms
 
     public function getFields($group)
     {
-        return $group->sortBy('filter_layout.order_number')->map(function ($attribute) {
+        return $group->sortBy('filter_layout.order_number')->map(function (Attribute $attribute) {
             return AttributeFactory::getFilterComponent($attribute);
         })
-        ->filter()
-        ->toArray();
+        ->filter();
     }
 
     public function getCategoryAttributes()
@@ -94,26 +90,24 @@ class Filters extends Component implements HasForms
 
         $category_attributes = Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Attribute::select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels')
-                    ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
-                    ->whereHas('categories', fn (Builder $query) => 
-                        $query->whereIn('category_id', $this->category
-                                ->getParentsAndSelf()
-                                ->pluck('id')
-                                ->toArray()
-                        )
+                ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
+                ->whereHas('categories', fn (Builder $query) => 
+                    $query->whereIn('category_id', $this->category
+                        ->getParentsAndSelf()
+                        ->pluck('id')
+                        ->toArray()
                     )
-                    ->get();
-            });
-
-        // dd($category_attributes);
+                )
+                ->get();
+        });
 
         return $category_attributes;
     }
 
     private function resetData()
     {
-        $this->reset('filters');
         $this->form->fill();
+        $this->search();
     }
 }
 

@@ -21,14 +21,12 @@ trait AnnouncementStatus
 
     public function getStatusAttribute()
     {
-        return $this->currentStatus?->status;
+        return $this->current_status;
     }
 
     public function scopeStatus($query, Status $status)
     {
-        return $query->whereHas('currentStatus', function ($q) use ($status) {
-            $q->where('status', $status);
-        });
+        return $query->where('current_status', $status);
     }
 
     public function moderate(array $info = [])
@@ -148,8 +146,7 @@ trait AnnouncementStatus
 
         if ($result) {
             // PublishOnTelegram::dispatch($this);
-            PublishAnnouncementJob::dispatch($this->id);
-            // ->delay(now()->addMinutes(5))
+            PublishAnnouncementJob::dispatch($this->id)->delay(now()->addMinutes(1));
         }
         
         return $result;

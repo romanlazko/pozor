@@ -177,7 +177,7 @@ class Create extends Component implements HasForms
     {
         $cacheKey = implode('_', $this->data['categories']) . '_create_attributes';
 
-        // return Cache::remember($cacheKey, config('cache.ttl'), function () {
+        return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Attribute::with([
                     'attribute_options' => function (HasMany $query) {
                         return $query->select(
@@ -192,7 +192,7 @@ class Create extends Component implements HasForms
                 ])
                 ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $this->data['categories']))
                 ->get();
-        // });
+        });
     }
 
     public function getCategories(): SupportCollection

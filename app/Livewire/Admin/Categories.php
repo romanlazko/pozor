@@ -46,7 +46,7 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
     {
         return $table
             ->heading($this->category?->name ?? "All categories")
-            ->query(Category::where('parent_id', $this->category?->id ?? null)->with('children', 'attributes', 'channels'))
+            ->query(Category::where('parent_id', $this->category?->id ?? null))
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')
                     ->collection('categories')
