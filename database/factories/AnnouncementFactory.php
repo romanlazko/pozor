@@ -36,23 +36,21 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
-            $context = stream_context_create(
-                array(
-                    "http" => array(
-                        'method'=>"GET",
-                        "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) 
-                                    AppleWebKit/537.36 (KHTML, like Gecko) 
-                                    Chrome/50.0.2661.102 Safari/537.36\r\n" .
-                                    "accept: text/html,application/xhtml+xml,application/xml;q=0.9,
-                                    image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3\r\n" .
-                                    "accept-language: es-ES,es;q=0.9,en;q=0.8,it;q=0.7\r\n" . 
-                                    "accept-encoding: gzip, deflate, br\r\n"
-                    )
-                )
-            );
             $url = 'https://picsum.photos/200';
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+            $contents = curl_exec($ch);
+            if(curl_errno($ch)) {
+                echo 'Error:' . curl_error($ch);
+            }
+            curl_close($ch);
+            
             $info = pathinfo($url);
-            $contents = file_get_contents($url, false, $context);
             $file = '/tmp/' . $info['basename'];
             file_put_contents($file, $contents);
             $uploaded_file = new UploadedFile($file, $info['basename']);
