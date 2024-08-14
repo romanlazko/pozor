@@ -36,11 +36,19 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
+            $url = 'https://picsum.photos/200';
+            $info = pathinfo($url);
+            $contents = file_get_contents($url);
+            $file = '/tmp/' . $info['basename'];
+            file_put_contents($file, $contents);
+            $uploaded_file = new UploadedFile($file, $info['basename']);
+
+
             $categories = Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf();
             $announcement->categories()->sync($categories->pluck('id')->toArray());
             $announcement->features()->createMany($this->getFeatures($categories->pluck('id')->toArray()));
             $announcement->channels()->createMany($this->getChannels($announcement));
-            // $announcement->addMedia(UploadedFile::fake()->image('avatar.jpg', 300, 300)->size(100))->toMediaCollection('announcements', 's3');
+            $announcement->addMedia($uploaded_file)->toMediaCollection('announcements', 's3');
             $announcement->publish();
         });
     }
