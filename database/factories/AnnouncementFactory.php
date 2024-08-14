@@ -60,7 +60,7 @@ class AnnouncementFactory extends Factory
             $announcement->categories()->sync($categories->pluck('id')->toArray());
             $announcement->features()->createMany($this->getFeatures($categories->pluck('id')->toArray()));
             $announcement->channels()->createMany($this->getChannels($announcement));
-            $announcement->addMediaFromUrl('https://picsum.photos/200')->toMediaCollection('announcements', 's3');
+            $announcement->addMediaFromUrl(fake()->imageUrl(100, 100, $announcement->slug))->toMediaCollection('announcements', 's3');
             $announcement->publish();
         });
     }
