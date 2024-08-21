@@ -1,7 +1,7 @@
 Options +SymLinksIfOwnerMatch
 RewriteEngine On
-RewriteCond %{HTTP_HOST} !^centr1.top$
-RewriteRule ^(.*)$ https://centr1.top/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} !^navajowhite-newt-316433.hostingersite.com$
+RewriteRule ^(.*)$ https://navajowhite-newt-316433.hostingersite.com/$1 [R=301,L]
 
 # Rewrite "public" to the URL if it's not a file or directory
 RewriteCond %{REQUEST_FILENAME} !-d
