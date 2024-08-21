@@ -59,6 +59,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
         'other' => [
             'location'  => 'Местоположение',
             'hidden'    => 'Скрытое поле',
+        ],
+        'date' => [
+            'date' => 'Date',
+            'date_time' => 'Date Time',
+            'month_year' => 'Month Year',
         ]
     ];
 
@@ -121,6 +126,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                     })
                     ->badge()
                     ->color('warning'),
+                    
                 TextColumn::make('create_layout.rules')
                     ->label('Rules')
                     ->badge()
@@ -157,6 +163,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                     ->hidden(app()->environment('production'))
                     ->slideOver()
                     ->closeModalByClickingAway(false),
+
                 CreateAction::make()
                     ->model(Attribute::class)
                     ->icon('heroicon-o-plus-circle')
@@ -224,6 +231,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                     ] 
                                                     : [])
                                             ),
+
                                         KeyValue::make('altersuffixes')
                                             ->label(__('Suffix'))
                                             ->keyLabel(__('Language'))
@@ -300,8 +308,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -331,8 +341,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -346,6 +358,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                     : null
                                             )
                                             ->live(),
+
                                         TextInput::make('create_layout.column_span')
                                             ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
                                             ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -355,6 +368,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                             )
                                             ->live()
                                             ->required(),
+
                                         TextInput::make('create_layout.column_start')
                                             ->helperText(__("В каком месте в линии будет находиться этот атрибут в секции (от 1 до 4)"))
                                             ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -364,6 +378,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                             )
                                             ->live()
                                             ->required(),
+
                                         TextInput::make('create_layout.order_number')
                                             ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                             ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -380,9 +395,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                     ->schema([
                                         Toggle::make('is_feature')
                                             ->helperText(__("Является ли этот атрибут характеристикой")),
+
                                         Toggle::make('translatable')
                                             ->helperText(__("Будет ли переводится этот атрибут автоматически"))
                                             ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+
                                         Toggle::make('required')
                                             ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
                                     ])
@@ -433,8 +450,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -464,8 +483,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -476,9 +497,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                         TextInput::make('filter_layout.column_span')
                                             ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
                                             ->required(),
+
                                         TextInput::make('filter_layout.column_start')
                                             ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 4)"))
                                             ->required(),
+
                                         TextInput::make('filter_layout.order_number')
                                             ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                             ->required()
@@ -490,9 +513,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
 
                         Section::make(__("Show layout"))
                             ->schema([
-                                Hidden::make('show_layout.type')
-                                    ->required()
-                                    ->live(),
+                                Grid::make(3)
+                                    ->schema([
+                                        Select::make('show_layout.type')
+                                            ->options($this->type_options)
+                                            ->required()
+                                            ->live(),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
 
                                 Grid::make(3)
                                     ->schema([
@@ -525,8 +553,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -556,8 +586,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             ])
                                                             ->required()
                                                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                         TextInput::make('slug')
                                                             ->required(),
+
                                                         TextInput::make('order_number')
                                                             ->helperText(__('Порядковый номер секции внутри формы.'))
                                                             ->numeric()
@@ -565,6 +597,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                     ])
                                                     ->columns(2)
                                             ]),
+
                                         TextInput::make('show_layout.order_number')
                                             ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                             ->required(),
@@ -594,12 +627,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                 },
                                             ])
                                             ->live(debounce: 500),
+
                                         Toggle::make('is_default')
                                             ->fixIndistinctState()
                                             ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
                                             ->visible(fn (Get $get) => in_array($get('../../create_type'), [
                                                 'toggle_buttons',
                                             ])),
+
                                         Toggle::make('is_null')
                                             ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
                                             ->live()
@@ -632,6 +667,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                             ->live()
                                             ->dehydrated(false)
                                             ->columnSpanFull(),
+
                                         Repeater::make('visible')
                                             ->schema([
                                                 Select::make('attribute_name')
@@ -642,16 +678,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         })
                                                         ->flatten();
 
-                                                        return Attribute::with('section')
-                                                            ->whereHas('attribute_options')
+                                                        return Attribute::whereHas('attribute_options')
                                                             ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
                                                             ->get()
-                                                            ->groupBy('section.slug')
-                                                            ->map
                                                             ->pluck('label', 'name');
                                                     })
                                                     ->required()
                                                     ->live(),
+
                                                 Select::make('value')
                                                     ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
                                             ])
@@ -668,6 +702,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                             ->label(__('Hide on condition'))
                                             ->live()
                                             ->dehydrated(false),
+
                                         Repeater::make('hidden')
                                             ->schema([
                                                 Select::make('attribute_name')
@@ -678,16 +713,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         })
                                                         ->flatten();
 
-                                                        return Attribute::with('section')
-                                                            ->whereHas('attribute_options')
+                                                        return Attribute::whereHas('attribute_options')
                                                             ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
                                                             ->get()
-                                                            ->groupBy('section.slug')
-                                                            ->map
                                                             ->pluck('label', 'name');
                                                     })
                                                     ->required()
                                                     ->live(),
+
                                                 Select::make('value')
                                                     ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
                                             ])
@@ -749,6 +782,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             $fail('The :attribute must contain english translation.');
                                                     },
                                                 ]),
+
                                             TextInput::make('name')
                                                 ->label(__('Slug'))
                                                 ->required()
@@ -774,6 +808,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         ])
                                                         : null)
                                                 ),
+
                                             KeyValue::make('altersuffixes')
                                                 ->label(__('Suffix'))
                                                 ->keyLabel(__('Language'))
@@ -851,8 +886,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -882,8 +919,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -897,6 +936,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         : null
                                                 )
                                                 ->live(),
+
                                             TextInput::make('create_layout.column_span')
                                                 ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
                                                 ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -906,6 +946,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                 )
                                                 ->live()
                                                 ->required(),
+
                                             TextInput::make('create_layout.column_start')
                                                 ->helperText(__("В каком месте в линии будет находиться этот атрибут в секции (от 1 до 4)"))
                                                 ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -915,6 +956,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                 )
                                                 ->live()
                                                 ->required(),
+
                                             TextInput::make('create_layout.order_number')
                                                 ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                                 ->afterStateUpdated(fn (Get $get, Set $set) => 
@@ -931,9 +973,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                         ->schema([
                                             Toggle::make('is_feature')
                                                 ->helperText(__("Является ли этот атрибут характеристикой")),
+
                                             Toggle::make('translatable')
                                                 ->helperText(__("Будет ли переводится этот атрибут автоматически"))
                                                 ->visible(fn (Get $get) => in_array($get('create_layout.type'), array_keys($this->type_options['text_fields']))),
+
                                             Toggle::make('required')
                                                 ->helperText(__("Является ли этот атрибут обязательным при создании объявления")),
                                         ])
@@ -986,8 +1030,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -1017,8 +1063,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -1029,9 +1077,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                             TextInput::make('filter_layout.column_span')
                                                 ->helperText(__("Сколько места по ширине, внутри секции, будет занимать этот атрибут (от 1 до 4)"))
                                                 ->required(),
+
                                             TextInput::make('filter_layout.column_start')
                                                 ->helperText(__("В каком месте (слева или справа) будет находиться этот атрибут в секции (от 1 до 4)"))
                                                 ->required(),
+
                                             TextInput::make('filter_layout.order_number')
                                                 ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                                 ->required()
@@ -1043,11 +1093,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
 
                             Section::make(__("Show layout"))
                                 ->schema([
-                                    Select::make('show_layout.type')
-                                        ->options($this->type_options)
-                                        // ->disabled()
-                                        ->required()
-                                        ->live(),
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('show_layout.type')
+                                                ->options($this->type_options)
+                                                ->required()
+                                                ->live(),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
 
                                     Grid::make(3)
                                         ->schema([
@@ -1080,8 +1133,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -1111,8 +1166,10 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                                 ])
                                                                 ->required()
                                                                 ->afterStateUpdated(fn ($state, callable $set) => $set('slug', str()->snake($state['en']))),
+
                                                             TextInput::make('slug')
                                                                 ->required(),
+
                                                             TextInput::make('order_number')
                                                                 ->helperText(__('Порядковый номер секции внутри формы.'))
                                                                 ->numeric()
@@ -1120,6 +1177,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                         ])
                                                         ->columns(2)
                                                 ]),
+
                                             TextInput::make('show_layout.order_number')
                                                 ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                                 ->required(),
@@ -1149,12 +1207,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                     },
                                                 ])
                                                 ->live(debounce: 500),
+
                                             Toggle::make('is_default')
                                                 ->fixIndistinctState()
                                                 ->helperText(__('Опция будет выбрана по умолчанию при создании объявления и при фильтрации.'))
                                                 ->visible(fn (Get $get) => in_array($get('../../create_type'), [
                                                     'toggle_buttons',
                                                 ])),
+
                                             Toggle::make('is_null')
                                                 ->helperText(__('Опция не будет отображаться при создании объявления и не будет учавствовать в фильтрации объявлений.'))
                                                 ->live()
@@ -1188,6 +1248,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                 ->live()
                                                 ->dehydrated(false)
                                                 ->columnSpanFull(),
+
                                             Repeater::make('visible')
                                                 ->schema([
                                                     Select::make('attribute_name')
@@ -1198,16 +1259,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             })
                                                             ->flatten();
 
-                                                            return Attribute::with('section')
-                                                                ->whereHas('attribute_options')
+                                                            return Attribute::whereHas('attribute_options')
                                                                 ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
                                                                 ->get()
-                                                                ->groupBy('section.slug')
-                                                                ->map
                                                                 ->pluck('label', 'name');
                                                         })
                                                         ->required()
                                                         ->live(),
+
                                                     Select::make('value')
                                                         ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
                                                 ])
@@ -1225,6 +1284,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                 ->label(__('Hide on condition'))
                                                 ->live()
                                                 ->dehydrated(false),
+
                                             Repeater::make('hidden')
                                                 ->schema([
                                                     Select::make('attribute_name')
@@ -1235,16 +1295,14 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                                             })
                                                             ->flatten();
 
-                                                            return Attribute::with('section')
-                                                                ->whereHas('attribute_options')
+                                                            return Attribute::whereHas('attribute_options')
                                                                 ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories ?? []))
                                                                 ->get()
-                                                                ->groupBy('section.slug')
-                                                                ->map
                                                                 ->pluck('label', 'name');
                                                         })
                                                         ->required()
                                                         ->live(),
+
                                                     Select::make('value')
                                                         ->options(fn (Get $get) => Attribute::whereName($get('attribute_name'))->first()?->attribute_options->pluck('name', 'id'))
                                                 ])

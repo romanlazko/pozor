@@ -2,19 +2,15 @@
 
 namespace App\AttributeType;
 
-use App\Models\Feature;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Support\Components\ViewComponent;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class Between extends BaseAttributeType
 {
-    protected function getQuery($query) : Builder
+    protected function getSearchQuery(Builder $query) : Builder
     {
         $from = $this->data[$this->attribute->name]['from'] ?? null;
         $to = $this->data[$this->attribute->name]['to'] ?? null;
@@ -42,11 +38,9 @@ class Between extends BaseAttributeType
                 ->numeric()
                 ->default(''),
             ])
+            ->hint($this->attribute->suffix)
             ->label($this->attribute->label)
-            ->columnSpanFull()
-            ->columns(['default' => 2])
-            ->visible(fn (Get $get) => $this->isVisible($get))
-            ->hidden(fn (Get $get) => $this->isHidden($get));
+            ->columns(['default' => 2]);
     }
 
     protected function getFilamentCreateComponent(Get $get = null): ?ViewComponent

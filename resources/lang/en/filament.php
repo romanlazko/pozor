@@ -18,5 +18,11 @@ return [
         'from' => 'From',
         'to' => 'To',
         'currency' => 'Currency',
+        'country' => 'Country',
+        'city' => 'City',
+        'radius' => 'Radius',
+        'year' => 'Year',
+        'month' => 'Month',
+        'day' => 'Day',
     ],
 ];

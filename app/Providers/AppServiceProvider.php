@@ -7,6 +7,8 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\Models\TelegramBot;

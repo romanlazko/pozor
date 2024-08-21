@@ -149,6 +149,46 @@ class AttributeSectionsTableSeeder extends Seeder
                 'updated_at' => '2024-08-10 17:23:17',
                 'deleted_at' => NULL,
             ),
+            13 => 
+            array (
+                'id' => 14,
+                'slug' => 'vehicle_condition',
+                'alternames' => '{"cs": "Stav vozidla", "en": "Vehicle condition", "ru": "Состояние автомобиля"}',
+                'order_number' => 6,
+                'created_at' => '2024-08-17 15:53:35',
+                'updated_at' => '2024-08-17 16:33:46',
+                'deleted_at' => NULL,
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'slug' => 'vehicle_type_and_model',
+                'alternames' => '{"cs": "Typ a model vozidla", "en": "Vehicle type and model", "ru": "Тип и модель автомобиля"}',
+                'order_number' => 4,
+                'created_at' => '2024-08-17 16:10:34',
+                'updated_at' => '2024-08-17 16:10:34',
+                'deleted_at' => NULL,
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'slug' => 'engine',
+                'alternames' => '{"cs": "Motor", "en": "Engine", "ru": "Мотор"}',
+                'order_number' => 6,
+                'created_at' => '2024-08-18 11:18:38',
+                'updated_at' => '2024-08-18 11:18:38',
+                'deleted_at' => NULL,
+            ),
+            16 => 
+            array (
+                'id' => 17,
+                'slug' => 'transmission',
+                'alternames' => '{"cs": "Transmise", "en": "Transmission", "ru": "Трансмиссия"}',
+                'order_number' => 7,
+                'created_at' => '2024-08-19 09:19:57',
+                'updated_at' => '2024-08-19 09:40:49',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

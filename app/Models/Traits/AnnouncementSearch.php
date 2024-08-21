@@ -7,6 +7,7 @@ use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Attribute;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 use function JmesPath\search;
@@ -20,29 +21,14 @@ trait AnnouncementSearch
                 => $query->where('category_id', $category->id)->select('categories.id')
         ));
     }
-    public function scopeFeatures($query, Category|null $category, array|null $attributes)
+    public function scopeFeatures($query, $searchAttributes, array|null $attributes)
     {
-        if (!$category OR !$attributes) {
+        if ($searchAttributes->isEmpty() OR !$attributes) {
             return $query;
         }
 
-        return $query->where(function ($query) use ($attributes, $category) {
-            $category_attributes = 
-                Cache::remember($category?->slug.'_search_attributes', config('cache.ttl'), fn () => 
-                    Attribute::select('id', 'visible', 'name', 'filter_layout')
-                        ->withCount('attribute_options')
-                        ->with('attribute_options:id,attribute_id,is_default,is_null')
-                        ->whereHas('categories', fn ($query) => 
-                            $query->whereIn('category_id', $category
-                                ->getParentsAndSelf()
-                                ->pluck('id')
-                                ->toArray()
-                            )
-                        )
-                        ->get()
-                );
-
-            foreach ($category_attributes as $attribute) {
+        return $query->where(function (Builder $query) use ($attributes, $searchAttributes) {
+            foreach ($searchAttributes as $attribute) {
                 AttributeFactory::applyQuery($attribute, $attributes, $query);
             }
         });

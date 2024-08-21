@@ -6,11 +6,11 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Components\ToggleButtons as ComponentsToggleButtons;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class ToggleButtons extends BaseAttributeType
 {
-    protected function getQuery($query) : Builder
+    protected function getSearchQuery(Builder $query) : Builder
     {
         if ($attribute_option = $this->attribute->attribute_options?->where('id', $this->data[$this->attribute->name] ?? null)->first() AND $attribute_option?->is_null) {
             return $query;
@@ -26,11 +26,7 @@ class ToggleButtons extends BaseAttributeType
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options?->pluck('name', 'id'))
-            ->inline($this->attribute->is_grouped ?? true)
             ->live()
-            ->columnSpanFull()
-            ->visible(fn (Get $get) => $this->isVisible($get))
-            ->hidden(fn (Get $get) => $this->isHidden($get))
             ->afterStateHydrated(function (Get $get, Set $set) {
                 if ($get('attributes.'.$this->attribute->name) == null) {
                     $set('attributes.'.$this->attribute->name, $this->attribute->attribute_options?->firstWhere('is_default', true)?->id);

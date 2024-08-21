@@ -7,7 +7,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select as ComponentsSelect;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Components\ViewComponent;
 use Igaster\LaravelCities\Geo;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +23,7 @@ class Location extends BaseAttributeType
         parent::__construct($attribute, $data);
     }
 
-    protected function getQuery($query) : Builder
+    protected function getSearchQuery(Builder $query) : Builder
     {
         $query->whereHas('geo', function ($query) {
             $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 

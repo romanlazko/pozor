@@ -16,7 +16,7 @@
                 <div class="flex">
                     <div class="w-full space-y-2">
                         <h1 class="font-bold text-lg lg:text-2xl">
-                            {{ $announcement->getSectionByName('title')->pluck('value')->implode(' ') }}
+                            {{ $announcement->getSectionByName('title')->pluck('value')->implode(', ') }}
                         </h1>
                         <p class="text-xl text-indigo-600">
                             {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
@@ -75,7 +75,7 @@
                                         <li class="w-full grid grid-cols-2 space-x-2 text-sm lg:text-base">
                                             <span class="text-gray-500 inline-block">• {{ $feature->label }}:</span>
                                             <span class="">
-                                                {{ $feature->value }} {{ $feature->suffix }}
+                                                {{ $feature->value }}
                                             </span>
                                         </li>
                                     @endforeach

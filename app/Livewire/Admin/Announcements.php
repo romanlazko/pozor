@@ -48,13 +48,17 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                                 100 => 100,
                             ])
                             ->label('Count of announcements')
-                            ->default(100)
+                            ->default(100),
+                        Select::make('category')
+                            ->options(Category::doesntHave('children')->get()->pluck('name', 'id'))
+                            ->label('Category without children')
                     ])
                     ->action(function (array $data) {
                         $buses = intdiv($data['count'], 10);
 
                         for ($i = 0; $i < $buses; $i++) {
-                            Announcement::factory(10)->create();
+                            $categories = (Category::where('id', $data['category'])->first() ?? Category::doesntHave('children')->inRandomOrder()->first())->getParentsAndSelf();
+                            Announcement::factory(10)->hasAttached($categories)->create();
                         }
                     }),
             ])
@@ -64,7 +68,8 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                 'categories', 
                 'channels.channel', 
                 'geo', 
-                'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title']))), 
+                'features.attribute_option',
+                'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title']))->orWhere('name', 'description')),
                 'currentStatus'
             ]))
             ->columns([
@@ -98,7 +103,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                     TextColumn::make('Title')
                         ->wrap()
                         ->weight(FontWeight::Bold)
-                        ->state(fn (Announcement $announcement) => $announcement->getFeatureByName('title')?->value)
+                        ->state(fn (Announcement $announcement) => $announcement?->getSectionByName('title')?->pluck('value')?->implode(' '))
                         ->description(fn (Announcement $announcement) => 
                             new HtmlString(
                                 app(MarkdownRenderer::class)->toHtml($announcement->getFeatureByName('description')?->value ?? '')

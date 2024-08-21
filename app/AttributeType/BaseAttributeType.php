@@ -4,11 +4,20 @@ namespace App\AttributeType;
 
 use Filament\Forms\Get;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class BaseAttributeType extends AbstractAttributeType
 {
-    protected function getQuery($query) : Builder
+    protected function getSortQuery(Builder $query, $destination = 'asc') : Builder
+    {
+        return $query->rightJoin('features as announcement_features', function($join) {
+            $join->on('announcements.id', '=', 'announcement_features.announcement_id')
+                ->where('announcement_features.attribute_id', $this->attribute->id);
+        })
+        ->orderBy('announcement_features.translated_value->original', $destination);
+    }
+
+    protected function getSearchQuery(Builder $query) : Builder
     {
         return $query;
     }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +28,11 @@ class ViewServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $view->with('unreadMessagesCount', $this->getUnreadMessagesCount());
         });
+
+        // View::composer('*', function ($view) {
+        //     $locale = session('locale', config('app.locale'));
+        //     URL::defaults(['locale' => $locale]);
+        // });
         // View::composer('announcement.show', function ($view) {
         //     $announcement = $view->getData()['announcement'];
 

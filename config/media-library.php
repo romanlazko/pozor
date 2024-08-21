@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 
 return [
 
@@ -83,6 +84,7 @@ return [
      * Here you can specify which path generator should be used for the given class.
      */
     'custom_path_generators' => [
+        Category::class => App\Services\SpatieMediaLibrary\CategoryPathGenerator::class,
         // Model::class => PathGenerator::class
         // or
         // 'model_morph_alias' => PathGenerator::class

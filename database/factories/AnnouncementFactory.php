@@ -27,7 +27,6 @@ class AnnouncementFactory extends Factory
         return [
             'user_id'           => 1,
             'geo_id'            => Geo::inRandomOrder()->first()->id,
-            'slug'              => fake()->slug,
             'created_at'        => now(),
             'updated_at'        => now(),
         ];
@@ -36,29 +35,7 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
-            // $url = 'https://picsum.photos/200';
-            // $ch = curl_init();
-
-            // curl_setopt($ch, CURLOPT_URL, $url);
-            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            // curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-            // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
-            // $contents = curl_exec($ch);
-            // if(curl_errno($ch)) {
-            //     echo 'Error:' . curl_error($ch);
-            // }
-            // curl_close($ch);
-            
-            // $info = pathinfo($url);
-            // $file = '/tmp/' . $info['basename'];
-            // file_put_contents($file, $contents);
-            // $uploaded_file = new UploadedFile($file, $info['basename']);
-
-
-            $categories = Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf();
-            $announcement->categories()->sync($categories->pluck('id')->toArray());
-            $announcement->features()->createMany($this->getFeatures($categories->pluck('id')->toArray()));
+            $announcement->features()->createMany($this->getFeatures($announcement->categories->pluck('id')->toArray()));
             $announcement->channels()->createMany($this->getChannels($announcement));
             $announcement->addMediaFromUrl(fake()->imageUrl(100, 100, $announcement->slug))->toMediaCollection('announcements', 's3');
             $announcement->publish();
@@ -85,6 +62,11 @@ class AnnouncementFactory extends Factory
             'other' => [
                 'location'  => 'Местоположение',
                 'hidden'    => 'Скрытое поле',
+            ],
+            'date' => [
+                'date' => 'Date',
+                'date_time' => 'Date Time',
+                'month_year' => 'Month Year',
             ]
         ];
 
@@ -131,14 +113,18 @@ class AnnouncementFactory extends Factory
                         'attribute_option_id' => $attribute->attribute_options->where('is_null', '!=' ,true)->random()->id,
                     ];
                 }
+
+                if (in_array($attribute->create_layout['type'], array_keys($type_options['date']))) {
+                    return [
+                        'attribute_id' => $attribute->id,
+                        'translated_value' => [
+                            'original' => fake()->date(),
+                        ],
+                    ];
+                }
             })
             ->filter()
             ->all();
-    }
-
-    public function getCategories() : array
-    {
-        return Category::doesntHave('children')->inRandomOrder()->first()->getParentsAndSelf()->pluck('id')->toArray();
     }
 
     private function getChannels($announcement) : array

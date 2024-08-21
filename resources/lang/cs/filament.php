@@ -18,5 +18,11 @@ return [
         'from' => 'Od',
         'to' => 'Do',
         'currency' => 'Měna',
+        'country' => 'Zeme',
+        'city' => 'Mesto',
+        'radius' => 'Rozsah',
+        'year' => 'Rok',
+        'month' => 'Měsíc',
+        'day' => 'Den',
     ],
 ];

@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
 use App\Models\Category;
+use App\Services\Actions\CategoryAttributeService;
 use Illuminate\Support\Facades\Cache;
 
 class AnnouncementController extends Controller
 {
-    public function index(SearchRequest $request)
+    public function index(SearchRequest $request, CategoryAttributeService $categoryAttributeService)
     {
-        $category = Category::select('id', 'alternames', 'slug', 'parent_id', 'is_active')
+        $category = Category::select('id', 'slug', 'parent_id', 'is_active')
             ->where('slug', $request->route('category'))
             ->isActive()
             ->first();
@@ -25,13 +26,14 @@ class AnnouncementController extends Controller
                         ->load('media');
             })
             ->loadCount(['announcements' => fn ($query) => $query->isPublished()])
-            ->filter(fn ($category) => $category->announcements_count > 0)
+            // ->filter(fn ($category) => $category->announcements_count > 0 AND $category->is_active)
             ->sortByDesc('announcements_count');
+        
+        $searchAttributes = $category ? $categoryAttributeService->forSearch($category) : collect([]);
 
         $announcements = Announcement::with([
                 'media',
                 'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title', 'price']))),
-                // 'features.attribute.showSection',
                 'features.attribute_option:id,alternames',
                 'geo',
                 'userVotes',
@@ -39,7 +41,7 @@ class AnnouncementController extends Controller
             ->select('announcements.*')
             ->isPublished()
             ->category($category)
-            ->features($category, $request->data['filters']['attributes'] ?? null)
+            ->features($searchAttributes, $request->data['filters']['attributes'] ?? null)
             ->sort($request->data['sort'])
             ->search($request->data['search'])
             ->paginate(30)->withQueryString();
@@ -54,7 +56,10 @@ class AnnouncementController extends Controller
 
     public function search(SearchRequest $request)
     {
-        return redirect()->route('announcement.index', ['category' => $request->route('category'), 'data' => $request->serializedData()]);
+        return redirect()->route('announcement.index', [
+            'category' => $request->route('category'), 
+            'data' => $request->serializedData()
+        ]);
     }
 
     public function show(Announcement $announcement)

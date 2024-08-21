@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
+use App\Models\Category;
+use App\Services\Actions\CategoryAttributeService;
 
 class Filters extends Component implements HasForms
 {
@@ -24,7 +26,14 @@ class Filters extends Component implements HasForms
     public $filters = [
     ];
 
+    private $categoryAttributeService;
+
     public $category;
+
+    public function boot(CategoryAttributeService $categoryAttributeService)
+    {
+        $this->categoryAttributeService = $categoryAttributeService;
+    }
 
     public function mount(null|array $filters = null , $category = null)
     {
@@ -46,7 +55,7 @@ class Filters extends Component implements HasForms
                         ->color('danger')
                 ]),
                 Grid::make()
-                    ->schema(fn () => $this->getCategoryAttributes()
+                    ->schema(fn () => $this->categoryAttributeService->forFilter($this->category)
                         ?->sortBy('filterSection.order_number')
                         ?->groupBy('filterSection')
                         ?->map(function ($section) {
@@ -84,25 +93,26 @@ class Filters extends Component implements HasForms
         ->filter();
     }
 
-    public function getCategoryAttributes()
-    {
-        $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
+    // public function getCategoryAttributes()
+    // {
 
-        $category_attributes = Cache::remember($cacheKey, config('cache.ttl'), function () {
-            return Attribute::select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels')
-                ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
-                ->whereHas('categories', fn (Builder $query) => 
-                    $query->whereIn('category_id', $this->category
-                        ->getParentsAndSelf()
-                        ->pluck('id')
-                        ->toArray()
-                    )
-                )
-                ->get();
-        });
+    //     $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
 
-        return $category_attributes;
-    }
+    //     $category_attributes = Cache::remember($cacheKey, config('cache.ttl'), function () {
+    //         return Attribute::select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels', 'altersuffixes')
+    //             ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
+    //             ->whereHas('categories', fn (Builder $query) => 
+    //                 $query->whereIn('category_id', $this->category
+    //                     ->getParentsAndSelf()
+    //                     ->pluck('id')
+    //                     ->toArray()
+    //                 )
+    //             )
+    //             ->get();
+    //     });
+
+    //     return $categoryAttributeService->forFilter($this->category);
+    // }
 
     private function resetData()
     {

@@ -12,6 +12,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
@@ -49,9 +51,9 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
             ->query(Category::where('parent_id', $this->category?->id ?? null))
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')
-                    ->collection('categories')
-                    ->conversion('thumb'),
+                    ->collection('categories'),
                 TextColumn::make('name')
+                    ->description(fn (Category $category): string => $category->slug)
                     ->url(fn (Category $category): string => route('admin.categories', $category)),
                 ToggleColumn::make('is_active'),
                 TextColumn::make('children')
@@ -89,7 +91,6 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                                             ->schema([
                                                 SpatieMediaLibraryFileUpload::make('Image')
                                                     ->collection('categories')
-                                                    ->conversion('thumb')
                                                     ->imageEditor(),
                                             ])
                                             ->columnSpan(2),
@@ -113,7 +114,12 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                                         'en' => '',
                                         'cs' => '',
                                         'ru' => '',
-                                    ]),
+                                    ])
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, Set $set) => $set('slug', str()->slug($state['en']. '-'))),
+
+                                TextInput::make('slug'),
+
                                 TextInput::make('parent_id')
                                     ->hiddenLabel()
                                     ->default($this->category?->id ?? null)
@@ -128,9 +134,9 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                     ->closeModalByClickingAway(false),
             ])
             ->actions([
-                ActionGroup::make([
+                // ActionGroup::make([
                     EditAction::make()
-                        ->record($this->category)
+                        ->modalHeading(fn ($record) => $record->name)
                         ->form([
                             Section::make()
                                 ->schema([
@@ -140,7 +146,6 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                                                 ->schema([
                                                     SpatieMediaLibraryFileUpload::make('Image')
                                                         ->collection('categories')
-                                                        ->conversion('thumb')
                                                         ->imageEditor(),
                                                 ])
                                                 ->columnSpan(2),
@@ -164,7 +169,12 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                                             'en' => '',
                                             'cs' => '',
                                             'ru' => '',
-                                        ]),
+                                        ])
+                                        ->live()
+                                        ->afterStateUpdated(fn ($state, Set $set) => $set('slug', str()->slug($state['en']. '-'))),
+
+                                    TextInput::make('slug'),
+
                                     TextInput::make('parent_id')
                                         ->hiddenLabel()
                                         ->default($this->category?->id ?? null)
@@ -182,10 +192,14 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                                 ])
                         ])
                         ->slideOver()
+                        // ->button()
+                        ->hiddenLabel()
                         ->closeModalByClickingAway(false),
                     DeleteAction::make()
                         ->record($this->category)
-                ])
+                        ->hiddenLabel()
+                        // ->button()
+                // ])
             ]);
     }
 }
