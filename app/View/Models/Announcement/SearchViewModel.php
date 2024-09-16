@@ -146,7 +146,7 @@ class SearchViewModel
                 )
             )
             ->whereHas('announcement', fn ($query) => $query->category($this->category())->isPublished())
-            ->havingRaw('COUNT(DISTINCT attribute_id) = '. $this->filterQueries)
+            ->havingRaw('COUNT(DISTINCT attribute_id) = '. $this->filterQueries + ($search ? 1 : 0))
             ->paginate(30)
             ->withQueryString();
     }
