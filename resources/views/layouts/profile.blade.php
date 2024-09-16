@@ -1,6 +1,6 @@
 <x-body-layout>
-    <x-slot name="headerNavigation">
-        @include('layouts.header')
+    <x-slot name="navigation">
+        @include('layouts.navigation')
     </x-slot>
     
     <x-slot name="sidebar">
@@ -9,7 +9,7 @@
 
 
     @if (isset($header))
-        <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-0 z-30 p-2 lg:p-0 border-b lg:border-none bg-gray-50">
+        <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-0 z-30 p-2 lg:p-0 border-b lg:border-none bg-white">
             <div class="flex items-center justify-between space-x-3">
                 {{ $header }}
             </div>

@@ -10,59 +10,37 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CategoryAttributeService
 {
-    public function forFilter(Category $category)
+    public function forFilter(Category|null $category)
     {
         $cacheKey = ($category?->slug ?? 'default') . '_filter_attributes';
 
         $categories = $category?->getParentsAndSelf()->pluck('id')->toArray();
 
         return Cache::remember($cacheKey, config('cache.ttl'), function () use ($categories) {
-            return Attribute::with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
-            // ->select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels', 'altersuffixes')
-                
-                ->whereHas('categories', fn (Builder $query) => 
-                    $query->whereIn('category_id', $categories)
-                )
-                ->get();
+            return $this->getAttributesByCategories($categories)
+                ->load('filterSection:id,order_number,alternames');
         });
     }
 
-    public function forSearch(Category $category)
+    public function forSorting(Category|null $category)
     {
-        $cacheKey = ($category?->slug ?? 'default') . '_search_attributes';
+        $cacheKey = ($category?->slug ?? 'default') . '_sorting_attributes';
 
         $categories = $category?->getParentsAndSelf()->pluck('id')->toArray();
-        
+
         return Cache::remember($cacheKey, config('cache.ttl'), function () use ($categories) {
-            return Attribute::with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
-            // ->select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels', 'altersuffixes')
-                
-                ->whereHas('categories', fn (Builder $query) => 
-                    $query->whereIn('category_id', $categories)
-                )
-                ->get();
+            return $this->getAttributesByCategories($categories)
+                ->where('is_sortable');
         });
     }
 
-    public function forCreate(Category $category, $categories)
+    public function forCreate($categories)
     {
-        $cacheKey = implode('_', $this->data['categories']) . '_create_attributes';
+        $cacheKey = implode('_', $categories) . '_create_attributes';
 
         return Cache::remember($cacheKey, config('cache.ttl'), function () use ($categories) {
-            return Attribute::with([
-                    'attribute_options' => function (HasMany $query) {
-                        return $query->select(
-                            'attribute_id',
-                            'id',
-                            'alternames',
-                            'is_default',
-                            'is_null'
-                        )->whereNot('is_null', true);
-                    },
-                    'createSection:id,order_number,alternames'
-                ])
-                ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))
-                ->get();
+            return $this->getAttributesByCategories($categories)
+                ->load('createSection:id,order_number,alternames');
         });
     }
 
@@ -79,5 +57,17 @@ class CategoryAttributeService
                 )
                 ->get();
         });
+    }
+
+    public function getAttributesByCategories(array|null $categories)
+    {
+        return Attribute::with('attribute_options:id,alternames,attribute_id,is_default,is_null')
+            ->when(!$categories, fn ($query) => $query->where('always_required', true))
+            ->when($categories, fn ($query) => 
+                $query->whereHas('categories', fn (Builder $query) => 
+                    $query->whereIn('category_id', $categories)
+                )
+            )
+            ->get();
     }
 }

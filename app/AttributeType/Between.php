@@ -16,11 +16,11 @@ class Between extends BaseAttributeType
         $to = $this->data[$this->attribute->name]['to'] ?? null;
 
         $query->when(!empty($from) OR !empty($to), function ($query) use ($from, $to){
-            $query->whereHas('features', function ($query) use ($from, $to){
+            // $query->whereHas('features', function ($query) use ($from, $to){
                 $query->where('attribute_id', $this->attribute->id)
                     ->when(!empty($from), fn ($query) => $query->where('translated_value->original', '>=', (integer)$from))
                     ->when(!empty($to), fn ($query) => $query->where('translated_value->original', '<=', (integer)$to));
-            });
+            // });
         });
 
         return $query;

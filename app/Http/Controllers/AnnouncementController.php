@@ -4,59 +4,44 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
-use App\Models\Category;
-use App\Services\Actions\CategoryAttributeService;
-use Illuminate\Support\Facades\Cache;
+use App\View\Models\Announcement\IndexViewModel;
+use App\View\Models\Announcement\SearchViewModel;
 
 class AnnouncementController extends Controller
 {
-    public function index(SearchRequest $request, CategoryAttributeService $categoryAttributeService)
+    public function index()
     {
-        $category = Category::select('id', 'slug', 'parent_id', 'is_active')
-            ->where('slug', $request->route('category'))
-            ->isActive()
-            ->first();
+        session()->forget('announcement_search');
 
-        $categories = Cache::remember($category?->slug.'_categories', config('cache.ttl'), function () use ($category) {
-                return ($category?->children->isNotEmpty() ? $category->children->load('media') : null)
-                    ?? ($category?->siblings->isNotEmpty() ? $category->siblings->load('media') : null)
-                    ?? Category::whereNull('parent_id')
-                        ->isActive()
-                        ->get()
-                        ->load('media');
-            })
-            ->loadCount(['announcements' => fn ($query) => $query->isPublished()])
-            // ->filter(fn ($category) => $category->announcements_count > 0 AND $category->is_active)
-            ->sortByDesc('announcements_count');
-        
-        $searchAttributes = $category ? $categoryAttributeService->forSearch($category) : collect([]);
-
-        $announcements = Announcement::with([
-                'media',
-                'features' => fn ($query) => $query->whereHas('attribute', fn ($query) => $query->whereHas('showSection', fn ($query) => $query->whereIn('slug', ['title', 'price']))),
-                'features.attribute_option:id,alternames',
-                'geo',
-                'userVotes',
-            ])
-            ->select('announcements.*')
-            ->isPublished()
-            ->category($category)
-            ->features($searchAttributes, $request->data['filters']['attributes'] ?? null)
-            ->sort($request->data['sort'])
-            ->search($request->data['search'])
-            ->paginate(30)->withQueryString();
+        $viewModel = new IndexViewModel();
 
         return view('announcement.index', [
+            'announcements' => $viewModel->announcements(),
+            'categories' => $viewModel->categories(),
+        ]);
+    }
+
+    public function all(SearchRequest $request)
+    {
+        $viewModel = new SearchViewModel($request);
+
+        $announcements = $viewModel->announcements();
+
+        $paginator = $viewModel->features()->isNotEmpty() ? $viewModel->features() : $announcements;
+
+        return view('announcement.all', [
             'announcements' => $announcements,
-            'categories' => $categories,
-            'category' => $category,
+            'categories' => $viewModel->categories(),
+            'category' => $viewModel->category(),
+            'sortableAttributes' => $viewModel->sortableAttributes(),
             'data' => $request->data,
+            'paginator' => $paginator,
         ]);
     }
 
     public function search(SearchRequest $request)
     {
-        return redirect()->route('announcement.index', [
+        return redirect()->route('announcement.all', [
             'category' => $request->route('category'), 
             'data' => $request->serializedData()
         ]);

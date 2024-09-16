@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use App\Models\Category;
 use App\Services\Actions\CategoryAttributeService;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 
 class Filters extends Component implements HasForms
 {
@@ -55,23 +57,10 @@ class Filters extends Component implements HasForms
                         ->color('danger')
                 ]),
                 Grid::make()
-                    ->schema(fn () => $this->categoryAttributeService->forFilter($this->category)
-                        ?->sortBy('filterSection.order_number')
-                        ?->groupBy('filterSection')
-                        ?->map(function ($section) {
-                            $fields = $this->getFields($section);
-                            
-                            if ($fields->isNotEmpty()) {
-                                return Grid::make()
-                                    ->schema($fields->toArray())
-                                    ->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
-                            }
-                        })
-                        ?->filter()
-                        ?->toArray()
-                )
+                    ->schema($this->getFormSchema())
             ])
-            ->statePath('filters');
+            ->statePath('filters')
+            ->extraAttributes(['class' => 'rounded-2xl']);
     }
 
 
@@ -85,6 +74,48 @@ class Filters extends Component implements HasForms
         return $this->redirectRoute('announcement.search', ['category' => $this->category?->slug, 'filters' => $this->filters]);
     }
 
+    public function getFormSchema(): array
+    {
+        return $this->categoryAttributeService->forFilter($this->category)
+            ?->sortBy('filterSection.order_number')
+            ?->groupBy('filterSection.name')
+            ?->map(function ($section, $section_name) {
+                // $fields = $this->getFields($section);
+                
+                // if ($fields->isNotEmpty()) {
+                //     return Section::make('')
+                //         ->columns([
+                //             'default' => 4,
+                //             'sm' => 4,
+                //             'md' => 4,
+                //             'lg' => 4,
+                //             'xl' => 4,
+                //             '2xl' => 4,
+                //         ])
+                //         ->schema($fields->toArray())
+                //         ->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
+                // }
+
+                $fields = $this->getFields($section);
+                
+                if ($fields->isNotEmpty()) {
+                    return Fieldset::make($section_name)->schema([
+                        Grid::make([
+                            'default' => 2,
+                            'sm' => 4,
+                            'md' => 4,
+                            'lg' => 4,
+                            'xl' => 4,
+                            '2xl' => 4,
+                        ])
+                        ->schema($fields->toArray())
+                    ]);
+                }
+            })
+            ?->filter()
+            ?->toArray();
+    }
+
     public function getFields($group)
     {
         return $group->sortBy('filter_layout.order_number')->map(function (Attribute $attribute) {
@@ -93,30 +124,10 @@ class Filters extends Component implements HasForms
         ->filter();
     }
 
-    // public function getCategoryAttributes()
-    // {
-
-    //     $cacheKey = ($this->category?->slug ?? 'default') . '_filters_attributes';
-
-    //     $category_attributes = Cache::remember($cacheKey, config('cache.ttl'), function () {
-    //         return Attribute::select('id', 'name', 'is_feature', 'visible', 'filter_layout', 'alterlabels', 'altersuffixes')
-    //             ->with('attribute_options:id,alternames,attribute_id,is_default,is_null', 'filterSection:id,order_number')
-    //             ->whereHas('categories', fn (Builder $query) => 
-    //                 $query->whereIn('category_id', $this->category
-    //                     ->getParentsAndSelf()
-    //                     ->pluck('id')
-    //                     ->toArray()
-    //                 )
-    //             )
-    //             ->get();
-    //     });
-
-    //     return $categoryAttributeService->forFilter($this->category);
-    // }
-
     private function resetData()
     {
-        $this->form->fill();
+        $this->reset('filters');
+        $this->form->fill($this->filters);
         $this->search();
     }
 }

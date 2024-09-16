@@ -7,6 +7,7 @@ use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Attribute;
 use App\Models\Category;
+use App\Services\Actions\CategoryAttributeService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,22 +15,31 @@ use function JmesPath\search;
 
 trait AnnouncementSearch
 {
-    public function scopeCategory($query, Category|null $category)
+    public function scopeCategory($query, ?Category $category)
     {
-        return $query->when($category, fn ($query) 
-            => $query->whereHas('categories', fn ($query) 
-                => $query->where('category_id', $category->id)->select('categories.id')
-        ));
-    }
-    public function scopeFeatures($query, $searchAttributes, array|null $attributes)
-    {
-        if ($searchAttributes->isEmpty() OR !$attributes) {
+        if (!$category) {
             return $query;
         }
 
-        return $query->where(function (Builder $query) use ($attributes, $searchAttributes) {
-            foreach ($searchAttributes as $attribute) {
-                AttributeFactory::applyQuery($attribute, $attributes, $query);
+        // return $query->whereHas('categories', fn ($query) 
+        //     => $query->where('category_id', $category->id)
+        //         ->select('categories.id')
+        // );
+
+        return $query->leftJoin('announcement_category', 'announcement_category.announcement_id', '=', 'announcements.id')
+            ->where('announcement_category.category_id', $category->id);
+    }
+    public function scopeFilter($query, ?Category $category, ?array $attributes)
+    {
+        if (!$category OR !$attributes) {
+            return $query;
+        }
+
+        return $query->where(function (Builder $query) use ($category, $attributes) {
+            $filterAttributes = (new CategoryAttributeService())->forFilter($category);
+
+            foreach ($filterAttributes as $attribute) {
+                AttributeFactory::applySearchQuery($attribute, $attributes, $query);
             }
         });
     }
@@ -39,7 +49,7 @@ trait AnnouncementSearch
         return $query->where('current_status', Status::published);
     }
 
-    public function scopeSearch($query, string $search)
+    public function scopeSearch($query, ?string $search = null)
     {
         if (!$search) {
             return $query;
@@ -49,12 +59,22 @@ trait AnnouncementSearch
             $query->whereRaw('LOWER(translated_value) LIKE ?', ['%' . mb_strtolower($search) . '%']));
     }
 
-    public function scopeSort($query, Sort $sort = null)
+    public function scopeSort($query, ?string $sort = null)
     {
-        // return $query->when($sort, fn ($query) 
-        //     => $query->orderBy($sort->orderBy(), $sort->type())
-        // );
+        if (!$sort) {
+            return $query;
+        }
 
-        return $sort?->query($query);
+        $sort = explode(':', $sort);
+        $attribute_name = $sort[0];
+        $direction = $sort[1] ?? 'asc';
+
+        $attribute = Attribute::firstWhere('name', $attribute_name);
+
+        if ($attribute) {
+            return AttributeFactory::applySortQuery($attribute, $direction, $query);
+        }
+
+        return $query->orderBy($attribute_name, $direction);
     }
 }

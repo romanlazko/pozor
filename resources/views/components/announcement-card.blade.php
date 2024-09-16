@@ -52,35 +52,39 @@
 @props(['layout' => 'sm', 'announcement' => null])
 
 @if ($layout == 'sm')
-    <div class="announcement-card w-full space-x-0">
-        <div {{ $attributes->merge(['class' => "w-full bg-white border hover:border-indigo-700 group transition ease-in-out duration-150 p-3 space-x-0 space-y-3"]) }} >
-            <div class="w-full rounded-lg overflow-hidden h-min">
-                <x-slider :medias="$announcement?->getMedia('announcements')" :h="250" :thumb="false"/>
+    <div class="announcement-card w-full space-x-0 p-2 ">
+        <a href="{{ route('announcement.show', $announcement) }}" {{ $attributes->merge(['class' => "w-full group transition ease-in-out duration-150 space-x-0 space-y-3 block"]) }} >
+            <div class="w-full rounded-2xl overflow-hidden h-min">
+                <x-slider :medias="$announcement?->getMedia('announcements')" :h="300" :thumb="false"/>
             </div>
         
-            <a href="{{ route('announcement.show', $announcement) }}" class="w-full flex">
+            <div class="w-full flex">
                 <div class="flex flex-col w-full space-y-1">
                     <div class="flex-1 space-y-1">
                         <div class="w-full">
-                            <p class="sm:text-xl sm:font-bold text-indigo-700 hover:text-indigo-800 hover:underline">
+                            <p class="text-lg font-semibold text-gray-900 group-hover:text-indigo-800 group-hover:underline line-clamp-1">
                                 {{ $announcement?->getSectionByName('title')?->pluck('value')?->implode(' ') }}
                             </p>
-                            
-                            <p class="font-bold sm:text-2xl w-full">
-                                {{ $announcement?->getSectionByName('price')?->pluck('value')?->implode(' ') }}
+
+                            <p class="text-xs text-gray-600">
+                                {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }}
                             </p>
+
+                            <p class="text-xs text-gray-400">
+                                {{ $announcement->created_at?->diffForHumans() }}
+                            </p>
+                            
+                            <div class="flex items-center space-x-2">
+                                <p class="font-bold text-lg w-full">
+                                    {{ $announcement?->getSectionByName('price')?->pluck('value')?->implode(' ') }}
+                                </p>
+                                <livewire:components.like-dislike :announcement="$announcement"/>
+                            </div>
+                            
                         </div>
                     </div>
-                    <div class="">
-                        <p class="text-xs text-gray-500">
-                            {{ $announcement->geo?->country }}, {{ $announcement->geo?->name }} - {{ $announcement->created_at?->diffForHumans() }}
-                        </p>
-                    </div>
                 </div>
-            </a>
-            <div class="h-full">
-                <livewire:components.like-dislike :announcement="$announcement"/>
             </div>
-        </div>
+        </a>
     </div>
 @endif

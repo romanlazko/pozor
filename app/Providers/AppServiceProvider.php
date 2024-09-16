@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Translators\NlpTranslation;
 use DeepL\Translator;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -20,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('deepl', function () {
-            return new Translator(env('DEEPL_API_KEY'));
+        $this->app->bind('rapid-api-translator', function () {
+            return new NlpTranslation(env('RAPID_API_KEY'));
         });
 
         $this->app->bind('bot', function () {

@@ -34,9 +34,9 @@ class SearchRequest extends FormRequest
 
         $this->merge([
             'data' => [
-                'filters' => $this->input('filters', $data['filters'] ?? null),
-                'sort' => Sort::tryFrom($this->input('sort', $data['sort']->value ?? 'newest')),
-                'search' => $this->input('search', $data['search'] ?? ''),
+                'filters' => $this->input('filters', $this->filter($data['filters'] ?? [])),
+                'sort' => $this->input('sort', $data['sort'] ?? null),
+                'search' => $this->input('search', $data['search'] ?? null),
             ],
         ]);
     }
@@ -54,5 +54,17 @@ class SearchRequest extends FormRequest
     {
         return $data ? unserialize(decrypt(urldecode($data))) : null;
     }
-    
+
+    private function filter($array)
+    {
+        $array = array_filter($array);
+
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->filter($value);
+            }
+        }
+
+        return $array;
+    }
 }

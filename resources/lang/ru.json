@@ -78,6 +78,9 @@
         "Latest announcements:": "Последние объявления:",
         "Details": "Подробности",
 
+        "from high to low": "от большего к меньшему",
+        "from low to high": "от меньшего к большому",
+
     "MESSAGE-INDEX.BLADE": "MESSAGE-INDEX.BLADE",
 
         "Messages": "Сообщения",

@@ -38,30 +38,30 @@ class Location extends BaseAttributeType
     {
         return Grid::make(2)
             ->schema([
-                ComponentsSelect::make('attributes.country')
+                ComponentsSelect::make('country')
                     ->label(__('filament.labels.country'))
                     ->options($this->countries->pluck('name', 'country'))
                     ->searchable()
                     ->afterStateUpdated(function (Set $set) {
-                        $set('attributes.geo_id', null);
+                        $set('geo_id', null);
                     })
                     ->placeholder(__('filament.labels.country'))
                     ->default('CZ')
                     ->live(),
-                ComponentsSelect::make('attributes.geo_id')
+                ComponentsSelect::make('geo_id')
                     ->label(__('filament.labels.city'))
                     ->searchable()
                     ->preload()
-                    ->options(fn (Get $get) => Geo::where('country', $get('attributes.country') ?? 'CZ')->orderBy('level')->pluck('name', 'id'))
+                    ->options(fn (Get $get) => Geo::where('country', $get('country') ?? 'CZ')->orderBy('level')->pluck('name', 'id'))
                     ->getSearchResultsUsing(function (string $search, Get $get) {
-                        return Geo::where('country', $get('attributes.country') ?? 'CZ')
+                        return Geo::where('country', $get('country') ?? 'CZ')
                             ->whereRaw('LOWER(alternames) LIKE ?', ['%' . mb_strtolower($search) . '%'])
                             ->limit(30)
                             ->pluck('name', 'id');
                     })
                     ->live()
                     ->placeholder(__('filament.labels.city')),
-                ComponentsSelect::make('attributes.radius')
+                ComponentsSelect::make('radius')
                     ->label(__('filament.labels.radius'))
                     ->options([
                         10 => '10 km',
@@ -72,10 +72,10 @@ class Location extends BaseAttributeType
                         60 => '60 km',
                         70 => '70 km',
                     ])
-                    ->hidden(fn (Get $get) => $get('attributes.geo_id') == null)
+                    ->hidden(fn (Get $get) => $get('geo_id') == null)
                     ->afterStateHydrated(function (Get $get, Set $set) {
-                        if ($get('attributes.radius') == null) {
-                            $set('attributes.radius', 30);
+                        if ($get('radius') == null) {
+                            $set('radius', 30);
                         }
                     })
                     ->selectablePlaceholder(false)

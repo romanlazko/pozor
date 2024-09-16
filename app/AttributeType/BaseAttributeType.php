@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BaseAttributeType extends AbstractAttributeType
 {
-    protected function getSortQuery(Builder $query, $destination = 'asc') : Builder
+    protected function getSortQuery(Builder $query, $direction = 'asc') : Builder
     {
         return $query->rightJoin('features as announcement_features', function($join) {
             $join->on('announcements.id', '=', 'announcement_features.announcement_id')
                 ->where('announcement_features.attribute_id', $this->attribute->id);
         })
-        ->orderBy('announcement_features.translated_value->original', $destination);
+        ->orderByRaw('CAST(announcement_features.translated_value->>"$.original" AS UNSIGNED) ' . $direction);
     }
 
     protected function getSearchQuery(Builder $query) : Builder

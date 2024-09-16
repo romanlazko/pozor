@@ -81,6 +81,9 @@
         "Latest announcements:": "Nejnovější inzeráty:",
         "Details": "Detaily",
 
+        "from high to low": "od většího k menšímu",
+        "from low to high": "od meněho k větěšímu",
+
     "MESSAGE-INDEX.BLADE": "MESSAGE-INDEX.BLADE",
 
         "Messages": "Zprávy",

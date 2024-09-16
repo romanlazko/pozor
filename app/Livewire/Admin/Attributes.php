@@ -1088,6 +1088,13 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                         ])
                                         ->hidden(fn (Get $get) => $get('filter_layout.type') == 'hidden')
                                         ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+
+                                    Grid::make(3)
+                                        ->schema([
+                                            Toggle::make('is_sortable')
+                                                ->helperText(__("Является ли этот атрибут для сортировки")),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
                                 ])
                                 ->columns(3),
 

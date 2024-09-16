@@ -14,22 +14,33 @@ abstract class AbstractAttributeType
     {
     }
 
-    public function sort(Builder $query, $destination = 'asc') : Builder
+    public function sort(Builder $query, $direction = 'asc') : Builder
     {
-        // if ($this->attribute->sortable) {
-            return $this->getSortQuery($query, $destination);
-        // }
+        if ($this->attribute->is_sortable) {
+            return $this->getSortQuery($query, $direction);
+        }
 
-        // return $query;
+        return $query;
     }
 
-    public function apply(Builder $query) : Builder
+    public function search(Builder $query) : Builder
+    {
+        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
+            $query->whereHas('features', function ($query) {
+                return $this->getSearchQuery($query);
+            });
+        }
+
+        return $query;
+    }
+
+    public function alternativeSearch(Builder $query) : ?Builder
     {
         if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
             return $this->getSearchQuery($query);
         }
 
-        return $query;
+        return null;
     }
 
     public function getValueByFeature(Feature $feature = null) : ?string
@@ -84,8 +95,8 @@ abstract class AbstractAttributeType
         }
 
         return $this->getFilamentFilterComponent($get)
-            ?->columnSpan(['default' => 'full', 'sm' => $this->attribute->create_layout['column_span'] ?? 'full'])
-            ?->columnStart(['default' => '1', 'sm' => $this->attribute->create_layout['column_start'] ?? '1'])
+            ?->columnSpan(['default' => 'full', 'sm' => $this->attribute->filter_layout['column_span'] ?? 'full'])
+            ?->columnStart(['default' => '1', 'sm' => $this->attribute->filter_layout['column_start'] ?? '1'])
             ?->visible(fn (Get $get) => $this->isVisible($get))
             ?->hidden(fn (Get $get) => $this->isHidden($get));
     }
@@ -130,7 +141,7 @@ abstract class AbstractAttributeType
         return false;
     }
 
-    protected abstract function getSortQuery(Builder $query) : Builder;
+    protected abstract function getSortQuery(Builder $query, $direction = 'asc') : Builder;
 
     protected abstract function getSearchQuery(Builder $query) : Builder;
 

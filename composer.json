@@ -8,6 +8,7 @@
         "php": "^8.1",
         "akuechler/laravel-geoly": "^1.0",
         "anhskohbo/no-captcha": "^3.5",
+        "codewithdennis/filament-select-tree": "^3.1",
         "deeplcom/deepl-php": "^1.7",
         "ezyang/htmlpurifier": "^4.17",
         "filament/forms": "^3.2",
