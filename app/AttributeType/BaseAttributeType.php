@@ -14,8 +14,9 @@ class BaseAttributeType extends AbstractAttributeType
             $join->on('announcements.id', '=', 'announcement_features.announcement_id')
                 ->where('announcement_features.attribute_id', $this->attribute->id);
         })
-        ->orderByRaw('CAST(announcement_features.translated_value->>"$.original" AS UNSIGNED) ' . $direction);
+        ->orderByRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(announcement_features.translated_value, "$.original")) AS UNSIGNED) ' . $direction);
     }
+
 
     protected function getSearchQuery(Builder $query) : Builder
     {
