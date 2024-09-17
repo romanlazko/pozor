@@ -16,65 +16,26 @@ class SearchViewModel
 {
     public $features = null;
 
+    public $category = null;
+
+    public $categories = null;
+
+    public $announcements = null;
+
+    public $sortableAttributes = null;
+
     private $filterQueries = 0;
 
     public function __construct(public SearchRequest $request)
     {
+        $this->category = $this->category();
+        $this->categories = $this->categories();
+        $this->features = $this->features();
+        $this->announcements = $this->announcements();
+        $this->sortableAttributes = $this->sortableAttributes();
     }
 
-    public function announcements()
-    {
-        return $this->getAnnouncementsQuery()
-            ->when($this->features()->isNotEmpty(), fn ($query) => 
-                $query->whereIn('announcements.id', $this->features()->pluck('announcement_id'))
-                    ->get()
-            )
-            ->when($this->features()->isEmpty(), fn ($query) => 
-                $query->category($this->category())
-                    ->isPublished()
-                    ->paginate(30)
-                    ->withQueryString()
-            );
-    }
-
-    public function category(): ?Category
-    {
-        if (!$this->request->route('category')) {
-            return null;
-        }
-
-        return Cache::remember($this->request->route('category').'_category', config('cache.ttl'), function () {
-            return Category::select('id', 'slug', 'parent_id', 'is_active', 'alternames')
-                ->where('slug', $this->request->route('category'))
-                ->isActive()
-                ->first();
-        });
-    }
-
-    public function categories()
-    {
-        return Cache::remember($this->category()?->slug.'_categories', config('cache.ttl'), function () {
-            if ($children = $this->category()?->children->where('is_active', true) AND $children->isNotEmpty()) {
-                return $children->load('media');
-            }
-
-            if ($siblings = $this->category()?->siblings->where('is_active', true) AND $siblings->isNotEmpty()) {
-                return $siblings->load('media');
-            }
-
-            return Category::whereNull('parent_id')
-                ->isActive()
-                ->get()
-                ->load('media');
-        });
-    }
-
-    public function sortableAttributes()
-    {
-        return (new CategoryAttributeService())->forSorting($this->category());
-    }
-
-    private function getAnnouncementsQuery()
+    private function announcements()
     {
         $title_price_attributes = Attribute::whereHas('showSection', fn ($query) => 
             $query->whereIn('slug', ['title', 'price'])
@@ -92,51 +53,71 @@ class SearchViewModel
                 'userVotes',
             ])
             ->select('announcements.id', 'announcements.slug', 'announcements.geo_id', 'announcements.created_at')
-            ->sort($this->request->data['sort']);
+            ->sort($this->request->sort)
+            ->whereIn('announcements.id', $this->features->pluck('announcement_id'))
+            ->get();
     }
 
-    public function features()
+    private function category(): ?Category
     {
-        if (!$this->features) {
-            $this->features = $this->getFeatures();
+        if (!$this->request->route('category')) {
+            return null;
         }
 
-        return $this->features;
+        return Cache::remember($this->request->route('category').'_category', config('cache.ttl'), function () {
+            return Category::select('id', 'slug', 'parent_id', 'is_active', 'alternames')
+                ->where('slug', $this->request->route('category'))
+                ->isActive()
+                ->first();
+        });
     }
 
-    public function paginator() 
+    private function categories()
     {
-        if ($this->features()->isNotEmpty()) {
-            return $this->features();
-        }
+        return Cache::remember($this->category?->slug.'_categories', config('cache.ttl'), function () {
+            if ($children = $this->category?->children->where('is_active', true) AND $children->isNotEmpty()) {
+                return $children->load('media');
+            }
 
-        return $this->announcements();
+            if ($siblings = $this->category?->siblings->where('is_active', true) AND $siblings->isNotEmpty()) {
+                return $siblings->load('media');
+            }
+
+            return Category::whereNull('parent_id')
+                ->isActive()
+                ->get()
+                ->load('media');
+        });
     }
 
-    public function getFeatures() 
+    private function sortableAttributes()
     {
-        $filters = $this->request->data['filters']['attributes'] ?? null;
-        $search = $this->request->data['search'] ?? null;
+        return (new CategoryAttributeService())->forSorting($this->category);
+    }
 
-        if (!$filters AND !$search) {
-            return collect([]);
-        }
+    private function features() 
+    {
+        $filters = $this->request->filters['attributes'] ?? null;
+        $search = $this->request->search;
+        $location = $this->request->location;
 
         return Feature::select('announcement_id')->groupBy('announcement_id')
-            ->where(function ($query) use ($filters) {
-                $filterAttributes = (new CategoryAttributeService())->forFilter($this->category());
-
-                foreach ($filterAttributes as $attribute) {
-                    $query->orWhere(function($query) use ($attribute, $filters) {
-                        if (AttributeFactory::applyAlternativeSearchQuery($attribute, $filters, $query) instanceof Builder) {
-                            $this->filterQueries++;
-                        }
-                    });
-                }
-                
-                return $query;
-            })
-            
+            ->when($filters, fn ($query) => 
+                $query->where(function ($query) use ($filters) {
+                    $filterAttributes = (new CategoryAttributeService())->forFilter($this->category);
+    
+                    foreach ($filterAttributes as $attribute) {
+                        $query->orWhere(function($query) use ($attribute, $filters) {
+                            if (AttributeFactory::applyAlternativeSearchQuery($attribute, $filters, $query) instanceof Builder) {
+                                $this->filterQueries++;
+                            }
+                        });
+                    }
+                    
+                    return $query;
+                })
+            )
+        
             ->when($search, fn ($query) =>
                 $query->orWhere(fn ($query) => 
                     $query->whereRaw('LOWER(translated_value) LIKE ?', ['%' . mb_strtolower($search) . '%'])
@@ -145,9 +126,45 @@ class SearchViewModel
                         )
                 )
             )
-            ->whereHas('announcement', fn ($query) => $query->category($this->category())->isPublished())
-            ->havingRaw('COUNT(DISTINCT attribute_id) = '. $this->filterQueries + ($search ? 1 : 0))
+
+            ->whereHas('announcement', fn ($query) => 
+                $query->category($this->category)
+                    ->isPublished()
+                    ->when($location, fn ($query) => $query->geo($location))
+            )
+
+            ->when($filters, fn ($query) => $query->havingRaw('COUNT(DISTINCT attribute_id) = '. $this->filterQueries + ($search ? 1 : 0)))
             ->paginate(30)
             ->withQueryString();
+    }
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    public function getSortableAttributes()
+    {
+        return $this->sortableAttributes;
+    }
+
+    public function getAnnouncements()
+    {
+        return $this->announcements;
+    }
+
+    public function getFeatures()
+    {
+        return $this->features;
+    }
+
+    public function getPaginator()
+    {
+        return $this->features;
     }
 }

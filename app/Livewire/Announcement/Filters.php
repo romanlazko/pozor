@@ -28,6 +28,8 @@ class Filters extends Component implements HasForms
     public $filters = [
     ];
 
+    public $gettedFilters = null;
+
     private $categoryAttributeService;
 
     public $category;
@@ -40,6 +42,8 @@ class Filters extends Component implements HasForms
     public function mount(null|array $filters = null , $category = null)
     {
         $this->category = $category;
+
+        $this->gettedFilters = $filters;
 
         $this->form->fill($filters);
     }
@@ -80,21 +84,6 @@ class Filters extends Component implements HasForms
             ?->sortBy('filterSection.order_number')
             ?->groupBy('filterSection.name')
             ?->map(function ($section, $section_name) {
-                // $fields = $this->getFields($section);
-                
-                // if ($fields->isNotEmpty()) {
-                //     return Section::make('')
-                //         ->columns([
-                //             'default' => 4,
-                //             'sm' => 4,
-                //             'md' => 4,
-                //             'lg' => 4,
-                //             'xl' => 4,
-                //             '2xl' => 4,
-                //         ])
-                //         ->schema($fields->toArray())
-                //         ->extraAttributes(['class' => 'bg-gray-100 rounded-lg border p-2 border-gray-500']);
-                // }
 
                 $fields = $this->getFields($section);
                 

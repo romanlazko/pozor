@@ -14,7 +14,7 @@
                     Buy, Sell, Discover<br> Everything you need in one place
                 </h1>
 
-                <x-search/>
+                <x-search :location="$request->location"/>
             </div>
             
             <div class="space-y-6">

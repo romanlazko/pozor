@@ -24,44 +24,48 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
+            'filters' => 'array|nullable',
+            'sort' => 'string|nullable',
+            'search' => 'string|nullable',
+            'location' => 'array|nullable',
         ];
     }
 
     protected function prepareForValidation()
     {
-        $data = $this->unserializeData($this->input('data')) ?? $this->unserializeData(session('announcement_search'));
+        $data = $this->unserializeData($this->input('data'));
 
         $this->merge([
-            'data' => [
-                'filters' => $this->input('filters', $this->filter($data['filters'] ?? [])),
-                'sort' => $this->input('sort', $data['sort'] ?? null),
-                'search' => $this->input('search', $data['search'] ?? null),
-            ],
+            'filters' => $this->recursive_array_filter($this->input('filters', $data['filters'] ?? session('filters'))),
+            'sort' => $this->input('sort', $data['sort'] ?? session('sort')),
+            'search' => $this->input('search', $data['search'] ?? session('search')),
+            'location' => $this->recursive_array_filter($this->input('location', $data['location'] ?? session('location'))),
         ]);
     }
 
     public function serializedData()
     {
-        $data = urlencode(encrypt(serialize($this->data)));
+        foreach ($this->validated() as $key => $value) {
+            Session::put($key, $value);
+        }
 
-        Session::put('announcement_search', $data);
-
-        return $data;
+        return urlencode(encrypt(serialize($this->validated())));
     }
 
-    private function unserializeData(?string $data)
+    private function unserializeData(?string $data): ?array
     {
         return $data ? unserialize(decrypt(urldecode($data))) : null;
     }
 
-    private function filter($array)
+    private function recursive_array_filter($array)
     {
-        $array = array_filter($array);
+        if (is_array($array)) {
+            $array = array_filter($array);
 
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $array[$key] = $this->filter($value);
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    $array[$key] = $this->recursive_array_filter($value);
+                }
             }
         }
 

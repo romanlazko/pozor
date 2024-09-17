@@ -48,7 +48,7 @@
 
         <section class="lg:flex w-full mx-auto space-x-0 space-y-12 lg:space-x-6 lg:space-y-0 px-2 xl:px-0">
             <div class="w-full lg:w-2/3 overflow-hidden space-y-4">
-
+                @dump($announcement->categories)
                 <hr class="lg:hidden">
                 @if ($description = $announcement->getFeatureByName('description'))
                     <div class="space-y-4 ">

@@ -9,15 +9,18 @@ use App\View\Models\Announcement\SearchViewModel;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    public function index(SearchRequest $request)
     {
-        session()->forget('announcement_search');
+        session()->forget('filters');
+        session()->forget('search');
+        session()->forget('sort');
 
         $viewModel = new IndexViewModel();
 
         return view('announcement.index', [
             'announcements' => $viewModel->announcements(),
             'categories' => $viewModel->categories(),
+            'request' => $request,
         ]);
     }
 
@@ -25,25 +28,21 @@ class AnnouncementController extends Controller
     {
         $viewModel = new SearchViewModel($request);
 
-        $announcements = $viewModel->announcements();
-
-        $paginator = $viewModel->features()->isNotEmpty() ? $viewModel->features() : $announcements;
-
         return view('announcement.all', [
-            'announcements' => $announcements,
-            'categories' => $viewModel->categories(),
-            'category' => $viewModel->category(),
-            'sortableAttributes' => $viewModel->sortableAttributes(),
-            'data' => $request->data,
-            'paginator' => $paginator,
+            'announcements' => $viewModel->getAnnouncements(),
+            'categories' => $viewModel->getCategories(),
+            'category' => $viewModel->getCategory(),
+            'sortableAttributes' => $viewModel->getSortableAttributes(),
+            'paginator' => $viewModel->getPaginator(),
+            'request' => $request,
         ]);
     }
 
     public function search(SearchRequest $request)
     {
         return redirect()->route('announcement.all', [
-            'category' => $request->route('category'), 
-            'data' => $request->serializedData()
+            'category' => $request->route('category'),
+            'data'   => $request->serializedData(),
         ]);
     }
 

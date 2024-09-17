@@ -7,6 +7,7 @@ use App\Enums\Sort;
 use App\Enums\Status;
 use App\Models\Attribute;
 use App\Models\Category;
+use App\Models\Geo;
 use App\Services\Actions\CategoryAttributeService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -29,6 +30,14 @@ trait AnnouncementSearch
         return $query->leftJoin('announcement_category', 'announcement_category.announcement_id', '=', 'announcements.id')
             ->where('announcement_category.category_id', $category->id);
     }
+
+    public function scopeGeo($query, $location)
+    {
+        return $query->whereHas('geo', function ($query) use ($location) {
+            $query->radius($location['coordinates']['lat'], $location['coordinates']['lng'], (integer) $location['radius'] == 0 ? 30 : (integer) $location['radius']);
+        });
+    }
+
     public function scopeFilter($query, ?Category $category, ?array $attributes)
     {
         if (!$category OR !$attributes) {

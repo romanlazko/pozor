@@ -1,4 +1,4 @@
-<header class="flex items-center justify-between bg-gray-900 space-x-3 h-12 max-w-7xl m-auto">
+<header class="flex items-center justify-between bg-gray-900 space-x-3 h-12 max-w-7xl m-auto z-50">
 	<div class="flex-1 items-center justify-start flex space-x-6">
 		<a href="{{ route('announcement.index') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
@@ -29,15 +29,15 @@
 	</div>
 	
 	
-	<div class="flex items-center space-x-3">
-		<div x-data="{ dropdownOpen: false }"  class="relative">
+	<div class="flex items-center space-x-3 z-50">
+		<div x-data="{ dropdownOpen: false }"  class="relative z-50">
 			<button @click="dropdownOpen = ! dropdownOpen" class="flex text-white hover:text-indigo-700">
 				<i class="fa-solid fa-gear text-lg"></i>
 			</button>
 
 			<div x-cloak x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 z-10 w-full h-full"></div>
 
-			<x-profile-nav x-cloak x-show="dropdownOpen" class="absolute right-0 z-20 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border"/>
+			<x-profile-nav x-cloak x-show="dropdownOpen" class="absolute right-0 z-50 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border"/>
 		</div>
 	</div>
 </header>
