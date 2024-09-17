@@ -92,7 +92,11 @@ class LocationForm extends Component implements HasForms, HasActions
                                     'lat' => $this->locationData['coordinates']['lat'] ?? $this->defaultCoordinates['lat'], 
                                     'lng' => $this->locationData['coordinates']['lng'] ?? $this->defaultCoordinates['lng']
                                 ]);
-                                $set('geo_id', Geo::radius($this->locationData['coordinates']['lat'], $this->locationData['coordinates']['lng'], 10)->first()->id);
+                                $set('geo_id', Geo::radius(
+                                    $this->locationData['coordinates']['lat'] ?? $this->defaultCoordinates['lat'], 
+                                    $this->locationData['coordinates']['lng'] ?? $this->defaultCoordinates['lng'], 
+                                    10
+                                )->first()->id);
                             })
                             ->zoom(11)
                             ->columnSpanFull(),
