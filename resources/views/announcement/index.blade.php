@@ -27,7 +27,7 @@
         </div>
     </x-slot>
 
-    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 sticky top-12 lg:relative lg:top-0 z-30 p-2 lg:p-0 border-b lg:border-none bg-white">
+    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative p-2 lg:px-0 border-b lg:border-none bg-white md:bg-inherit">
         <div class="w-full text-start">
             <div class="w-full justify-between">
                 <h2 class="text-xl lg:text-3xl font-bold ">

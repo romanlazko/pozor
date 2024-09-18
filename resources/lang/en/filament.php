@@ -12,6 +12,7 @@ return [
         'full_text_search' => 'Full text search',
         'sorting' => 'Sorting',
         'reset_filters' => 'Reset filters',
+        'reset_location' => 'Reset location',
     ],
 
     'placeholders' => [

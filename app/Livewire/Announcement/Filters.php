@@ -98,7 +98,8 @@ class Filters extends Component implements HasForms
                             '2xl' => 4,
                         ])
                         ->schema($fields->toArray())
-                    ]);
+                    ])
+                    ->extraAttributes(['class' => 'bg-white']);
                 }
             })
             ?->filter()

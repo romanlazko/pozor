@@ -12,6 +12,7 @@ return [
         'full_text_search' => 'Полнотекстовый поиск',
         'sorting' => 'Сортировка',
         'reset_filters' => 'Сбросить фильтры',
+        'reset_location' => 'Сбросить местоположение',
     ],
 
     'placeholders' => [

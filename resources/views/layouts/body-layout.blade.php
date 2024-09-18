@@ -30,29 +30,36 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-white min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
+    <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''">
         <livewire:components.empty-component/>
 
         <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
 
         @if (isset($navigation))
-            <div class="w-full bg-gray-900 block sticky top-0 h-12 z-30 px-3">
+            <div class="w-full bg-gray-900 block h-12 px-3">
                 {{ $navigation }}
             </div>
         @endif
 
+        @if (isset($search))
+            <div class="bg-white sticky top-0 z-30 ">
+                {{ $search }}
+                <hr>
+            </div>
+        @endif
+
         @if (isset($header))
-            <div class="flex w-full min-h-10 items-center space-x-2 z-40 bg-gray-100 px-2 lg:px-0 " x-data="{ headerOpen: false }">
+            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100 px-2">
                 <div class="w-full max-w-7xl m-auto py-6">
                     {{ $header }}
                 </div>
             </div>
         @endif
-        
-        <div class="w-full h-full relative flex flex-1 flex-col max-w-7xl m-auto">
-            <div class='flex flex-1 flex-col relative py-6 h-full'>
+    
+        <div class="w-full h-full relative flex flex-1 flex-col border-t">
+            <div class='flex flex-1 flex-col relative h-full max-w-7xl m-auto w-full'>
                 @if (isset($sidebar))
-                    <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-white fixed lg:absolute inset-y-0 left-0 z-50 lg:z-20 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
+                    <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
                         <x-sidebar class="h-full lg:h-min">
                             {{ $sidebar }}
                         </x-sidebar>
@@ -61,7 +68,7 @@
     
                 <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
     
-                    <main id="main-block" class="w-full space-y-4 flex-1 flex-col flex">
+                    <main id="main-block" class="w-full space-y-4 flex-1 flex-col flex" >
                         {{ $slot }}
                     </main>
     
@@ -75,7 +82,7 @@
         </div>
 
         @if (isset($footerNavigation))
-            <div class="w-full lg:hidden block sticky bottom-0 h-12 z-40 border-t ">
+            <div class="w-full lg:hidden block sticky bottom-0 h-12 z-20 border-t ">
                 {{ $footerNavigation }}
             </div>
         @endif
