@@ -1,4 +1,4 @@
-@props(['medias' => [], 'h' => 500, 'thumb' => true])
+@props(['medias' => [], 'h' => null, 'thumb' => true])
 
 <div x-data="{
         photos: {{ $medias->map(fn ($media) => [
@@ -35,7 +35,7 @@
             }
         },
     }"
-    class="overflow-hidden flex flex-col "
+    @class(["overflow-hidden flex flex-col", 'h-[200px] md:h-[300px]' => !$h])
     style="height: {{ $h }}px"
 >
     <div class="relative overflow-hidden flex-1">

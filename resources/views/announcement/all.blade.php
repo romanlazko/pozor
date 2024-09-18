@@ -54,7 +54,7 @@
     </div>
 
     <div class="space-y-6 px-2 " x-ref="stickyBlock">
-        <x-announcement-list :announcements="$announcements" :cols="3" :paginator="$paginator"/>
+        <x-announcement-list :announcements="$announcements" :cols="4" :paginator="$paginator"/>
     </div>
 
     <x-slot name="footerNavigation">

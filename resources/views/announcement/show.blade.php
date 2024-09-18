@@ -10,7 +10,7 @@
     <div class="space-y-6">
         <section class="lg:flex w-full mx-auto space-x-0 space-y-6 lg:space-x-6 lg:space-y-0">
             <div class="w-full lg:w-2/3  overflow-hidden">
-                <x-slider :medias="$announcement->getMedia('announcements')"/>
+                <x-slider :medias="$announcement->getMedia('announcements')" :h="500"/>
             </div>
             <div class="w-full lg:w-1/3 overflow-hidden h-min space-y-5 px-2 xl:px-0">
                 <div class="flex">

@@ -45,7 +45,7 @@ class LocationForm extends Component implements HasForms, HasActions
 
     public function location(): Action
     {
-        return Action::make('location')
+        return Action::make('location') 
             ->link()
             ->icon('heroicon-o-map-pin')
             ->extraAttributes(['class' => 'cursor-pointer whitespace-nowrap'])

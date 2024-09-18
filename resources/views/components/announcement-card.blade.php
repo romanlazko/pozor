@@ -55,7 +55,7 @@
     <div class="announcement-card w-full space-x-0 ">
         <a href="{{ route('announcement.show', $announcement) }}" {{ $attributes->merge(['class' => "w-full group transition ease-in-out duration-150 space-x-0 space-y-3 block"]) }} >
             <div class="w-full rounded-2xl overflow-hidden h-min">
-                <x-slider :medias="$announcement?->getMedia('announcements')" :h="200" :thumb="false"/>
+                <x-slider :medias="$announcement?->getMedia('announcements')" :thumb="false"/>
             </div>
         
             <div class="w-full flex">

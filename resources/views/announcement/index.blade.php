@@ -38,7 +38,7 @@
     </div>
 
     <div class="space-y-6 px-2 lg:px-0">
-        <x-announcement-list :announcements="$announcements" :cols="4"/>
+        <x-announcement-list :announcements="$announcements" :cols="5"/>
     </div>
 
     <x-slot name="footerNavigation">
