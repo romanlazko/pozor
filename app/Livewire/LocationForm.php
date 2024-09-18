@@ -39,7 +39,7 @@ class LocationForm extends Component implements HasForms, HasActions
     public function mount($location, $category = null)
     {
         $this->category = $category;
-        $this->locationData = $location ?? [];
+        $this->locationData = $location ?? []; 
         $this->countries = Cache::rememberForever('countries', fn () => Geo::select('name', 'country')->where('level', 'PCLI')->get());
     }
 
