@@ -72,6 +72,7 @@ class AnnouncementChannels extends BaseAdminLayout implements HasForms, HasTable
                             'telegram_chat_id' => $data['telegram_chat_id']
                         ]);
                     })
+                    ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                     ->slideover(),
             ])
             ->poll('2s');

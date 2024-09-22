@@ -40,7 +40,7 @@
 >
     <div class="relative overflow-hidden flex-1">
         {{-- <img x-bind:src="photos[current]['placeholder']" alt="" class="absolute z-0 inset-0 bg-cover bg-center object-cover border-none h-full w-full"/> --}}
-        <div class="w-full m-auto items-center z-30 h-full bg-black">
+        <div class="w-full m-auto items-center z-30 h-full bg-black rounded-2xl overflow-hidden">
             <div class="flex relative h-full justify-center items-center">
                 <div class="absolute z-20 left-0 content-center h-full flex items-center px-1">
                     <button x-on:click="prev" :class="{ 'hidden': photos.length < 2 }" class="m-auto whitespace-nowrap items-center cursor-pointer grid w-8 h-8 " aria-label="previous-photo">

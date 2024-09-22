@@ -131,6 +131,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                                 ->form(fn (Announcement $announcement) => [
                                     Livewire::make(AnnouncementChannels::class, ['announcement_id' => $announcement->id]),
                                 ])
+                                ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                                 ->icon('heroicon-o-chat-bubble-bottom-center-text')
                                 ->slideover(),
                         )
@@ -182,6 +183,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                             ->icon('heroicon-c-no-symbol')
                             ->slideOver()
                             ->modalWidth('md')
+                            ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                             ->size(ActionSize::ExtraSmall),
                     ])
                     ->dropdown(false)
@@ -263,6 +265,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                             ->form(fn (Announcement $announcement) => [
                                 Livewire::make(AnnouncementAudits::class, ['announcement_id' => $announcement->id])
                             ])
+                            ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                             ->modalSubmitAction(false)
                             ->slideover()
                             ->icon('heroicon-o-clock'),

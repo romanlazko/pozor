@@ -51,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::Indigo,
             'success' => Color::Green,
             'warning' => Color::Amber,
+            'neutral' => Color::Neutral,
+            'white' => Color::hex('#ffffff'),
         ]);
     }
 }

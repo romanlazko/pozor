@@ -735,6 +735,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                             ->columns(2),
                     ])
                     ->slideOver()
+                    ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                     ->closeModalByClickingAway(false),
                 
             ])
@@ -1325,6 +1326,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                 ->columns(2),
                         ])
                         ->slideOver()
+                        ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                         ->closeModalByClickingAway(false),
                     DeleteAction::make()
                 ])

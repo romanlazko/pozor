@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-.fi-modal-content {
+/* .fi-modal-content {
     background-color: #e5e7eb;
     padding: 6px;
+} */
+
+.fi-btn {
+    border-radius: 1rem;
+}
+
+.parent:focus * {
+    text-decoration: none;
 }
 
 .fi-fieldset {
