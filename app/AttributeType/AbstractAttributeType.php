@@ -4,10 +4,9 @@ namespace App\AttributeType;
 
 use App\Models\Attribute;
 use App\Models\Feature;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Get;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class AbstractAttributeType
 {
@@ -15,13 +14,33 @@ abstract class AbstractAttributeType
     {
     }
 
-    public function apply($query) : Builder
+    public function sort(Builder $query, $direction = 'asc') : Builder
     {
-        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
-            return $this->getQuery($query);
+        if ($this->attribute->is_sortable) {
+            return $this->getSortQuery($query, $direction);
         }
 
         return $query;
+    }
+
+    public function search(Builder $query) : Builder
+    {
+        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
+            $query->whereHas('features', function ($query) {
+                return $this->getSearchQuery($query);
+            });
+        }
+
+        return $query;
+    }
+
+    public function alternativeSearch(Builder $query) : ?Builder
+    {
+        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
+            return $this->getSearchQuery($query);
+        }
+
+        return null;
     }
 
     public function getValueByFeature(Feature $feature = null) : ?string
@@ -31,7 +50,7 @@ abstract class AbstractAttributeType
                 $feature->translated_value[app()->getLocale()]
                 ?? $feature->translated_value['original']
                 ?? null
-            );
+            ) . ' ' . $this->attribute->suffix;
     }
 
     public function getCreateSchema(): array
@@ -75,7 +94,11 @@ abstract class AbstractAttributeType
             return null;
         }
 
-        return $this->getFilamentFilterComponent($get);
+        return $this->getFilamentFilterComponent($get)
+            ?->columnSpan(['default' => 'full', 'sm' => $this->attribute->filter_layout['column_span'] ?? 'full'])
+            ?->columnStart(['default' => '1', 'sm' => $this->attribute->filter_layout['column_start'] ?? '1'])
+            ?->visible(fn (Get $get) => $this->isVisible($get))
+            ?->hidden(fn (Get $get) => $this->isHidden($get));
     }
 
     protected function isVisible(Get $get = null): bool
@@ -118,7 +141,9 @@ abstract class AbstractAttributeType
         return false;
     }
 
-    protected abstract function getQuery($query) : Builder;
+    protected abstract function getSortQuery(Builder $query, $direction = 'asc') : Builder;
+
+    protected abstract function getSearchQuery(Builder $query) : Builder;
 
     protected abstract function getFeatureValue(null|string|array $translated_value = null): ?string;
 

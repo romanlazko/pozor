@@ -46,7 +46,7 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function ($model) {
-                return $model->getFeatureByName('title')?->translated_value['original'] ?? $model->uuid;
+                return $model?->getSectionByName('title')?->pluck('value')?->implode(' ') ?? $model->uuid;
             })
             ->skipGenerateWhen(function () {
                 return $this->features->isEmpty();

@@ -12,11 +12,18 @@ return [
         'full_text_search' => 'Full text search',
         'sorting' => 'Sorting',
         'reset_filters' => 'Reset filters',
+        'reset_location' => 'Reset location',
     ],
 
     'placeholders' => [
         'from' => 'From',
         'to' => 'To',
         'currency' => 'Currency',
+        'country' => 'Country',
+        'city' => 'City',
+        'radius' => 'Radius',
+        'year' => 'Year',
+        'month' => 'Month',
+        'day' => 'Day',
     ],
 ];

@@ -24,7 +24,7 @@
 		@endauth
 		
 		<x-a-buttons.create href="{{ route('profile.announcement.create') }}" class="">
-			{{ __("Create announcement") }}
+			{{ __("Create New") }}
 		</x-a-buttons.create>
 	</div>
 	

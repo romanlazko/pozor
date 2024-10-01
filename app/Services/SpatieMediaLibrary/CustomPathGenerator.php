@@ -2,7 +2,7 @@
 
 namespace App\Services\SpatieMediaLibrary;
 
-
+use App\Models\Announcement;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -37,12 +37,29 @@ class CustomPathGenerator implements PathGenerator
      */
     protected function getBasePath(Media $media): string
     {
-        $prefix = config('media-library.prefix', '');
+        return implode('/', array_filter([
+            $this->getCollectionDirectory($media),
+            $this->getFileDirectory($media),
+        ]));
+    }
 
-        if ($prefix !== '') {
-            return $prefix.'/'.$media->getKey();
-        }
+    protected function getEnvironmentDirectory(Media $media): string
+    {
+        return config('app.env');
+    }
 
-        return $media->collection_name . '/' . md5($media->getKey().config('app.key'));
+    protected function getCollectionDirectory(Media $media): string
+    {
+        return $media->collection_name;
+    }
+
+    protected function getModelDirectory(Media $media): ?string
+    {
+        return $media->model?->getKey();
+    }
+
+    protected function getFileDirectory(Media $media): string
+    {
+        return md5($media->getKey().$media->name);
     }
 }

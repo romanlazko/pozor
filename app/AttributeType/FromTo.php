@@ -6,11 +6,11 @@ use Filament\Forms\Get;
 use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class FromTo extends Between
 {
-    protected function getQuery($query) : Builder
+    protected function getSearchQuery(Builder $query) : Builder
     {
         $from = $this->data[$this->attribute->name]['from'] ?? null;
         $to = $this->data[$this->attribute->name]['to'] ?? null;
@@ -45,11 +45,13 @@ class FromTo extends Between
             ComponentsTextInput::make('attributes.'.$this->attribute->name.'.from')
                 ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
-                ->default(''),
+                ->default('')
+                ->required($this->attribute->required),
             ComponentsTextInput::make('attributes.'.$this->attribute->name.'.to')
                 ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
-                ->default(''),
+                ->default('')
+                ->required($this->attribute->required),
             ])
             ->label($this->attribute->label)
             ->columns(['default' => 2]);

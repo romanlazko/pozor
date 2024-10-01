@@ -5,12 +5,16 @@ namespace App\Livewire\Announcement;
 use App\AttributeType\AttributeFactory;
 use App\Livewire\Components\Forms\Components\Wizard;
 use App\Livewire\Traits\AnnouncementCrud;
+use App\Models\Announcement;
 use App\Models\Attribute;
 use App\Models\Category;
+use App\Services\Actions\CategoryAttributeService;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -49,6 +53,13 @@ class Create extends Component implements HasForms
 
     protected $categories = null;
 
+    protected $categoryAttributeService;
+
+    public function boot(CategoryAttributeService $categoryAttributeService)
+    {
+        $this->categoryAttributeService = $categoryAttributeService;
+    }
+
     public function mount(): void
     {
         $this->parent_categories = Category::where('parent_id', null)->get()->pluck('name', 'id');
@@ -77,7 +88,6 @@ class Create extends Component implements HasForms
                                                 ->live(),
                                             ...$this->getSubcategories($get, $set)
                                         ]),
-                                    
                                 ]),
                         ]),
                     Step::make('Features')
@@ -122,21 +132,25 @@ class Create extends Component implements HasForms
 
     public function getFormSchema(): array
     {
-        return $this->getCategoryAttributes()
+        return $this->categoryAttributeService->forCreate($this->data['categories'] ?? [])
             ?->sortBy('createSection.order_number')
             ?->groupBy('createSection.name')
-            ?->map(function($section, $section_name) {
-                return Section::make($section_name)->schema([
-                    Grid::make([
-                        'default' => 2,
-                        'sm' => 4,
-                        'md' => 4,
-                        'lg' => 4,
-                        'xl' => 4,
-                        '2xl' => 4,
-                    ])
-                    ->schema($this->getFields($section))
-                ]);
+            ?->map(function ($section, $section_name) {
+                $fields = $this->getFields($section);
+                
+                if ($fields->isNotEmpty()) {
+                    return Section::make($section_name)->schema([
+                        Grid::make([
+                            'default' => 2,
+                            'sm' => 4,
+                            'md' => 4,
+                            'lg' => 4,
+                            'xl' => 4,
+                            '2xl' => 4,
+                        ])
+                        ->schema($fields->toArray())
+                    ]);
+                }
             })
             ?->filter()
             ?->toArray();
@@ -164,40 +178,17 @@ class Create extends Component implements HasForms
         return [];
     }
 
-    public function getFields($section): array
+    public function getFields($section)
     {
         return $section->sortBy('create_layout->order_number')->map(function ($attribute) {
                 return AttributeFactory::getCreateComponent($attribute);
             })
-            ->filter()
-            ->toArray();
-    }
-
-    public function getCategoryAttributes(): Collection
-    {
-        $cacheKey = implode('_', $this->data['categories']) . '_create_attributes';
-
-        return Cache::remember($cacheKey, config('cache.ttl'), function () {
-            return Attribute::with([
-                    'attribute_options' => function (HasMany $query) {
-                        return $query->select(
-                            'attribute_id',
-                            'id',
-                            'alternames',
-                            'is_default',
-                            'is_null'
-                        )->whereNot('is_null', true);
-                    },
-                    'createSection:id,order_number,alternames'
-                ])
-                ->whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $this->data['categories']))
-                ->get();
-        });
+            ->filter();
     }
 
     public function getCategories(): SupportCollection
     {
-        $cacheKey = implode('_', $this->data['categories']) . '_create_categories';
+        $cacheKey = implode('_', $this->data['categories'] ?? []) . '_create_categories';
 
         return Cache::remember($cacheKey, config('cache.ttl'), function () {
             return Category::whereIn('id', $this->data['categories'])

@@ -1,5 +1,8 @@
 <?php
 
+use App\Facades\NlpTranslate;
+use App\Facades\RapidApiTranslator;
+use App\Facades\Translator;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramAdvertisementController;
@@ -53,7 +56,8 @@ Route::post('/locale', function (Request $request){
 })->name('locale');
 
 Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
-    Route::get('/all/{category:slug?}', 'index')->name('index');
+    Route::get('/', 'index')->name('index');
+    Route::get('/all/{category:slug?}', 'all')->name('all');
     Route::get('/search/{category:slug?}', 'search')->name('search');
 
     Route::get('/show/{announcement:slug}', 'show')->name('show');
@@ -97,7 +101,72 @@ Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function
     
 });
 
+Route::get('translate' , function () {
+    // $response = Http::withHeaders([
+    //     'x-rapidapi-host' => 'nlp-translation.p.rapidapi.com',
+    //     'x-rapidapi-key' => 'abb4d8aff0mshe1f1bb77e8e01a2p16e8ecjsned3cdb8857ee',
+    // ])->asMultipart()->post('https://nlp-translation.p.rapidapi.com/v1/translate', [
+    //     [
+    //         'name' => 'from',
+    //         'contents' => 'en',
+    //     ],
+    //     [
+    //         'name' => 'to',
+    //         'contents' => 'ru',
+    //     ],
+    //     [
+    //         'name' => 'text',
+    //         'contents' => "New York City (NYC), often called New York (NY), is the most populous city in the United States. With an estimated 2019 population of 8,336,817 distributed over about 302.6 square miles (784 km2), New York is also the most densely populated major city in the United States.",
+    //     ],
+    // ]);
 
+
+    $sourceText = "Мастер маникюра
+
+-Гарантируем полную запись с первого рабочего дня!
+-ЗП % от  20000 - 45000 крон + премии+ процент от продаж + 🫰 чаевые 
+*Зависит от того, сколько вы готовы работать
+-График оговаривается, но обязательно выходные и наличие вечерних смен. 
+-  Мы предоставляем абсолютно все расходные материалы, инструменты, форму одежды, всё для правильной стерилизации.
+- Официальное трудоустройство (DPP, HPP)
+
+-Опыт работы, минимум пол года активной работы с клиентами
+- Знание чешского приветствуется
+- Osvědčení (лицензию мастера) мы поможем вам получить
+";
+
+
+    $translation = RapidApiTranslator::text($sourceText)->to('cs')->translate();
+    
+    dump($translation);
+});
+
+Route::get('translate1' , function () {
+    // $response = Http::withHeaders([
+    //     'x-rapidapi-host' => 'nlp-translation.p.rapidapi.com',
+    //     'x-rapidapi-key' => 'abb4d8aff0mshe1f1bb77e8e01a2p16e8ecjsned3cdb8857ee',
+    // ])->asMultipart()->post('https://nlp-translation.p.rapidapi.com/v1/translate', [
+    //     [
+    //         'name' => 'from',
+    //         'contents' => 'en',
+    //     ],
+    //     [
+    //         'name' => 'to',
+    //         'contents' => 'ru',
+    //     ],
+    //     [
+    //         'name' => 'text',
+    //         'contents' => "New York City (NYC), often called New York (NY), is the most populous city in the United States. With an estimated 2019 population of 8,336,817 distributed over about 302.6 square miles (784 km2), New York is also the most densely populated major city in the United States.",
+    //     ],
+    // ]);
+
+
+    $translation = (new NlpTranslation('abb4d8aff0mshe1f1bb77e8e01a2p16e8ecjsned3cdb8857ee'))->translateText(
+        'New York City (NYC), often called New York (NY), is the most populous city in the United States. With an estimated 2019 population of 8,336,817 distributed over about 302.6 square miles (784 km2), New York is also the most densely populated major city in the United States.', 
+        'ru;cs', 'en');
+    
+    dump($translation);
+});
 
 
 // Route::middleware('auth')->group(function () {

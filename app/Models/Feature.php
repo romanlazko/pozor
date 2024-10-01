@@ -22,24 +22,6 @@ class Feature extends Model
         'attribute',
     ];
 
-    // protected static function booted(): void
-    // {
-    //     static::creating(function (Feature $feature) {
-            
-    //         if ($feature->attribute->translatable) {
-    //             $values = [
-    //                 'original' => $feature->translated_value['original']
-    //             ];
-
-    //             $values['en'] = Deepl::translateText($feature->translated_value['original'], null, 'en-US')->text;
-    //             $values['ru'] = Deepl::translateText($feature->translated_value['original'], null, 'RU')->text;
-    //             $values['cs'] = Deepl::translateText($feature->translated_value['original'], null, 'CS')->text;
-
-    //             $feature->translated_value = $values;
-    //         }
-    //     });
-    // }
-
     public function attribute()
     {
         return $this->belongsTo(Attribute::class);
@@ -68,5 +50,10 @@ class Feature extends Model
     public function getSuffixAttribute()
     {
         return $this->attribute->suffix;
+    }
+
+    public function scopeFilter($query)
+    {
+        return $query;
     }
 }

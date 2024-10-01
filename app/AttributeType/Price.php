@@ -5,10 +5,8 @@ namespace App\AttributeType;
 use App\Models\Feature;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
-use Guava\FilamentClusters\Forms\Cluster;
 use Filament\Forms\Components\TextInput as ComponentsTextInput;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Contracts\Database\Query\Builder;
 use Filament\Forms\Components\Select as ComponentsSelect;
 
 class Price extends Between

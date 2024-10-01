@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Services\Translators\NlpTranslation;
 use DeepL\Translator;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\Models\TelegramBot;
@@ -18,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('deepl', function () {
-            return new Translator(env('DEEPL_API_KEY'));
+        $this->app->bind('rapid-api-translator', function () {
+            return new NlpTranslation(env('RAPID_API_KEY'));
         });
 
         $this->app->bind('bot', function () {
@@ -48,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::Indigo,
             'success' => Color::Green,
             'warning' => Color::Amber,
+            'neutral' => Color::Neutral,
+            'white' => Color::hex('#ffffff'),
         ]);
     }
 }
