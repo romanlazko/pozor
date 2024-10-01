@@ -7,7 +7,7 @@
         @include('layouts.navigation')
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-6 py-6">
         <section class="grid w-full md:grid-cols-3 grid-cols-1 md:gap-6">
             <div class="order-1 col-span-2 ">
                 <x-slider :medias="$announcement->getMedia('announcements')" :h="500" />
@@ -50,41 +50,44 @@
                     </div>
                 @endif
             </div>
+
             <div class="w-full h-min space-y-5 py-6 md:sticky top-0 order-2 col-span-1 p-2 md:px-0">
-                <div class="h-full flex items-center justify-between">
-                    <span class="text-sm text-gray-500">
-                        {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
-                    </span>
+                <div class="space-y-5">
+                    <div class="h-full flex items-center justify-between">
+                        <span class="text-sm text-gray-500">
+                            {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
+                        </span>
+                        
+                        <livewire:components.like-dislike :announcement="$announcement"/>
+                    </div>
+    
+                    <div class="w-full space-y-4">
+                        <h1 class="font-medium text-lg lg:text-xl">
+                            {{ $announcement->getSectionByName('title')->pluck('value')->implode(', ') }}
+                        </h1>
+                        <p class="font-bold text-3xl">
+                            {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
+                        </p>
+                    </div>
+    
+                    <div class="w-full flex space-x-3 items-center justify-between">
+                        @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
+                            <x-buttons.secondary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
+                                {{ __("Call") }}
+                            </x-buttons.secondary>
+                        @endif
+                    </div>
+    
+                    <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
+                </div>
+
+                <div>
                     
-                    <livewire:components.like-dislike :announcement="$announcement"/>
-                </div>
-                <div class="w-full space-y-4">
-                    <h1 class="font-medium text-lg lg:text-xl">
-                        {{ $announcement->getSectionByName('title')->pluck('value')->implode(', ') }}
-                    </h1>
-                    <p class="font-bold text-3xl">
-                        {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
-                    </p>
-                </div>
-
-
-                <div class="w-full flex space-x-3 items-center justify-between">
-                    @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
-                        <x-buttons.secondary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
-                            {{ __("Call") }}
-                        </x-buttons.secondary>
-                    @endif
-                </div>
-                <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
-                <div class="w-full">
-                    <livewire:send-message :announcement_id="$announcement->id"/>
                 </div>
             </div>
         </section>
 
         <section class="lg:flex w-full mx-auto space-x-0 space-y-12 lg:space-x-6 lg:space-y-0 px-2 xl:px-0">
-            
-
             <div class="w-full lg:w-1/3 space-y-6 sticky top-0">
                 <div>
                 </div>

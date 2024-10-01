@@ -3,42 +3,58 @@
 @endphp
 
 <x-body-layout :title="$title">
+    @if ($category)
+        <x-slot name="meta">
+            {!! seo()->for($category) !!}
+        </x-slot>
+    @endif
+    
     <x-slot name="navigation">
         @include('layouts.navigation')
     </x-slot>
+
+    <x-slot name="sidebar">
+        <livewire:announcement.filters :filters="$request->filters ?? null" :category="$category"/>
+    </x-slot>
+
+    <x-slot name="search">
+        <div class="w-full py-1 md:py-2 p-2">
+            <x-search :category="$category" :search="$request->search ?? null" :filterButton="true" :location="$request->location ?? null"/>
+        </div>
+    </x-slot>
     
     <x-slot name="header">
-        <div class="w-full space-y-24 py-12">
-            <div class="max-w-2xl m-auto space-y-12">
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-500 to-purple-800 text-transparent bg-clip-text">
-                    Buy, Sell, Discover<br> Everything you need in one place
-                </h1>
-
-                <x-search :location="$request->location"/>
-            </div>
+        <div class="w-full space-y-6">
+            <x-breadcrumbs :category="$category"/>
             
-            <div class="space-y-6">
-                <h2 class="text-xl text-gray-800 text-left font-semibold">
-                    View our range of <span class="text-indigo-700 font-bold">categories</span>:
-                </h2>
-                
-                <x-categories :categories="$categories"/>
-            </div>
+            <x-categories :categories="$categories" :category="$category"/>
         </div>
     </x-slot>
 
-    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative p-2 lg:px-0 border-b lg:border-none bg-white md:bg-inherit">
+    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative lg:top-0 z-20 p-2 border-b lg:border-none bg-white md:bg-inherit" >
         <div class="w-full text-start">
-            <div class="w-full justify-between">
+            <div class="w-full md:flex justify-between items-center space-y-2">
                 <h2 class="text-xl lg:text-3xl font-bold ">
-                    {{ __("All announcements:") }} <span class="text-gray-500">{{ $announcements->total() }}</span>
+                    {{ $category?->name ?? __("All announcements:") }} <span class="text-gray-500">{{ $paginator->total() }}</span>
                 </h2>
+                <form action="{{ route('announcement.search', ['category' => $category?->slug]) }}">
+                    <div class="w-full flex items-center space-x-2 ">
+                        <label for="sort" class="text-gray-500 text-sm">{{ __('Sort by:') }}</label>
+                        <select name="sort" class="border-none py-0 pl-0 shadow-none focus:ring-0 font-bold bg-transparent text-sm text-gray-900" onchange="this.form.submit()">
+                            @foreach ($sortableAttributes as $attribute)
+                                <option value="{{ $attribute->name }}:desc" @selected($request->sort == $attribute->name.":desc")>{{ $attribute->label }}: {{ __('from high to low') }} </option>
+                                <option value="{{ $attribute->name }}:asc" @selected($request->sort == $attribute->name.":asc")>{{ $attribute->label }}: {{ __('from low to high') }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="space-y-6 px-2 lg:px-0">
-        <x-announcement-list :announcements="$announcements" :cols="5"/>
+    <div class="space-y-6 px-2 " x-ref="stickyBlock">
+        <x-announcement-list :announcements="$announcements" :cols="4" :paginator="$paginator"/>
     </div>
 
     <x-slot name="footerNavigation">

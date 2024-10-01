@@ -53,7 +53,7 @@
 
 @if ($layout == 'sm')
     <div class="announcement-card w-full space-x-0 ">
-        <a href="{{ route('announcement.show', $announcement) }}" {{ $attributes->merge(['class' => "w-full group transition ease-in-out duration-150 space-x-0 space-y-3 block"]) }} >
+        <a href="{{ route('announcement.show', $announcement) }}" {{ $attributes->merge(['class' => "w-full group transition ease-in-out duration-150 space-x-0 space-y-3"]) }} >
             <div class="w-full rounded-2xl overflow-hidden h-min">
                 <x-slider :medias="$announcement?->getMedia('announcements')" :thumb="false"/>
             </div>
@@ -75,12 +75,11 @@
                             </p>
                             
                             <div class="flex items-center space-x-2">
-                                <p class="font-bold text-lg w-full">
+                                <p class="font-bold text-lg w-full z-30">
                                     {{ $announcement?->getSectionByName('price')?->pluck('value')?->implode(' ') }}
                                 </p>
                                 <livewire:components.like-dislike :announcement="$announcement"/>
                             </div>
-                            
                         </div>
                     </div>
                 </div>

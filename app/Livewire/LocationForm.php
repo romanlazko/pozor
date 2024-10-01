@@ -81,7 +81,7 @@ class LocationForm extends Component implements HasForms, HasActions
                     ->columnSpan(1),
                 Map::make('coordinates')
                     ->showMyLocationButton()
-                    ->liveLocation(true, false, 5000)
+                    ->liveLocation(true, false, 1000)
                     ->live()
                     ->afterStateUpdated(function (Set $set, $state) {
                         $set('geo_id', Geo::radius($state['lat'], $state['lng'], 10)?->first()?->id);
