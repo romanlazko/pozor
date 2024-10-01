@@ -44,7 +44,7 @@
 			</x-responsive-nav-link>
 		@endhasrole
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('announcement.index') }}">
+			<x-responsive-nav-link href="{{ route('home') }}">
 				{{ __('Back to user') }}
 			</x-responsive-nav-link>
 		@endhasrole

@@ -11,24 +11,9 @@ class AnnouncementController extends Controller
 {
     public function index(SearchRequest $request)
     {
-        session()->forget('filters');
-        session()->forget('search');
-        session()->forget('sort');
-
-        $viewModel = new IndexViewModel();
-
-        return view('announcement.index', [
-            'announcements' => $viewModel->announcements(),
-            'categories' => $viewModel->categories(),
-            'request' => $request,
-        ]);
-    }
-
-    public function all(SearchRequest $request)
-    {
         $viewModel = new SearchViewModel($request);
 
-        return view('announcement.all', [
+        return view('announcement.index', [
             'announcements' => $viewModel->getAnnouncements(),
             'categories' => $viewModel->getCategories(),
             'category' => $viewModel->getCategory(),
@@ -40,7 +25,7 @@ class AnnouncementController extends Controller
 
     public function search(SearchRequest $request)
     {
-        return redirect()->route('announcement.all', [
+        return redirect()->route('announcement.index', [
             'category' => $request->route('category'),
             'data'   => $request->serializedData(),
         ]);

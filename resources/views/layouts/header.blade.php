@@ -1,6 +1,6 @@
 <header class="flex items-center justify-between bg-gray-900 space-x-3 h-12 max-w-7xl m-auto">
 	<div class="flex-1 items-center justify-start flex space-x-6">
-		<a href="{{ route('announcement.index') }}">
+		<a href="{{ route('home') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
 		</a>
 	</div>

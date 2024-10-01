@@ -1,6 +1,6 @@
 @props(['user' => null, 'announcement_id' => null])
 
-{{-- <x-white-block> --}}
+<div class="space-y-3">
     <div class="flex space-x-4 items-center bg-gray-100 p-4 rounded-2xl border">
         <div class="relative">
             <img src="{{ $user?->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="rounded-full w-14 h-14 min-h-14 min-w-14 object-cover aspect-square">
@@ -17,4 +17,7 @@
             </div>
         </div>
     </div>
-{{-- </x-white-block> --}}
+    <div class="w-full">
+        <livewire:send-message :announcement_id="$announcement_id"/>
+    </div>
+</div>

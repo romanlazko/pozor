@@ -24,10 +24,12 @@ use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
+use App\Http\Requests\SearchRequest;
 use App\Livewire\Admin\TelegramBots;
 use App\Livewire\Admin\TelegramChats;
 use App\Livewire\Admin\Users;
 use App\Models\Category;
+use App\View\Models\Announcement\IndexViewModel;
 use Illuminate\Http\Request;
 
 /*
@@ -41,8 +43,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', fn () => redirect()->route('announcement.index'));
-
 Route::post('/locale', function (Request $request){
     if ($user = auth()->user()) {
         $user->update([
@@ -55,13 +55,24 @@ Route::post('/locale', function (Request $request){
     return back();
 })->name('locale');
 
-Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::get('/all/{category:slug?}', 'all')->name('all');
-    Route::get('/search/{category:slug?}', 'search')->name('search');
+Route::get('/', function (SearchRequest $request) {
+    session()->forget('filters');
+    session()->forget('search');
+    session()->forget('sort');
 
+    $viewModel = new IndexViewModel();
+
+    return view('home', [
+        'announcements' => $viewModel->announcements(),
+        'categories' => $viewModel->categories(),
+        'request' => $request,
+    ]);
+})->name('home');
+
+Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
+    Route::get('/all/{category:slug?}', 'index')->name('index');
+    Route::get('/search/{category:slug?}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
-    
 });
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
