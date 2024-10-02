@@ -17,13 +17,13 @@ class SendMessage extends Component implements HasForms, HasActions
     use InteractsWithActions;
     use InteractsWithForms;
 
-    // public $announcement_id;
+    public $announcement_id;
 
     public $announcement;
 
     public function mount($announcement_id)
     {
-        $this->announcement = Announcement::findOrFail($announcement_id);
+        $this->announcement = Announcement::findOrFail(21);
     }
 
     public function sendMessage()
