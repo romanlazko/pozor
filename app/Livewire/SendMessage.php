@@ -23,9 +23,13 @@ class SendMessage extends Component implements HasForms, HasActions
 
     public function mount($announcement_id)
     {
-        dump($announcement_id, $this->announcement_id);
-
-        $this->announcement = Announcement::findOrFail(21);
+        dump($announcement_id, $this->announcement_id, $this->announcement);
+        
+        try {
+            $this->announcement = Announcement::findOrFail($announcement_id ?? $this->announcement_id);
+        } catch (\Throwable $th) {
+            dump($announcement_id, $this->announcement_id, $this->announcement);
+        }
     }
 
     public function sendMessage()

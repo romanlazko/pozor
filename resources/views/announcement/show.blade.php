@@ -78,7 +78,10 @@
                         @endif
                     </div> --}}
     
-                    <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
+                    <x-user-card :user="$announcement->user"/>
+                    <div class="w-full">
+                        <livewire:send-message :announcement_id="$announcement->id"/>
+                    </div>
                 </div>
 
                 <div>
