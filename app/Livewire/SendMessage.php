@@ -24,7 +24,9 @@ class SendMessage extends Component implements HasForms, HasActions
         $announcement = Announcement::findOrFail($this->announcement_id);
 
         $action = Action::make('sendMessage')
-            ->icon('heroicon-o-paper-airplane');
+            ->icon('heroicon-s-chat-bubble-bottom-center')
+            ->iconButton()
+            ->extraAttributes(['class' => 'border border-indigo-400 hover:border-indigo-600 rounded-xl']);
 
         if (auth()->guest()) {
             return $action

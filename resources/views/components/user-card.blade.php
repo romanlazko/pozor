@@ -7,12 +7,21 @@
     <div class="w-full space-y-2">
         <span class="block font-medium leading-none">{{ $user?->name }}</span>
         <span class="block text-gray-500 text-xs leading-none">{{ __("registered") }} {{ $user?->created_at->diffForHumans() }}</span>
-        <div class="w-full flex space-x-0.5">
-            @foreach ($user?->lang ?? [] as $item)
-                <span class="text-sm bg-indigo-600 text-white p-0.5 leading-none rounded-md">
-                    {{ $item }}
+        @if ($user?->lang)
+            <label class="text-gray-500 flex text-sm items-center space-x-1">
+                <i class="fa-solid fa-language"></i>
+                <span>
+                    {{ __("Languages:") }}
                 </span>
-            @endforeach
-        </div>
+                @foreach ($user?->lang ?? [] as $item)
+                    <span class="text-sm text-gray-900 uppercase">
+                        {{ $item }}@if (!$loop->last),@endif
+                    </span>
+                @endforeach
+            </label>
+        @endif
+    </div>
+    <div>
+        {{ $slot }}
     </div>
 </div>
