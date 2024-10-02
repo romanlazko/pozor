@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
-use App\View\Models\Announcement\IndexViewModel;
 use App\View\Models\Announcement\SearchViewModel;
 
 class AnnouncementController extends Controller
