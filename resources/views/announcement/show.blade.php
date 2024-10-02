@@ -51,7 +51,7 @@
                 @endif
             </div>
 
-            <div class="w-full h-min space-y-5 py-6 md:sticky top-0 order-2 col-span-1 p-2 md:px-0">
+            <div class="w-full h-min space-y-5 py-6 md:sticky top-0 order-2 col-span-1 p-2 md:px-0 z-20">
                 <div class="space-y-5">
                     <div class="h-full flex items-center justify-between">
                         <span class="text-sm text-gray-500">
@@ -78,11 +78,10 @@
                         @endif
                     </div> --}}
     
-                    <x-user-card :user="$announcement->user"/>
-                        
-                    <div class="w-full">
+                    <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
+                    {{-- <div class="w-full">
                         <livewire:send-message :announcement_id="$announcement->id"/>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div>

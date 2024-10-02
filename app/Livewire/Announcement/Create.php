@@ -5,16 +5,12 @@ namespace App\Livewire\Announcement;
 use App\AttributeType\AttributeFactory;
 use App\Livewire\Components\Forms\Components\Wizard;
 use App\Livewire\Traits\AnnouncementCrud;
-use App\Models\Announcement;
-use App\Models\Attribute;
 use App\Models\Category;
 use App\Services\Actions\CategoryAttributeService;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -23,9 +19,6 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
@@ -62,6 +55,7 @@ class Create extends Component implements HasForms
 
     public function mount(): void
     {
+        $this->form->fill(session('data') ?? $this->data);
         $this->parent_categories = Category::where('parent_id', null)->get()->pluck('name', 'id');
     }
 
@@ -122,11 +116,15 @@ class Create extends Component implements HasForms
 
         $this->createAnnouncement((object) $this->data);
 
+        session()->forget('data');
+
         $this->redirectRoute('announcement.index');
     }
 
     public function render(): View
     {
+        session()->put('data', $this->data);
+
         return view('livewire.announcement.create');
     }
 
