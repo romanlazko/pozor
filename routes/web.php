@@ -1,18 +1,12 @@
 <?php
 
-use App\Facades\NlpTranslate;
 use App\Facades\RapidApiTranslator;
-use App\Facades\Translator;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Profile\ProfileController;
-use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramAdvertisementController;
-use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramChatController;
-use App\Http\Controllers\SuperDuperAdmin\Telegram\TelegramController;
 use App\Livewire\Admin\AnnouncementAudits;
 use App\Livewire\Admin\Announcements as AdminAnnouncements;
 use App\Livewire\Admin\Attributes;
 use App\Livewire\Admin\Categories;
-use App\Livewire\Announcement\Create;
 use App\Livewire\Profile\Announcements;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +22,6 @@ use App\Http\Requests\SearchRequest;
 use App\Livewire\Admin\TelegramBots;
 use App\Livewire\Admin\TelegramChats;
 use App\Livewire\Admin\Users;
-use App\Models\Category;
 use App\View\Models\Announcement\IndexViewModel;
 use Illuminate\Http\Request;
 
