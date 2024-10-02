@@ -70,18 +70,14 @@
                         </p>
                     </div>
     
-                    {{-- <div class="w-full flex space-x-3 items-center justify-between">
-                        @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
-                            <x-buttons.secondary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
-                                {{ __("Call") }}
-                            </x-buttons.secondary>
-                        @endif
-                    </div> --}}
-    
-                    <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
-                    {{-- <div class="w-full">
-                        <livewire:send-message :announcement_id="$announcement->id"/>
-                    </div> --}}
+                    <x-user-card :user="$announcement->user" :announcement="$announcement">
+                        <div class="w-full z-50 flex space-x-5">
+                            <livewire:send-message :announcement_id="$announcement->id"/>
+                            <livewire:show-contact :user_id="$announcement->user->id"/>
+                        </div>
+                    </x-user-card>
+
+                    {{--  --}}
                 </div>
 
                 <div>

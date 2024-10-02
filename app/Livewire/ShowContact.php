@@ -42,15 +42,4 @@ class ShowContact extends Component implements HasForms, HasActions
     {
         return view('livewire.show-contact');
     }
-
-    // public function submit()
-    // {
-    //     try {
-    //         if ($this->recaptchaPasses()) {
-    //             $this->user = User::where('id', $this->user_id)->select('phone', 'email', 'telegram_chat_id')->first();
-    //         }
-    //     } catch (\Exception $e) {
-    //         $this->error = $e->getMessage();
-    //     }
-    // }
 }
