@@ -19,21 +19,10 @@ class SendMessage extends Component implements HasForms, HasActions
 
     public $announcement_id;
 
-    public $announcement;
-
-    public function mount($announcement_id)
-    {
-        dump($announcement_id, $this->announcement_id, $this->announcement);
-        
-        try {
-            $this->announcement = Announcement::findOrFail($announcement_id ?? $this->announcement_id);
-        } catch (\Throwable $th) {
-            dump($announcement_id, $this->announcement_id, $this->announcement);
-        }
-    }
-
     public function sendMessage()
     {
+        $announcement = Announcement::findOrFail($this->announcement_id);
+
         $action = Action::make('sendMessage')
             ->icon('heroicon-o-paper-airplane');
 
@@ -51,7 +40,7 @@ class SendMessage extends Component implements HasForms, HasActions
                 ->modalCancelAction(false);
         }
 
-        if ($this->announcement->user->id == auth()->id()) {
+        if ($announcement->user->id == auth()->id()) {
             return $action
                 ->modalHeading('You can\'t send message to yourself')
                 ->requiresConfirmation()
@@ -67,15 +56,15 @@ class SendMessage extends Component implements HasForms, HasActions
                     ->placeholder('Write a message...')
                     ->rows(6),
             ])
-            ->action(function (array $data) {
-                $thread = auth()->user()->threads()->where('announcement_id', $this->announcement->id)->first();
+            ->action(function (array $data) use ($announcement){
+                $thread = auth()->user()->threads()->where('announcement_id', $announcement->id)->first();
 
                 if (!$thread) {
                     $thread = auth()->user()->threads()->create([
-                        'announcement_id' => $this->announcement->id,
+                        'announcement_id' => $announcement->id,
                     ]);
 
-                    $thread->users()->attach([$this->announcement->user->id]);
+                    $thread->users()->attach([$announcement->user->id]);
                 }
 
                 $thread->messages()->create([
