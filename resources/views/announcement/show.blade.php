@@ -7,13 +7,13 @@
         @include('layouts.navigation')
     </x-slot>
 
-    <div class="space-y-6 py-6">
-        <section class="grid w-full md:grid-cols-3 grid-cols-1 md:gap-6">
-            <div class="order-1 col-span-2 ">
+    <div class="space-y-6 py-6 px-3">
+        <section class="grid w-full grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 md:gap-6">
+            <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2">
                 <x-slider :medias="$announcement->getMedia('announcements')" :h="500" />
             </div>
                 
-            <div class="w-full overflow-hidden space-y-4 order-3 col-span-2 p-2 md:p-0">
+            <div class="w-full overflow-hidden space-y-4 order-3 col-span-2 lg:col-span-3 xl:col-span-2 p-2 md:p-0">
                 <hr class="lg:hidden">
                 @if ($description = $announcement->getFeatureByName('description'))
                     <div class="space-y-4 ">
@@ -51,7 +51,7 @@
                 @endif
             </div>
 
-            <div class="w-full h-min space-y-5 py-6 md:sticky top-0 order-2 col-span-1 p-2 md:px-0 z-20">
+            <div class="w-full h-min space-y-5 py-6 xl:sticky top-0 order-2 col-span-1 lg:col-span-2 xl:col-span-1 p-2 md:px-0 z-20">
                 <div class="space-y-5">
                     <div class="h-full flex items-center justify-between">
                         <span class="text-sm text-gray-500">
@@ -76,8 +76,6 @@
                             <livewire:show-contact :user_id="$announcement->user->id"/>
                         </div>
                     </x-user-card>
-
-                    {{--  --}}
                 </div>
 
                 <div>

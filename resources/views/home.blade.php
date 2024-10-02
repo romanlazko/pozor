@@ -27,7 +27,7 @@
         </div>
     </x-slot>
 
-    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative p-2 lg:px-0 border-b lg:border-none bg-white md:bg-inherit">
+    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative p-2 border-b lg:border-none bg-white md:bg-inherit">
         <div class="w-full text-start">
             <div class="w-full justify-between">
                 <h2 class="text-xl lg:text-3xl font-bold ">
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <div class="space-y-6 px-2 lg:px-0">
+    <div class="space-y-6 px-2">
         <x-announcement-list :announcements="$announcements" :cols="5"/>
     </div>
 

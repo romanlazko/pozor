@@ -47,9 +47,9 @@
 		</div>
 	</div>
 
-	<x-locale class="lg:w-min w-full"/>
+	<x-locale class="md:w-min w-full"/>
 
-	<div class="flex items-center space-x-3 lg:hidden relative">
+	<div class="flex items-center space-x-3 md:hidden relative">
 		<div x-data="{ dropdownOpen: false }" class="relative">
 			<button @click="dropdownOpen = ! dropdownOpen" class="flex text-white hover:text-indigo-700">
 				<i class="fa-solid fa-bars"></i>
