@@ -18,6 +18,6 @@
         </div>
     </div>
     <div class="w-full">
-        {{-- <livewire:send-message :announcement_id="$announcement_id"/> --}}
+        <livewire:send-message :announcement_id="$announcement_id"/>
     </div>
 </div>

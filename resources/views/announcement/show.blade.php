@@ -70,19 +70,19 @@
                         </p>
                     </div>
     
-                    <div class="w-full flex space-x-3 items-center justify-between">
+                    {{-- <div class="w-full flex space-x-3 items-center justify-between">
                         @if ($announcement?->user?->isProfileFilled() AND $announcement?->user?->hasVerifiedEmail())
                             <x-buttons.secondary class="w-full whitespace-nowrap justify-center" x-data="" x-on:click.prevent="$dispatch('open-modal', 'show-contact')">
                                 {{ __("Call") }}
                             </x-buttons.secondary>
                         @endif
-                    </div>
+                    </div> --}}
     
                     <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
                 </div>
 
                 <div>
-                    
+
                 </div>
             </div>
         </section>
