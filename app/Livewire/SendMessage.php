@@ -17,7 +17,7 @@ class SendMessage extends Component implements HasForms, HasActions
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public $announcement_id;
+    // public $announcement_id;
 
     public $announcement;
 
