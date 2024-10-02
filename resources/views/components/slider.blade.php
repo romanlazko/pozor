@@ -75,7 +75,7 @@
     </div>
 
     @if ($thumb)
-        <div class="flex m-auto overflow-x-auto z-20 py-2 px-3">
+        <div class="flex m-auto overflow-x-auto z-10 py-2 px-3">
             <template x-for="(photo, index) in photos" :key="index" class="bg-gray-200 w-16 h-16">
                 <img x-bind:src="photo['thumb']" class="bg-gray-200 w-16 h-16 border-2 rounded-lg mx-2 hover:border-indigo-400"
                     :class="{ 'border-indigo-700': index === current, 'border-transparent': index !== current }"
