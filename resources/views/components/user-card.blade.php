@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    {{-- <div class="w-full">
+    <div class="w-full">
         <livewire:send-message :announcement_id="$announcement_id"/>
-    </div> --}}
+    </div>
 </div>
