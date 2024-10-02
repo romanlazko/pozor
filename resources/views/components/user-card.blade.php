@@ -1,4 +1,4 @@
-@props(['user' => null, 'announcement_id' => null])
+@props(['user' => null, 'announcement' => null])
 
 <div class="space-y-3">
     <div class="flex space-x-4 items-center bg-gray-100 p-4 rounded-2xl border">
@@ -18,6 +18,6 @@
         </div>
     </div>
     <div class="w-full">
-        <livewire:send-message :announcement_id="$announcement_id"/>
+        <livewire:send-message :announcement="$announcement"/>
     </div>
 </div>
