@@ -78,7 +78,7 @@
                         @endif
                     </div> --}}
     
-                    <x-user-card :user="$announcement->user" :announcement_id="$announcement->id"/>
+                    <x-user-card :user="$announcement->user" :announcement="$announcement->id"/>
                     {{-- <div class="w-full">
                         <livewire:send-message :announcement_id="$announcement->id"/>
                     </div> --}}
