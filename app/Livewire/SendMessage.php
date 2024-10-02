@@ -17,11 +17,11 @@ class SendMessage extends Component implements HasForms, HasActions
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public $announcement;
+    public $announcement_id;
 
     public function sendMessage()
     {
-        $announcement = Announcement::findOrFail($this->announcement);
+        $announcement = Announcement::findOrFail($this->announcement_id);
 
         $action = Action::make('sendMessage')
             ->icon('heroicon-o-paper-airplane');
