@@ -280,11 +280,7 @@
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
 
-                console.log(deltaY);
-
-                // Если горизонтальное движение больше чем вертикальное
                 if (deltaX * 10 > deltaY && deltaY < this.verticalThreshold) {
-                    // Останавливаем стандартное поведение прокрутки страницы
                     event.preventDefault();
                 }
             },
@@ -298,18 +294,14 @@
 
                 const deltaX = this.touchEndX - this.touchStartX;
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
-
-                console.log(deltaY);
-                // Если горизонтальное движение больше вертикального и превышает порог
+                
                 if (deltaY < this.verticalThreshold && Math.abs(deltaX) > deltaY) {
                     if (deltaX < 0) {
-                        this.nextSlide(); // Листаем вправо
+                        this.nextSlide();
                     } else if (deltaX > 0) {
-                        this.prevSlide(); // Листаем влево
+                        this.prevSlide();
                     }
                 }
-
-                // Если вертикальное движение больше, не останавливаем событие, страница продолжит скролл
             },
             centerThumbnail(index) {
                 const thumbnailContainer = this.$refs.thumbnailContainer;
