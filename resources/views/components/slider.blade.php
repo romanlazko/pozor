@@ -315,7 +315,7 @@
                 //     }
                 // }
 
-                if (this.ratio > 2) {
+                if (this.ratio > 2 || deltaX > this.horizontalThreshold) {
                     if (this.touchEndX - this.touchStartX < 0) {
                         this.nextSlide();
                     } else if (this.touchEndX - this.touchStartX > 0) {
