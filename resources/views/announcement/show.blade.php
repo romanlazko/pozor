@@ -12,43 +12,47 @@
             <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2">
                 <x-slider :medias="$announcement->getMedia('announcements')" :h="500" />
             </div>
-                
-            <div class="w-full overflow-hidden space-y-6 order-3 col-span-2 lg:col-span-3 xl:col-span-2 p-3">
-                <hr class="lg:hidden">
+            
+            
 
-                <x-markdown class="html">
-                    {{ $announcement->description }}
-                </x-markdown>
+            <div class="w-full overflow-hidden order-3 col-span-2 lg:col-span-3 xl:col-span-2 px-3">
+                <hr class="pb-6 lg:hidden lg:pb-0">
+                <div class="space-y-6">
+                    <x-markdown class="html">
+                        {{ $announcement->description }}
+                    </x-markdown>
 
-                @if ($announcement->features->where('attribute.is_feature')->isNotEmpty())
-                    <hr>
-                    
-                    <div class="space-y-3 sm:space-y-0 sm:gap-6 grid grid-cols-1 ">
-                        @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.showSection.order_number')->groupBy('attribute.showSection.name') as $section_name => $feature_section)
-                            <div class="space-y-2">
-                                <h4 class="font-bold text-sm">
-                                    {{ $section_name }}:
-                                </h4>
-                                
-                                <ul class="w-full list-inside list-disc">
-                                    @foreach ($feature_section->sortBy('attribute.show_layout.order_number') as $feature)
-                                        <li class="w-full grid grid-cols-2 space-x-2 text-sm">
-                                            <span class="text-gray-500 inline-block">
-                                                • {{ $feature->label }}:
-                                            </span>
-                                            <span class="">
-                                                {{ $feature->value }}
-                                            </span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                    @if ($announcement->features->where('attribute.is_feature')->isNotEmpty())
+                        <hr>
+                        
+                        <div class="space-y-3 sm:space-y-0 sm:gap-6 grid grid-cols-1 ">
+                            @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.showSection.order_number')->groupBy('attribute.showSection.name') as $section_name => $feature_section)
+                                <div class="space-y-2">
+                                    <h4 class="font-bold text-sm">
+                                        {{ $section_name }}:
+                                    </h4>
+                                    
+                                    <ul class="w-full list-inside list-disc">
+                                        @foreach ($feature_section->sortBy('attribute.show_layout.order_number') as $feature)
+                                            <li class="w-full grid grid-cols-2 space-x-2 text-sm">
+                                                <span class="text-gray-500 inline-block">
+                                                    • {{ $feature->label }}:
+                                                </span>
+                                                <span class="">
+                                                    {{ $feature->value }}
+                                                </span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                </div>
             </div>
 
-            <div class="w-full h-min space-y-6 py-6 xl:sticky top-0 order-2 col-span-1 lg:col-span-2 xl:col-span-1 p-3 z-20">
+            <div class="w-full h-min space-y-6 py-6 xl:sticky top-0 order-2 col-span-1 lg:col-span-2 xl:col-span-1 px-3 z-20">
                 <div class="space-y-6 w-full">
                     <div class="space-y-4">
                         <div class="h-full flex items-center justify-between">
