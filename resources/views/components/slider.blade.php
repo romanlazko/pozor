@@ -254,7 +254,7 @@
             touchMoveX: 0,
             touchMoveY: 0,
             touchStarted: false,
-            horizontalThreshold: 60, // Порог горизонтальной прокрутки
+            horizontalThreshold: 70, // Порог горизонтальной прокрутки
             verticalThreshold: 60,
             ratio: 0,
             nextSlide() {
@@ -315,7 +315,7 @@
                 //     }
                 // }
 
-                if (this.ratio > 2 || deltaX > this.horizontalThreshold) {
+                if (this.ratio > 3 || deltaX > this.horizontalThreshold) {
                     if (this.touchEndX - this.touchStartX < 0) {
                         this.nextSlide();
                     } else if (this.touchEndX - this.touchStartX > 0) {
