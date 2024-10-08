@@ -251,7 +251,7 @@
             touchMoveX: 0,
             touchMoveY: 0,
             touchStarted: false,
-            horizontalThreshold: 100, // Порог горизонтальной прокрутки
+            horizontalThreshold: 10, // Порог горизонтальной прокрутки
             verticalThreshold: 10,
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
