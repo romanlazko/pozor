@@ -251,8 +251,8 @@
             touchMoveX: 0,
             touchMoveY: 0,
             touchStarted: false,
-            horizontalThreshold: 10, // Порог горизонтальной прокрутки
-            verticalThreshold: 10,
+            horizontalThreshold: 30, // Порог горизонтальной прокрутки
+            verticalThreshold: 100,
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
                 this.centerThumbnail(this.activeIndex);
@@ -280,7 +280,7 @@
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
 
-                console.log(deltaX, deltaY);
+                console.log(deltaY);
 
                 // Если горизонтальное движение больше чем вертикальное
                 if (deltaX > deltaY && deltaX > this.horizontalThreshold) {
@@ -299,8 +299,9 @@
                 const deltaX = this.touchEndX - this.touchStartX;
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
 
+                console.log(deltaY);
                 // Если горизонтальное движение больше вертикального и превышает порог
-                if (deltaY < this.verticalThreshold || Math.abs(deltaX) > deltaY) {
+                if (deltaY < this.verticalThreshold && Math.abs(deltaX) > deltaY) {
                     if (deltaX < 0) {
                         this.nextSlide(); // Листаем вправо
                     } else if (deltaX > 0) {
