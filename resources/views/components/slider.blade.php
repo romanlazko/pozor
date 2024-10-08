@@ -280,7 +280,13 @@
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
 
-                if (deltaX > deltaY && deltaY < this.verticalThreshold) {
+                const ratio = deltaX / deltaY;
+
+                // if (deltaX > deltaY && deltaY < this.verticalThreshold) {
+                //     event.preventDefault();
+                // }
+
+                if (ratio > 1.5) {
                     event.preventDefault();
                 }
             },
@@ -295,7 +301,17 @@
                 const deltaX = Math.abs(this.touchEndX - this.touchStartX);
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
                 
-                if (deltaX > deltaY && deltaY < this.verticalThreshold) {
+                const ratio = deltaX / deltaY;
+                
+                // if (deltaX > deltaY && deltaY < this.verticalThreshold) {
+                //     if (this.touchEndX - this.touchStartX < 0) {
+                //         this.nextSlide();
+                //     } else if (this.touchEndX - this.touchStartX > 0) {
+                //         this.prevSlide();
+                //     }
+                // }
+
+                if (ratio > 1.5) {
                     if (this.touchEndX - this.touchStartX < 0) {
                         this.nextSlide();
                     } else if (this.touchEndX - this.touchStartX > 0) {
