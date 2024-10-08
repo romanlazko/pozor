@@ -280,7 +280,7 @@
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
 
-                if (deltaX * 10 > deltaY && deltaY < this.verticalThreshold) {
+                if (deltaX > deltaY && deltaY < this.verticalThreshold) {
                     event.preventDefault();
                 }
             },
