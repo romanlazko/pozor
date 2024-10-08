@@ -292,6 +292,8 @@
 
                 if (this.ratio > 1.5) {
                     event.preventDefault();
+                } else {
+                    this.touchStarted = false;
                 }
             },
 
