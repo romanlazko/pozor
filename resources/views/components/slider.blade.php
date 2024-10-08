@@ -209,9 +209,6 @@
                     </div>
                 </template>
             </div>
-            <p x-text="ratio" class="absolute inset-x-0 bottom-0 text-center text-white text-xs font-bold">
-
-            </p>
             <div class="absolute inset-0 flex justify-between items-center px-3" :class="{ 'hidden': photos.length < 2 }">
                 <button @click="prevSlide" @dblclick.prevent class="bg-gray-800 bg-opacity-50 text-white p-2 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -256,7 +253,6 @@
             touchStarted: false,
             horizontalThreshold: 70, // Порог горизонтальной прокрутки
             verticalThreshold: 60,
-            ratio: 0,
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
                 this.centerThumbnail(this.activeIndex);
@@ -283,12 +279,7 @@
 
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
-
-                this.ratio = deltaX / deltaY;
-
-                // if (deltaX > deltaY && deltaY < this.verticalThreshold) {
-                //     event.preventDefault();
-                // }
+                const ratio = deltaX / deltaY;
 
                 if (this.ratio > 1.5) {
                     event.preventDefault();
@@ -306,16 +297,7 @@
 
                 const deltaX = Math.abs(this.touchEndX - this.touchStartX);
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
-                
-                this.ratio = deltaX / deltaY;
-                
-                // if (deltaX > deltaY && deltaY < this.verticalThreshold) {
-                //     if (this.touchEndX - this.touchStartX < 0) {
-                //         this.nextSlide();
-                //     } else if (this.touchEndX - this.touchStartX > 0) {
-                //         this.prevSlide();
-                //     }
-                // }
+                const ratio = deltaX / deltaY;
 
                 if (this.ratio > 1.5 || deltaX > this.horizontalThreshold) {
                     if (this.touchEndX - this.touchStartX < 0) {
