@@ -55,5 +55,9 @@ class AppServiceProvider extends ServiceProvider
             'neutral' => Color::Neutral,
             'white' => Color::hex('#ffffff'),
         ]);
+
+        LogViewer::auth(function ($request) {
+            return true;
+        });
     }
 }
