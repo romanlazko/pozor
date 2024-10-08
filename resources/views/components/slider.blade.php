@@ -283,7 +283,7 @@
                 console.log(deltaY);
 
                 // Если горизонтальное движение больше чем вертикальное
-                if (deltaX > deltaY && deltaX > this.horizontalThreshold) {
+                if (deltaX > deltaY && deltaY < this.verticalThreshold) {
                     // Останавливаем стандартное поведение прокрутки страницы
                     event.preventDefault();
                 }
