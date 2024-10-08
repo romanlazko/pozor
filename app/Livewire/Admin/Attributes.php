@@ -116,14 +116,18 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                 TextColumn::make('label')
                     ->description(fn (Attribute $attribute): string =>  $attribute?->name . ($attribute?->suffix ? " ({$attribute?->suffix})" : '')),
 
-                TextColumn::make('Layout type')
-                    ->state(function (Attribute $attribute) use ($table) {
-                        return match ($table->getGrouping()?->getRelationshipName()) {
-                            'filterSection' => $attribute->filter_layout['type'] ?? null,
-                            'createSection' => $attribute->create_layout['type'] ?? null,
-                            'showSection' => $attribute->show_layout['type'] ?? null,
-                            default => null,
+                TextColumn::make('Layout')
+                    ->state(function (Attribute $attribute) {
+                        $string = function ($layout_name, $layout) {
+                            $type = $layout['type'] ?? null;
+                            $order_number = $layout['order_number'] ?? null;
+                            return "#{$order_number} - {$layout_name}: {$type}";
                         };
+                        return [
+                            $string('filterSection', $attribute->filter_layout),
+                            $string('createSection', $attribute->create_layout),
+                            $string('showSection', $attribute->show_layout),
+                        ];
                     })
                     ->badge()
                     ->color('warning'),
@@ -608,6 +612,47 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                         TextInput::make('show_layout.order_number')
                                             ->helperText(__("Порядковый номер этого атрибута внутри секции"))
                                             ->required(),
+                                    ])
+                                    ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                            ])
+                            ->columns(3),
+
+                        Section::make(__("Group"))
+                            ->schema([
+                                Grid::make(3)
+                                    ->schema([
+                                        Select::make('group_layout.group_id')
+                                            ->label('Group')
+                                            ->helperText(__('Группа в которой будет находится этот атрибут'))
+                                            ->relationship(name: 'group')
+                                            ->getOptionLabelFromRecordUsing(fn (AttributeGroup $record) => "#{$record->slug}")
+                                            ->columnSpanFull()
+                                            ->createOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        TextInput::make('slug')
+                                                            ->required(),
+
+                                                        TextInput::make('separator')
+                                                            ->helperText(__('Разделитель внутри группы.')),
+                                                    ])
+                                                    ->columns(2),
+                                            ])
+                                            ->editOptionForm([
+                                                Section::make()
+                                                    ->schema([
+                                                        TextInput::make('slug')
+                                                            ->required(),
+
+                                                        TextInput::make('separator')
+                                                            ->helperText(__('Разделитель внутри группы.')),
+                                                    ])
+                                                    ->columns(2)
+                                            ]),
+
+                                        TextInput::make('group_layout.order_number')
+                                            ->helperText(__("Порядковый номер этого атрибута внутри группы"))
+                                            ->requiredWith('group_layout.group_id'),
                                     ])
                                     ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
                             ])

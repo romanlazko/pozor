@@ -260,6 +260,7 @@
             },
             handleTouchStart(event) {
                 this.touchStartX = event.changedTouches[0].screenX;
+                event.preventDefault();
             },
             handleTouchEnd(event) {
                 this.touchEndX = event.changedTouches[0].screenX;
@@ -268,6 +269,7 @@
                 } else if (this.touchEndX > this.touchStartX) {
                     this.prevSlide();
                 }
+                event.preventDefault();
             },
             centerThumbnail(index) {
                 const thumbnailContainer = this.$refs.thumbnailContainer;
