@@ -251,8 +251,8 @@
             touchMoveX: 0,
             touchMoveY: 0,
             touchStarted: false,
-            horizontalThreshold: 30, // Порог горизонтальной прокрутки
-            verticalThreshold: 10,
+            horizontalThreshold: 60, // Порог горизонтальной прокрутки
+            verticalThreshold: 60,
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
                 this.centerThumbnail(this.activeIndex);
@@ -292,13 +292,13 @@
                 this.touchEndY = event.changedTouches[0].screenY;
                 this.touchStarted = false;
 
-                const deltaX = this.touchEndX - this.touchStartX;
+                const deltaX = Math.abs(this.touchEndX - this.touchStartX);
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
                 
-                if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > this.horizontalThreshold && deltaY < this.verticalThreshold) {
-                    if (deltaX < 0) {
+                if (deltaX > deltaY && deltaY < this.verticalThreshold) {
+                    if (this.touchEndX - this.touchStartX < 0) {
                         this.nextSlide();
-                    } else if (deltaX > 0) {
+                    } else if (this.touchEndX - this.touchStartX > 0) {
                         this.prevSlide();
                     }
                 }
