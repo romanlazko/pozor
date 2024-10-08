@@ -280,9 +280,9 @@
 
                 const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
                 const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
-                this.ratio = deltaX / deltaY;
+                const ratio = deltaX / deltaY;
 
-                if (this.ratio > 1.5) {
+                if (ratio > 1.5) {
                     event.preventDefault();
                 } else {
                     this.touchStarted = false;
@@ -298,9 +298,9 @@
 
                 const deltaX = Math.abs(this.touchEndX - this.touchStartX);
                 const deltaY = Math.abs(this.touchEndY - this.touchStartY);
-                this.ratio = deltaX / deltaY;
+                const ratio = deltaX / deltaY;
 
-                if (this.ratio > 1.5 || deltaX > this.horizontalThreshold) {
+                if (ratio > 1.5 || deltaX > this.horizontalThreshold) {
                     if (this.touchEndX - this.touchStartX < 0) {
                         this.nextSlide();
                     } else if (this.touchEndX - this.touchStartX > 0) {
