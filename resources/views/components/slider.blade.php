@@ -210,12 +210,12 @@
                 </template>
             </div>
             <div class="absolute inset-0 flex justify-between items-center px-3" :class="{ 'hidden': photos.length < 2 }">
-                <button @click="prevSlide" @dblclick.prevent class="bg-gray-800 bg-opacity-50 text-white p-2 rounded-full">
+                <button @click.prevent="prevSlide()" @dblclick.prevent class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
-                <button @click="nextSlide" @dblclick.prevent class="bg-gray-800 bg-opacity-50 text-white p-2 rounded-full">
+                <button @click.prevent="nextSlide()" @dblclick.prevent class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -310,13 +310,17 @@
             },
             centerThumbnail(index) {
                 const thumbnailContainer = this.$refs.thumbnailContainer;
-                const thumbnailWidth = thumbnailContainer.children[index].offsetWidth;
-                const containerWidth = thumbnailContainer.offsetWidth;
-                const scrollAmount = thumbnailContainer.children[index].offsetLeft - containerWidth / 2 + thumbnailWidth / 2;
-                thumbnailContainer.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
+
+                if (thumbnailContainer) {
+                    const thumbnailWidth = thumbnailContainer.children[index].offsetWidth;
+                    const containerWidth = thumbnailContainer.offsetWidth;
+                    const scrollAmount = thumbnailContainer.children[index].offsetLeft - containerWidth / 2 + thumbnailWidth / 2;
+                    thumbnailContainer.scrollTo({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+                
             }
         }
     }

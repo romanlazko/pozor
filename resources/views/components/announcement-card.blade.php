@@ -52,7 +52,7 @@
 @props(['layout' => 'sm', 'announcement' => null])
 
 @if ($layout == 'sm')
-    <div {{ $attributes->merge(['class' => "w-full transition ease-in-out duration-150 space-y-1 hover:bg-white border border-transparent hover:border-gray-300 block w-full announcement-card p-2 rounded-2xl overflow-hidden"]) }}>
+    <div {{ $attributes->merge(['class' => "w-full transition ease-in-out duration-150 space-y-1 hover:bg-white border border-transparent hover:border-gray-300 block w-full announcement-card p-1 lg:p-2 rounded-2xl overflow-hidden"]) }}>
         <a href="{{ route('announcement.show', $announcement) }}"  class="space-y-1">
             <div class="w-full rounded-2xl overflow-hidden h-min">
                 <x-slider :medias="$announcement?->getMedia('announcements')" :thumb="false"/>
