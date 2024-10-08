@@ -160,6 +160,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                 'attribute_category' => 'AttributeCategory',
                                 'attribute_options' => 'AttributeOption',
                                 'attribute_sections' => 'AttributeSection',
+                                'attribute_groups' => 'Groups',
                                 'media' => 'Media',
                             ])
                     ])
