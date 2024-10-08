@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Announcement;
 
+use App\AttributeType\AttributeFactory;
+use App\AttributeType\TextInput;
 use App\Enums\Status;
+use App\Livewire\Admin\BaseAdminLayout;
 use App\Livewire\Components\Tables\Columns\ImageGridColumn;
 use App\Models\Announcement;
 use App\Models\Category;
@@ -26,11 +29,15 @@ use Illuminate\Support\HtmlString;
 use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Filament\Forms\Components\Livewire;
 use App\Livewire\Components\Tables\Columns\StatusSwitcher;
+use App\Models\Feature;
 use Filament\Forms\Components\Select;
-
+use Filament\Tables\Actions\ViewAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Novadaemon\FilamentPrettyJson\PrettyJson;
+use App\Services\Actions\CategoryAttributeService;
+use Filament\Forms\Components\Grid;
 
 class Announcements extends BaseAdminLayout implements HasForms, HasTable
 {
@@ -129,7 +136,7 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                             Action::make("Telegram Channels")
                                 ->modalHeading(fn (Announcement $announcement) => "Telegram Channels: {$announcement->getFeatureByName('title')?->value}")
                                 ->form(fn (Announcement $announcement) => [
-                                    Livewire::make(AnnouncementChannels::class, ['announcement_id' => $announcement->id]),
+                                    Livewire::make(Channels::class, ['announcement_id' => $announcement->id]),
                                 ])
                                 ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                                 ->icon('heroicon-o-chat-bubble-bottom-center-text')
@@ -259,23 +266,27 @@ class Announcements extends BaseAdminLayout implements HasForms, HasTable
                     ])
                     ->dropdown(false),
 
-                    ActionGroup::make([
+                    // ActionGroup::make([
                         Action::make('history')
                             ->label(__("View history"))
                             ->form(fn (Announcement $announcement) => [
-                                Livewire::make(AnnouncementAudits::class, ['announcement_id' => $announcement->id])
+                                Livewire::make(Audits::class, ['announcement_id' => $announcement->id])
                             ])
+                            ->hiddenLabel()
                             ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                             ->modalSubmitAction(false)
                             ->slideover()
+                            ->button()
                             ->icon('heroicon-o-clock'),
 
-                        DeleteAction::make(),
-                    ])
-                    ->size(ActionSize::ExtraSmall)
-                    ->dropdownPlacement('right-start')
-                    ->button()
-                    ->hiddenLabel()
+                        DeleteAction::make()
+                            ->hiddenLabel()
+                            ->button(),
+                    // ])
+                    // ->size(ActionSize::ExtraSmall)
+                    // ->dropdownPlacement('right-start')
+                    // ->button()
+                    // ->hiddenLabel()
             ])
             ->filters([
                 SelectFilter::make('status')

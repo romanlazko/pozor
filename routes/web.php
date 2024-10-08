@@ -3,8 +3,6 @@
 use App\Facades\RapidApiTranslator;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Profile\ProfileController;
-use App\Livewire\Admin\AnnouncementAudits;
-use App\Livewire\Admin\Announcements as AdminAnnouncements;
 use App\Livewire\Admin\Attributes;
 use App\Livewire\Admin\Categories;
 use App\Livewire\Profile\Announcements;
@@ -19,8 +17,14 @@ use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
 use App\Http\Requests\SearchRequest;
-use App\Livewire\Admin\TelegramBots;
-use App\Livewire\Admin\TelegramChats;
+
+use App\Livewire\Admin\Announcement\Announcements as AnnouncementIndex;
+use App\Livewire\Admin\Announcement\Audits as AnnouncementAudits;
+
+use App\Livewire\Admin\Telegram\Bots as TelegramIndex;
+use App\Livewire\Admin\Telegram\Chats as TelegramChats;
+use App\Livewire\Admin\Telegram\Logs as TelegramLogs;
+
 use App\Livewire\Admin\Users;
 use App\View\Models\Announcement\IndexViewModel;
 use Illuminate\Http\Request;
@@ -62,20 +66,30 @@ Route::get('/', function (SearchRequest $request) {
     ]);
 })->name('home');
 
+
+
+Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
+    Route::name('telegram.bot.')->prefix('telegram/bot')->group(function () {
+        Route::get('/', TelegramIndex::class)->name('index');
+        Route::get('{telegram_bot}/chat', TelegramChats::class)->name('chat.index');
+        Route::get('{telegram_bot}/logs', TelegramLogs::class)->name('logs.index');
+    });
+
+    Route::name('announcements.')->prefix('announcements')->group(function () {
+        Route::get('/', AnnouncementIndex::class)->name('index');
+        Route::get('audit/{announcement}', AnnouncementAudits::class)->name('audit');
+    });
+    
+    Route::get('users', Users::class)->name('users');
+    Route::get('category/{category?}', Categories::class)->name('categories');
+    Route::get('attribute', Attributes::class)->name('attributes');
+    Route::get('logs', fn () => redirect('admin/logs'))->name('logs');
+});
+
 Route::controller(AnnouncementController::class)->name('announcement.')->group(function () {
     Route::get('/all/{category:slug?}', 'index')->name('index');
     Route::get('/search/{category:slug?}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
-});
-
-Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
-    Route::get('telegram/bot', TelegramBots::class)->name('telegram.bot.index');
-    Route::get('telegram/bot/{telegram_bot}/chat', TelegramChats::class)->name('telegram.bot.chat.index');
-    Route::get('users', Users::class)->name('users');
-    Route::get('category/{category?}', Categories::class)->name('categories');
-    Route::get('attribute', Attributes::class)->name('attributes');
-    Route::get('announcements', AdminAnnouncements::class)->name('announcements');
-    Route::get('announcement/audit/{announcement}', AnnouncementAudits::class)->name('announcement.audit');
 });
 
 Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function () {

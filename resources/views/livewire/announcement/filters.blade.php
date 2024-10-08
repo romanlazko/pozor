@@ -5,7 +5,7 @@
     </div>
     <div class="bottom-0 sticky py-4 w-full rounded-2xl">
         <x-buttons.primary type="submit" @click="sidebarOpen = false" class="w-full justify-center rounded-2xl">
-            {{ __("Show results") }}
+            {{ __("Apply Filters") }}
         </x-buttons.primary>
     </div>
 </form>

@@ -37,7 +37,7 @@ class SearchViewModel
 
     private function announcements()
     {
-        $title_price_attributes = Attribute::whereHas('showSection', fn ($query) => 
+        $title_price_attributes = Attribute::whereHas('group', fn ($query) => 
             $query->whereIn('slug', ['title', 'price'])
         )
         ->pluck('id');

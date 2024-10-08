@@ -13,14 +13,9 @@
 	</div>
 
     <nav class="space-y-3 px-2">
-		{{-- @hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.marketplace.announcement.index') }}">
-				{{ __('Marketplace') }}
-			</x-responsive-nav-link>
-		@endhasrole --}}
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.telegram.bot.index') }}" >
-				{{ __('telegram') }}
+			<x-responsive-nav-link href="{{ route('admin.telegram.bot.index') }}" :active="request()->routeIs('admin.telegram.*')">
+				{{ __('Telegram') }}
 			</x-responsive-nav-link>
 		@endhasrole
 		@hasrole('super-duper-admin')
@@ -29,7 +24,7 @@
 			</x-responsive-nav-link>
 		@endhasrole
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.announcements') }}" :active="request()->routeIs('admin.announcements')">
+			<x-responsive-nav-link href="{{ route('admin.announcements.index') }}" :active="request()->routeIs('admin.announcements.index')">
 				{{ __('Announcements') }}
 			</x-responsive-nav-link>
 		@endhasrole
@@ -43,6 +38,12 @@
 				{{ __('Attribute') }}
 			</x-responsive-nav-link>
 		@endhasrole
+		@hasrole('super-duper-admin')
+			<x-responsive-nav-link href="{{ route('admin.logs') }}" :active="request()->routeIs('admin.logs')">
+				{{ __('Logs') }}
+			</x-responsive-nav-link>
+		@endhasrole
+		<hr>
 		@hasrole('super-duper-admin')
 			<x-responsive-nav-link href="{{ route('home') }}">
 				{{ __('Back to user') }}

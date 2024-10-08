@@ -49,7 +49,7 @@ class LocationForm extends Component implements HasForms, HasActions
             ->link()
             ->icon('heroicon-o-map-pin')
             ->extraAttributes(['class' => 'cursor-pointer whitespace-nowrap'])
-            ->label(Geo::find($this->locationData['geo_id'] ?? null)?->name)
+            ->label(Geo::find($this->locationData['geo_id'] ?? null)?->name ?? __('filament.labels.location'))
             ->form([
                 Select::make('geo_id')
                     ->label(__('filament.labels.city'))
@@ -142,6 +142,7 @@ class LocationForm extends Component implements HasForms, HasActions
     public function resetData()
     {
         session()->forget('location');
+        
         $this->redirectRoute('announcement.search', ['location' => null, 'category' => $this->category?->slug]);
     }
 }

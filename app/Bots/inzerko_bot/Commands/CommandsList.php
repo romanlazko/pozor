@@ -8,27 +8,29 @@ class CommandsList extends DefaultCommandsList
     static protected $commands = [
         'admin'     => [
             AdminCommands\StartCommand::class,
-            AdminCommands\DefaultCommand::class,
             AdminCommands\HelpCommand::class,
-            AdminCommands\ReferalCommand::class,
-            AdminCommands\GetReferalCommand::class,
         ],
         'user'      => [
+            UserCommands\ConnectCommand::class,
+
+            UserCommands\CreateAnnouncement::class,
+
+            UserCommands\EditProfile::class,
+
+            UserCommands\Email::class,
+            UserCommands\AwaitEmail::class,
+
+            UserCommands\Phone::class,
+            UserCommands\AwaitPhone::class,
+
+            UserCommands\SaveProfile::class,
+
+            UserCommands\CreateProfile::class,
+            UserCommands\SendTelegramEmailVerificationNotification::class,
+
             UserCommands\StartCommand::class,
-            UserCommands\DefaultCommand::class,
-            UserCommands\HelpCommand::class,
-            UserCommands\ReferalCommand::class,
-            UserCommands\GetReferalCommand::class,
+            UserCommands\MenuCommand::class,
         ],
-        'supergroup' => [
-            DefaultCommands\EmptyResponseCommand::class,
-        ],
-        'default'   => [
-            DefaultCommands\DefaultCommand::class,
-            DefaultCommands\SendResultCommand::class,
-            DefaultCommands\EmptyResponseCommand::class,
-        ]
-        
     ];
 
     static public function getCommandsList(?string $auth)

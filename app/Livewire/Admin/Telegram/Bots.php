@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Telegram;
 
+use App\Livewire\Admin\BaseAdminLayout;
 use App\Models\Category;
 use App\Models\TelegramBot;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
@@ -15,7 +17,7 @@ use Filament\Tables\Table;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\Generators\BotDirectoryGenerator;
 
-class TelegramBots extends BaseAdminLayout implements HasForms, HasTable
+class Bots extends BaseAdminLayout implements HasForms, HasTable
 {
     public function table(Table $table): Table
     {
@@ -29,9 +31,7 @@ class TelegramBots extends BaseAdminLayout implements HasForms, HasTable
                 TextColumn::make('first_name')
                     ->sortable()
                     ->grow()
-                    ->description(fn ($record) => $record->username)
-                    ->url(fn ($record) => route('admin.telegram.bot.chat.index', $record)),
-
+                    ->description(fn ($record) => $record->username),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -72,10 +72,17 @@ class TelegramBots extends BaseAdminLayout implements HasForms, HasTable
                     ->closeModalByClickingAway(false),
             ])
             ->actions([
-                // ActionGroup::make([
-                //     DeleteAction::make()
-                //         ->record($this->bot)
-                // ])
+                Action::make('Chats')
+                    ->button()
+                    ->icon('heroicon-o-chat-bubble-bottom-center')
+                    ->url(fn ($record) => route('admin.telegram.bot.chat.index', $record))
+                    ->color('success'),
+
+                Action::make('Logs')
+                    ->button()
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->url(fn ($record) => route('admin.telegram.bot.logs.index', $record))
+                    ->color('warning')
             ]);
     }
 }

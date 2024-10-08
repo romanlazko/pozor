@@ -124,7 +124,6 @@ class Create extends Component implements HasForms
     public function render(): View
     {
         session()->put('data', array_diff_key($this->data, ['attachments' => ""]));
-        
 
         return view('livewire.announcement.create');
     }

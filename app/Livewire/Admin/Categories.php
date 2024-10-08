@@ -194,10 +194,12 @@ class Categories extends BaseAdminLayout implements HasForms, HasTable
                         ->slideOver()
                         ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                         ->hiddenLabel()
+                        ->button()
                         ->closeModalByClickingAway(false),
                     DeleteAction::make()
                         ->record($this->category)
                         ->hiddenLabel()
+                        ->button()
                         // ->button()
                 // ])
             ]);

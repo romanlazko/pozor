@@ -11,6 +11,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Textarea;
+use Filament\Support\Enums\ActionSize;
 
 class SendMessage extends Component implements HasForms, HasActions
 {
@@ -25,8 +26,9 @@ class SendMessage extends Component implements HasForms, HasActions
 
         $action = Action::make('sendMessage')
             ->icon('heroicon-s-chat-bubble-bottom-center')
-            ->iconButton()
-            ->extraAttributes(['class' => 'border border-indigo-400 hover:border-indigo-600 rounded-xl']);
+            ->outlined()
+            ->extraAttributes(['class' => 'w-full'])
+            ->button();
 
         if (auth()->guest()) {
             return $action

@@ -24,6 +24,7 @@ class Attribute extends Model
         'filter_layout' => 'array',
         'create_layout' => 'array',
         'show_layout' => 'array',
+        'group_layout' => 'array',
     ];
 
     public function getVisibleConditionAttribute()
@@ -94,5 +95,10 @@ class Attribute extends Model
     public function getShowSectionAttribute()
     {
         return $this->cacheRelation('showSection');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(AttributeGroup::class, 'group_layout->group_id');
     }
 }

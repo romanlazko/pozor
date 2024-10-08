@@ -12,11 +12,8 @@ class Toggle extends BaseAttributeType
 {
     protected function getSearchQuery(Builder $query) : Builder
     {
-        // $query->whereHas('features', function ($query) {
-            $query->where('attribute_id', $this->attribute->id)->where('translated_value->original', $this->data[$this->attribute->name]);
-        // });
-
-        return $query;
+        return $query->where('attribute_id', $this->attribute->id)
+            ->where('translated_value->original', $this->data[$this->attribute->name]);
     }
 
     public function getValueByFeature(Feature $feature = null) : ?string

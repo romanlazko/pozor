@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Telegram;
 
+use App\Livewire\Admin\BaseAdminLayout;
 use App\Models\Category;
 use App\Models\Geo;
 use App\Models\TelegramBot;
@@ -11,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -18,9 +20,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class TelegramChats extends BaseAdminLayout implements HasForms, HasTable
+class Chats extends BaseAdminLayout implements HasForms, HasTable
 {
-
     public TelegramBot $telegram_bot;
 
     public function mount(TelegramBot $telegram_bot)
@@ -32,6 +33,11 @@ class TelegramChats extends BaseAdminLayout implements HasForms, HasTable
     {
         return $table
             ->heading("All Chats")
+            ->headerActions([
+                Action::make('back')
+                    ->icon('heroicon-o-arrow-left-circle')
+                    ->url(route('admin.telegram.bot.index')),
+            ])
             ->query(
                 $this->telegram_bot
                     ->chats()
@@ -77,7 +83,7 @@ class TelegramChats extends BaseAdminLayout implements HasForms, HasTable
                                 ->schema([
                                     Select::make('country')
                                         ->label(__('Country'))
-                                        ->options(Geo::select('name', 'country')->where('level', 'PCLI')->pluck('name', 'country'))
+                                        ->options(Geo::select('name', 'country')->where('level', 'PCLI')->get()->pluck('name', 'country'))
                                         ->searchable()
                                         ->afterStateUpdated(function (Set $set) {
                                             $set('geo_id', null);

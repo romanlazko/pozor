@@ -21,7 +21,7 @@ class Price extends Between
         return [
             'attribute_id' => $this->attribute->id,
             'attribute_option_id' => $this->data[$this->attribute->name]['currency'],
-            'translated_value'        => [
+            'translated_value' => [
                 'original' => $this->data[$this->attribute->name]['amount']
             ],
         ];

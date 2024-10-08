@@ -42,8 +42,8 @@
                         <label for="sort" class="text-gray-500 text-sm">{{ __('Sort by:') }}</label>
                         <select name="sort" class="border-none py-0 pl-0 shadow-none focus:ring-0 font-bold bg-transparent text-sm text-gray-900" onchange="this.form.submit()">
                             @foreach ($sortableAttributes as $attribute)
-                                <option value="{{ $attribute->name }}:desc" @selected($request->sort == $attribute->name.":desc")>{{ $attribute->label }}: {{ __('from high to low') }} </option>
-                                <option value="{{ $attribute->name }}:asc" @selected($request->sort == $attribute->name.":asc")>{{ $attribute->label }}: {{ __('from low to high') }} </option>
+                                <option value="{{ $attribute->name }}:desc" @selected($request->sort == $attribute->name.":desc")>{{ $attribute->label }} - {{ __('from high to low') }} </option>
+                                <option value="{{ $attribute->name }}:asc" @selected($request->sort == $attribute->name.":asc")>{{ $attribute->label }} - {{ __('from low to high') }} </option>
                             @endforeach
                         </select>
                     </div>
@@ -54,7 +54,7 @@
     </div>
 
     <div class="space-y-6 px-2 " x-ref="stickyBlock">
-        <x-announcement-list :announcements="$announcements" :cols="4" :paginator="$paginator"/>
+        <x-announcement-list :announcements="$announcements" :cols="3" :paginator="$paginator"/>
     </div>
 
     <x-slot name="footerNavigation">

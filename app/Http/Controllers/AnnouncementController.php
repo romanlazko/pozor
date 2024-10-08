@@ -38,9 +38,10 @@ class AnnouncementController extends Controller
             'media',
             'geo',
             'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
-            'features.attribute:id,name,alterlabels,is_feature,altersuffixes,show_layout',
+            'features.attribute:id,name,alterlabels,is_feature,altersuffixes,show_layout,group_layout',
             'features.attribute_option:id,alternames',
             'features.attribute.showSection:id,alternames,order_number,slug',
+            'features.attribute.group:id,slug,separator',
             'categories:id,slug,alternames',
         ]);
 

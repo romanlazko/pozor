@@ -13,6 +13,8 @@ return [
         'sorting' => 'Сортировка',
         'reset_filters' => 'Сбросить фильтры',
         'reset_location' => 'Сбросить местоположение',
+        'apply_filters' => 'Применить фильтры',
+        'location' => 'Местоположение',
     ],
 
     'placeholders' => [

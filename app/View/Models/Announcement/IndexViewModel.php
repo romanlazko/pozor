@@ -40,7 +40,7 @@ class IndexViewModel
 
     private function getAnnouncementsQuery()
     {
-        $title_price_attributes = Attribute::whereHas('showSection', fn ($query) => 
+        $title_price_attributes = Attribute::whereHas('group', fn ($query) => 
             $query->whereIn('slug', ['title', 'price'])
         )
         ->pluck('id');
@@ -56,6 +56,7 @@ class IndexViewModel
                 'userVotes',
             ])
             ->select('announcements.id', 'announcements.slug', 'announcements.geo_id', 'announcements.created_at')
-            ->isPublished();
+            ->isPublished()
+            ->orderByDesc('announcements.created_at');
     }
 }

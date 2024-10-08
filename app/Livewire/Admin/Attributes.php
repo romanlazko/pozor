@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Jobs\CreateSeedersJob;
 use App\Models\Attribute;
+use App\Models\AttributeGroup;
 use App\Models\AttributeSection;
 use App\Models\Category;
 use Closure;
@@ -126,6 +127,11 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                     })
                     ->badge()
                     ->color('warning'),
+
+                TextColumn::make('group.slug')
+                    ->badge()
+                    ->state(fn (Attribute $record) => $record->group ? "#{$record->group_layout['order_number']} - {$record->group?->slug}": null)
+                    ->color('danger'),
                     
                 TextColumn::make('create_layout.rules')
                     ->label('Rules')
@@ -740,7 +746,7 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                 
             ])
             ->actions([
-                ActionGroup::make([
+                // ActionGroup::make([
                     EditAction::make('Edit')
                         ->modalHeading(fn ($record) => $record->label)
                         ->modalDescription(fn ($record) => $record->name)
@@ -1194,6 +1200,47 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                 ])
                                 ->columns(3),
 
+                            Section::make(__("Group"))
+                                ->schema([
+                                    Grid::make(3)
+                                        ->schema([
+                                            Select::make('group_layout.group_id')
+                                                ->label('Group')
+                                                ->helperText(__('Группа в которой будет находится этот атрибут'))
+                                                ->relationship(name: 'group')
+                                                ->getOptionLabelFromRecordUsing(fn (AttributeGroup $record) => "#{$record->slug}")
+                                                ->columnSpanFull()
+                                                ->createOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            TextInput::make('slug')
+                                                                ->required(),
+
+                                                            TextInput::make('separator')
+                                                                ->helperText(__('Разделитель внутри группы.')),
+                                                        ])
+                                                        ->columns(2),
+                                                ])
+                                                ->editOptionForm([
+                                                    Section::make()
+                                                        ->schema([
+                                                            TextInput::make('slug')
+                                                                ->required(),
+
+                                                            TextInput::make('separator')
+                                                                ->helperText(__('Разделитель внутри группы.')),
+                                                        ])
+                                                        ->columns(2)
+                                                ]),
+
+                                            TextInput::make('group_layout.order_number')
+                                                ->helperText(__("Порядковый номер этого атрибута внутри группы"))
+                                                ->requiredWith('group_layout.group_id'),
+                                        ])
+                                        ->extraAttributes(['class' => 'bg-gray-100 p-4 rounded-lg border border-gray-200']),
+                                ])
+                                ->columns(3),
+
                             Section::make(__('Options'))
                                 ->schema([
                                     Repeater::make('attribute_options')
@@ -1325,11 +1372,15 @@ class Attributes extends BaseAdminLayout implements HasForms, HasTable
                                 ])
                                 ->columns(2),
                         ])
+                        ->hiddenLabel()
+                        ->button()
                         ->slideOver()
                         ->extraModalWindowAttributes(['style' => 'background-color: #e5e7eb'])
                         ->closeModalByClickingAway(false),
                     DeleteAction::make()
-                ])
+                        ->hiddenLabel()
+                        ->button()
+                // ])
             ])
             ->paginated(false)
             ->filters([

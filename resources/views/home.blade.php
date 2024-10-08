@@ -1,8 +1,4 @@
-@php
-    $title = $category?->translated_name ?? __("Latest announcements:");
-@endphp
-
-<x-body-layout :title="$title">
+<x-body-layout>
     <x-slot name="navigation">
         @include('layouts.navigation')
     </x-slot>
@@ -11,7 +7,7 @@
         <div class="w-full space-y-24 py-12">
             <div class="max-w-2xl m-auto space-y-12">
                 <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-500 to-purple-800 text-transparent bg-clip-text">
-                    Buy, Sell, Discover<br> Everything you need in one place
+                    {{ __("Buy, Sell, Discover") }} <br> {{ __("Everything you need in one place") }}
                 </h1>
 
                 <x-search :location="$request->location"/>

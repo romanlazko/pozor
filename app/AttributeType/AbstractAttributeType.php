@@ -45,12 +45,12 @@ abstract class AbstractAttributeType
 
     public function getValueByFeature(Feature $feature = null) : ?string
     {
-        return $feature->attribute_option?->name 
-            ?? $this->getFeatureValue(
-                $feature->translated_value[app()->getLocale()]
-                ?? $feature->translated_value['original']
-                ?? null
-            ) . ' ' . $this->attribute->suffix;
+        return $feature->attribute_option?->name ?? $this->getTranslatedValue($feature->translated_value) . ' ' . $this->attribute->suffix;
+    }
+
+    private function getTranslatedValue($translated_value)
+    {
+        return $this->getFeatureValue($translated_value[app()->getLocale()] ?? $translated_value['original'] ?? null);
     }
 
     public function getCreateSchema(): array
@@ -81,6 +81,10 @@ abstract class AbstractAttributeType
 
     public function getCreateComponent(Get $get = null): ?ViewComponent
     {
+        if ($this->attribute->create_layout['type'] == 'hidden') {
+            return null;
+        }
+
         return $this->getFilamentCreateComponent($get)
             ?->columnSpan(['default' => 'full', 'sm' => $this->attribute->create_layout['column_span'] ?? 'full'])
             ?->columnStart(['default' => '1', 'sm' => $this->attribute->create_layout['column_start'] ?? '1'])

@@ -1,6 +1,6 @@
 <x-body-layout>
-    <x-slot name="headerNavigation">
-        @include('layouts.header')
+    <x-slot name="navigation">
+        @include('layouts.navigation')
     </x-slot>
     
     {{ $slot }}

@@ -11,6 +11,7 @@ use HTMLPurifier_Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Opcodes\LogViewer\Facades\LogViewer;
 use Romanlazko\Telegram\App\Bot;
 use Romanlazko\Telegram\Models\TelegramBot;
 
@@ -54,5 +55,9 @@ class AppServiceProvider extends ServiceProvider
             'neutral' => Color::Neutral,
             'white' => Color::hex('#ffffff'),
         ]);
+
+        LogViewer::auth(function ($request) {
+            return $request->user()->isSuperAdmin();
+        });
     }
 }

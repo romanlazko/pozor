@@ -1,31 +1,20 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Announcement;
 
-use App\Enums\Status;
+use App\Livewire\Admin\BaseAdminLayout;
 use App\Models\Announcement;
-use App\Jobs\SendAnnouncementToChannelJob;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
-use OwenIt\Auditing\Models\Audit;
 use App\Models\TelegramChat;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Support\Enums\ActionSize;
 
 use Filament\Forms\Components\Select;
 
-class AnnouncementChannels extends BaseAdminLayout implements HasForms, HasTable
+class Channels extends BaseAdminLayout implements HasForms, HasTable
 {
     public Announcement $announcement;
 

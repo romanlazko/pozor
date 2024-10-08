@@ -8,7 +8,7 @@
 } */
 
 .fi-btn {
-    border-radius: 1rem;
+    border-radius: 0.75rem;
 }
 
 .parent:focus * {
@@ -30,6 +30,7 @@
 
 .fi-ta-content-grid {
     padding: 16px 4px;
+    background: #f5f4f4;
 }
 
 .fi-ta-record .block {

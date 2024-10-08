@@ -23,12 +23,13 @@ class MenuCommand extends Command
     public function execute(Update $updates): Response
     {
         $buttons = BotApi::inlineKeyboard([
-            [array(HelpCommand::getTitle('en'), HelpCommand::$command, '')],
+            [array(CreateAnnouncement::getTitle('ru'), CreateAnnouncement::$command, '')],
+            [array(EditProfile::getTitle('ru'), EditProfile::$command, '')],
         ]);
 
         $text = implode("\n", [
-            "Hi 👋",
-            "This is the main menu!"
+            "Привет 👋" ."\n", 
+            "Я помогу тебе создать объявление в каналах *Pozor*."."\n",
         ]);
 
         $data = [

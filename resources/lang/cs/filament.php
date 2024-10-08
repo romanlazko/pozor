@@ -13,6 +13,8 @@ return [
         'sorting' => 'Sortování',
         'reset_filters' => 'Vynulovat filtry',
         'reset_location' => 'Vynulovat uměření',
+        'apply_filters' => 'Použít filtry',
+        'location' => 'Uměření',
     ],
 
     'placeholders' => [

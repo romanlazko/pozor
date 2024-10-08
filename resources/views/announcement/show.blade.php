@@ -7,38 +7,35 @@
         @include('layouts.navigation')
     </x-slot>
 
-    <div class="space-y-6 py-6 px-3">
-        <section class="grid w-full grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 md:gap-6">
+    <div class="space-y-6 lg:py-12 lg:px-3">
+        <section class="grid w-full grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 lg:gap-6">
             <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2">
                 <x-slider :medias="$announcement->getMedia('announcements')" :h="500" />
             </div>
                 
-            <div class="w-full overflow-hidden space-y-4 order-3 col-span-2 lg:col-span-3 xl:col-span-2 p-2 md:p-0">
+            <div class="w-full overflow-hidden space-y-6 order-3 col-span-2 lg:col-span-3 xl:col-span-2 p-3">
                 <hr class="lg:hidden">
-                @if ($description = $announcement->getFeatureByName('description'))
-                    <div class="space-y-4 ">
-                        <h3 class="font-bold text-xl">{{ $description->label }}</h3>
-                        <x-markdown class="html">
-                            {{ $description->value }}
-                        </x-markdown>
-                    </div>
-                @endif
+
+                <x-markdown class="html">
+                    {{ $announcement->description }}
+                </x-markdown>
 
                 @if ($announcement->features->where('attribute.is_feature')->isNotEmpty())
                     <hr>
                     
                     <div class="space-y-3 sm:space-y-0 sm:gap-6 grid grid-cols-1 ">
-                        <h3 class="font-bold text-xl">{{ __("Details") }}</h3>
                         @foreach ($announcement->features->where('attribute.is_feature')->sortBy('attribute.showSection.order_number')->groupBy('attribute.showSection.name') as $section_name => $feature_section)
                             <div class="space-y-2">
-                                <h4 class="font-bold text-sm lg:text-base">
+                                <h4 class="font-bold text-sm">
                                     {{ $section_name }}:
                                 </h4>
                                 
                                 <ul class="w-full list-inside list-disc">
                                     @foreach ($feature_section->sortBy('attribute.show_layout.order_number') as $feature)
-                                        <li class="w-full grid grid-cols-2 space-x-2 text-sm lg:text-base">
-                                            <span class="text-gray-500 inline-block">• {{ $feature->label }}:</span>
+                                        <li class="w-full grid grid-cols-2 space-x-2 text-sm">
+                                            <span class="text-gray-500 inline-block">
+                                                • {{ $feature->label }}:
+                                            </span>
                                             <span class="">
                                                 {{ $feature->value }}
                                             </span>
@@ -51,35 +48,36 @@
                 @endif
             </div>
 
-            <div class="w-full h-min space-y-5 py-6 xl:sticky top-0 order-2 col-span-1 lg:col-span-2 xl:col-span-1 p-2 md:px-0 z-20">
-                <div class="space-y-5">
-                    <div class="h-full flex items-center justify-between">
-                        <span class="text-sm text-gray-500">
-                            {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
-                        </span>
-                        
-                        <livewire:components.like-dislike :announcement="$announcement"/>
+            <div class="w-full h-min space-y-6 py-6 xl:sticky top-0 order-2 col-span-1 lg:col-span-2 xl:col-span-1 p-3 z-20">
+                <div class="space-y-6 w-full">
+                    <div class="space-y-4">
+                        <div class="h-full flex items-center justify-between">
+                            <span class="text-sm text-gray-500">
+                                {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
+                            </span>
+                            
+                            <livewire:components.like-dislike :announcement="$announcement"/>
+                        </div>
+        
+                        <div class="w-full space-y-4">
+                            <h1 class="font-bold text-2xl">
+                                {{ $announcement->title }}
+                            </h1>
+                            <p class="font-medium text-xl">
+                                {{ $announcement->price }}
+                            </p>
+                        </div>
                     </div>
-    
-                    <div class="w-full space-y-4">
-                        <h1 class="font-medium text-lg lg:text-xl">
-                            {{ $announcement->getSectionByName('title')->pluck('value')->implode(', ') }}
-                        </h1>
-                        <p class="font-bold text-3xl">
-                            {{ $announcement->getSectionByName('price')->pluck('value')->implode(' ') }}
-                        </p>
-                    </div>
-    
-                    <x-user-card :user="$announcement->user" :announcement="$announcement">
-                        <div class="w-full z-50 flex space-x-5">
+                    
+                    <hr>
+
+                    <div class="space-y-4 w-full">
+                        <x-user-card :user="$announcement->user" :announcement="$announcement"/>
+                        <div class="w-full z-50 grid grid-cols-2 gap-2">
                             <livewire:send-message :announcement_id="$announcement->id"/>
                             <livewire:show-contact :user_id="$announcement->user->id"/>
                         </div>
-                    </x-user-card>
-                </div>
-
-                <div>
-
+                    </div>
                 </div>
             </div>
         </section>

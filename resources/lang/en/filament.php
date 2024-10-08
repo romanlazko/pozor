@@ -13,6 +13,8 @@ return [
         'sorting' => 'Sorting',
         'reset_filters' => 'Reset filters',
         'reset_location' => 'Reset location',
+        'apply_filters' => 'Apply filters',
+        'location' => 'Location',
     ],
 
     'placeholders' => [

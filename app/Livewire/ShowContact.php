@@ -28,9 +28,9 @@ class ShowContact extends Component implements HasForms, HasActions
 
         return Action::make('showContact')
             ->icon('heroicon-s-phone')
-            ->extraAttributes(['class' => "border border-green-500 rounded-xl"])
-            ->iconButton()
-            ->color('success')
+            ->extraAttributes(['class' => 'w-full'])
+            ->button()
+            ->color('primary')
             ->modalHeading(' ')
             ->modalWidth('xl')
             ->modalSubmitAction(false)

@@ -40,13 +40,21 @@ class Announcement extends Model implements HasMedia, Auditable
         static::created(function (Announcement $announcement) {
             $announcement->statuses()->create(['status' => Status::created]);
         });
+
+        // static::retrieved(function (Announcement $announcement) {
+        //     $features = $announcement->features;
+
+        //     foreach ($features as $feature) {
+        //         $announcement->setAttribute($feature->attribute->name, $feature);
+        //     }
+        // });
     }
 
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function ($model) {
-                return $model?->getSectionByName('title')?->pluck('value')?->implode(' ') ?? $model->uuid;
+                return $model?->title ?? $model->uuid;
             })
             ->skipGenerateWhen(function () {
                 return $this->features->isEmpty();
@@ -123,6 +131,28 @@ class Announcement extends Model implements HasMedia, Auditable
         return $this->features->groupBy('attribute.showSection.slug')
             ?->get($name)
             ?->sortBy('attribute.show_layout.order_number');
+    }
+
+    public function getGroupByName(string $name)
+    {
+        return $this->features->groupBy('attribute.group.slug')
+            ?->get($name)
+            ?->sortBy('attribute.group_layout.order_number');
+    }
+
+    public function getTitleAttribute()
+    {
+        return $this->getGroupByName('title')?->pluck('value')->implode(', ');
+    }
+
+    public function getPriceAttribute()
+    {
+        return $this->getGroupByName('price')?->pluck('value')->implode(' ');
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->getGroupByName('description')?->pluck('value')->implode(' ');
     }
 
     public function getDynamicSEOData(): SEOData

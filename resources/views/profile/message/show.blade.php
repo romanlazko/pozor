@@ -1,4 +1,8 @@
 <x-body-layout>
+    {{-- <x-slot name="navigation">
+        @include('layouts.navigation')
+    </x-slot> --}}
+
     <x-slot name="headerNavigation">
         @include('layouts.header')
     </x-slot>

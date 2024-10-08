@@ -16,9 +16,8 @@ class ToggleButtons extends BaseAttributeType
             return $query;
         }
 
-        // return $query->whereHas('features', function ($query) {
-            $query->where('attribute_id', $this->attribute->id)->where('attribute_option_id', $this->data[$this->attribute->name]);
-        // });
+        return $query->where('attribute_id', $this->attribute->id)
+            ->where('attribute_option_id', $this->data[$this->attribute->name]);
     }
 
     protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent

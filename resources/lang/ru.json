@@ -80,6 +80,14 @@
 
         "from high to low": "от большего к меньшему",
         "from low to high": "от меньшего к большому",
+        "All announcements:": "Все объявления:",
+
+        "Sort by:": "Сортировка:",
+        "All": "Все",
+
+        "Apply Filters": "Применить фильтры",
+
+        "Search...": "Поиск...",
 
     "MESSAGE-INDEX.BLADE": "MESSAGE-INDEX.BLADE",
 
@@ -119,7 +127,8 @@
         "Phone:": "Телефон:",
         "Show contacts": "Показать контакты",
         "Page not found": "Страница не найдена",
-        "registered": "регистрация",
+        "Registered:": "Регистрация:",
+        "Languages:": "Языки:",
 
     "AUTH.BLADE": "AUTH.BLADE",
 
@@ -131,5 +140,10 @@
         "Forgot your password?": "Забыли пароль?",
         "Already registered?": "Уже зарегистрированы?",
         "Reset Password": "Сбросить пароль",
-        "Resend Verification Email": "Повторно отправить письмо для подтверждения"
+        "Resend Verification Email": "Повторно отправить письмо для подтверждения",
+        "Continue": "Продолжить",
+
+    "Home": "HOME",
+        "Buy, Sell, Discover": "Купить, Продать, Найти",
+        "Everything you need in one place": "Все, что вам нужно в одном месте"
 }

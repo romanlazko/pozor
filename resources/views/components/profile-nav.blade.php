@@ -46,7 +46,7 @@
 
     @hasrole('super-duper-admin')
         <hr>
-        <a href="{{ route('admin.announcements') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('admin.announcements')])>
+        <a href="{{ route('admin.announcements.index') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('admin.announcements.inde')])>
             <i class="fa-solid fa-user-tie"></i>
             <span class="font-medium text-sm">{{ __("Admin") }}</span>
         </a>
