@@ -181,13 +181,91 @@
 @props(['medias' => [], 'h' => null, 'thumb' => true])
 
 <div 
+    x-data="{
+        photos: {{ $medias->map(fn ($media) => [
+            'srcset' => $media->getSrcset('responsive-images'),
+            'placeholder' => $media->responsiveImages('responsive-images')->getPlaceholderSvg(),
+            'thumb' => $media->getUrl('thumb'),
+        ]) }},
+        activeIndex: 0,
+        touchStartX: 0,
+        touchStartY: 0,
+        touchEndX: 0,
+        touchEndY: 0,
+        touchMoveX: 0,
+        touchMoveY: 0,
+        touchStarted: false,
+        horizontalThreshold: 70, // Порог горизонтальной прокрутки
+        verticalThreshold: 60,
+        ratio: 0,
+        nextSlide() {
+            this.activeIndex = (this.activeIndex + 1) % this.photos.length;
+            this.centerThumbnail(this.activeIndex);
+        },
+        prevSlide() {
+            this.activeIndex = (this.activeIndex - 1 + this.photos.length) % this.photos.length;
+            this.centerThumbnail(this.activeIndex);
+        },
+        setActiveSlide(index) {
+            this.activeIndex = index;
+            this.centerThumbnail(this.activeIndex);
+        },
+        handleTouchStart(event) {
+            this.touchStartX = event.touches[0].screenX;
+            this.touchStartY = event.touches[0].screenY;
+            this.touchStarted = true;
+        },
+        handleTouchMove(event) {
+            if (!this.touchStarted) return;
+
+            this.touchMoveX = event.touches[0].screenX;
+            this.touchMoveY = event.touches[0].screenY;
+
+            const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
+            const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
+            const ratio = deltaX / deltaY;
+
+            if (ratio > 1.5) {
+                event.preventDefault();
+            } else {
+                this.touchStarted = false;
+            }
+        },
+        handleTouchEnd(event) {
+            if (!this.touchStarted) return;
+
+            this.touchEndX = event.changedTouches[0].screenX;
+            this.touchEndY = event.changedTouches[0].screenY;
+            this.touchStarted = false;
+
+            const deltaX = Math.abs(this.touchEndX - this.touchStartX);
+            const deltaY = Math.abs(this.touchEndY - this.touchStartY);
+            const ratio = deltaX / deltaY;
+
+            if (ratio > 1.5 || deltaX > this.horizontalThreshold) {
+                if (this.touchEndX - this.touchStartX < 0) {
+                    this.nextSlide();
+                } else if (this.touchEndX - this.touchStartX > 0) {
+                    this.prevSlide();
+                }
+            }
+        },
+        centerThumbnail(index) {
+            const thumbnailContainer = this.$refs.thumbnailContainer;
+
+            if (thumbnailContainer) {
+                const thumbnailWidth = thumbnailContainer.children[index].offsetWidth;
+                const containerWidth = thumbnailContainer.offsetWidth;
+                const scrollAmount = thumbnailContainer.children[index].offsetLeft - containerWidth / 2 + thumbnailWidth / 2;
+                thumbnailContainer.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }"
     class="w-full mx-auto overflow-hidden flex flex-col" 
     style="height: {{ $h }}px"
-    x-data="slider({{ $medias->map(fn ($media) => [
-        'srcset' => $media->getSrcset('responsive-images'),
-        'placeholder' => $media->responsiveImages('responsive-images')->getPlaceholderSvg(),
-        'thumb' => $media->getUrl('thumb'),
-    ]) }})"
 >
     <!-- Слайдер -->
     <div class="relative overflow-hidden flex-1 bg-black lg:rounded-2xl aspect-square" @touchstart="handleTouchStart($event)" @touchend="handleTouchEnd($event)" @touchmove="handleTouchMove($event)" >
@@ -209,16 +287,20 @@
                     </div>
                 </template>
             </div>
-            <div class="absolute inset-0 flex justify-between items-center px-3" :class="{ 'hidden': photos.length < 2 }">
-                <button @click.prevent="prevSlide()" @dblclick.prevent class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
+            <div class="absolute inset-0 flex justify-between items-center " :class="{ 'hidden': photos.length < 2 }">
+                <button @click.prevent="prevSlide()" @dblclick.prevent class="h-full p-1 lg:px-3">
+                    <div class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100 ">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 lg:h-6 w-3 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </div>
                 </button>
-                <button @click.prevent="nextSlide()" @dblclick.prevent class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
+                <button @click.prevent="nextSlide()" @dblclick.prevent class="h-full p-1 lg:px-3">
+                    <div class="bg-gray-800 bg-opacity-50 lg:hover:bg-opacity-90 text-white p-2 rounded-full opacity-30 hover:opacity-100 lg:opacity-100 ">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 lg:h-6 w-3 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
                 </button>
             </div>
         </div>
@@ -226,16 +308,15 @@
 
     <!-- Thumbnails -->
     @if ($thumb)
-    <div class="w-full flex justify-center">
-        <div class="overflow-x-auto min-h-20 flex mt-4 m-auto" x-ref="thumbnailContainer">
-            <template x-for="(photo, index) in photos" :key="index">
-                <img :src="photo.thumb" @click="setActiveSlide(index); centerThumbnail(index)" 
-                    :class="{'ring-2 ring-indigo-700': activeIndex === index, 'ring-1': activeIndex !== index}" 
-                    class="w-16 h-16 min-h-16 min-w-16 object-cover m-1 cursor-pointer rounded-lg ring-gray-200 hover:ring-indigo-400">
-            </template>
+        <div class="w-full flex justify-center">
+            <div class="overflow-x-auto min-h-20 flex mt-4 m-auto" x-ref="thumbnailContainer">
+                <template x-for="(photo, index) in photos" :key="index">
+                    <img :src="photo.thumb" @click="setActiveSlide(index); centerThumbnail(index)" 
+                        :class="{'ring-2 ring-indigo-700': activeIndex === index, 'ring-1': activeIndex !== index}" 
+                        class="w-16 h-16 min-h-16 min-w-16 object-cover m-1 cursor-pointer rounded-lg ring-gray-200 hover:ring-indigo-400">
+                </template>
+            </div>
         </div>
-    </div>
-        
     @endif
 </div>
 
@@ -320,7 +401,6 @@
                         behavior: 'smooth'
                     });
                 }
-                
             }
         }
     }
