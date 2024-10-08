@@ -190,7 +190,7 @@
     ]) }})"
 >
     <!-- Слайдер -->
-    <div class="relative overflow-hidden flex-1 bg-black lg:rounded-2xl aspect-square" @touchstart="handleTouchStart($event)" @touchend="handleTouchEnd($event)">
+    <div class="relative overflow-hidden flex-1 bg-black lg:rounded-2xl aspect-square" @touchstart="handleTouchStart($event)" @touchend="handleTouchEnd($event)" @touchmove="handleTouchMove($event)" >
         <div class="w-full m-auto items-center z-30 h-full overflow-hidden">
             <div class="flex transition-transform duration-500 h-full items-center" :style="'transform: translateX(-' + activeIndex * 100 + '%)'">
                 <template x-for="(photo, index) in photos" :key="index">
@@ -245,7 +245,14 @@
             photos: photos,
             activeIndex: 0,
             touchStartX: 0,
+            touchStartY: 0,
             touchEndX: 0,
+            touchEndY: 0,
+            touchMoveX: 0,
+            touchMoveY: 0,
+            touchStarted: false,
+            horizontalThreshold: 30, // Порог горизонтальной прокрутки
+            verticalThreshold: 10,
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
                 this.centerThumbnail(this.activeIndex);
@@ -259,17 +266,49 @@
                 this.centerThumbnail(this.activeIndex);
             },
             handleTouchStart(event) {
-                this.touchStartX = event.changedTouches[0].screenX;
-                event.preventDefault();
+                this.touchStartX = event.touches[0].screenX;
+                this.touchStartY = event.touches[0].screenY;
+                this.touchStarted = true;
             },
-            handleTouchEnd(event) {
-                this.touchEndX = event.changedTouches[0].screenX;
-                if (this.touchEndX < this.touchStartX) {
-                    this.nextSlide();
-                } else if (this.touchEndX > this.touchStartX) {
-                    this.prevSlide();
+
+            handleTouchMove(event) {
+                if (!this.touchStarted) return;
+
+                this.touchMoveX = event.touches[0].screenX;
+                this.touchMoveY = event.touches[0].screenY;
+
+                const deltaX = Math.abs(this.touchMoveX - this.touchStartX);
+                const deltaY = Math.abs(this.touchMoveY - this.touchStartY);
+
+                console.log(deltaX, deltaY);
+
+                // Если горизонтальное движение больше чем вертикальное
+                if (deltaX > deltaY && deltaX > this.horizontalThreshold) {
+                    // Останавливаем стандартное поведение прокрутки страницы
+                    event.preventDefault();
                 }
-                event.preventDefault();
+            },
+
+            handleTouchEnd(event) {
+                if (!this.touchStarted) return;
+
+                this.touchEndX = event.changedTouches[0].screenX;
+                this.touchEndY = event.changedTouches[0].screenY;
+                this.touchStarted = false;
+
+                const deltaX = this.touchEndX - this.touchStartX;
+                const deltaY = Math.abs(this.touchEndY - this.touchStartY);
+
+                // Если горизонтальное движение больше вертикального и превышает порог
+                if (deltaY < this.verticalThreshold || Math.abs(deltaX) > deltaY) {
+                    if (deltaX < 0) {
+                        this.nextSlide(); // Листаем вправо
+                    } else if (deltaX > 0) {
+                        this.prevSlide(); // Листаем влево
+                    }
+                }
+
+                // Если вертикальное движение больше, не останавливаем событие, страница продолжит скролл
             },
             centerThumbnail(index) {
                 const thumbnailContainer = this.$refs.thumbnailContainer;
