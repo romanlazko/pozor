@@ -197,11 +197,11 @@
                     <div class="w-full h-full flex-shrink-0" >
                         <div class="h-full">
                             <img 
-                                :srcset="photo.srcset"
                                 :src="photo.placeholder"
+                                :srcset="photo.srcset"
                                 :alt="'Slide ' + (index + 1)"
-                                x-on:load="updateSize($event.target)"
-                                :sizes="sizes"
+                                sizes="1px"
+                                onload="window.requestAnimationFrame(function(){if(!(size=getBoundingClientRect().width))return;onload=null;sizes=Math.ceil(size/window.innerWidth*100)+'vw';});" 
                                 class="object-contain h-full m-auto" 
                                 loading="lazy"
                             >
@@ -209,7 +209,7 @@
                     </div>
                 </template>
             </div>
-            <div class="absolute inset-0 flex justify-between items-center px-3 z-40" :class="{ 'hidden': photos.length < 2 }">
+            <div class="absolute inset-0 flex justify-between items-center px-3" :class="{ 'hidden': photos.length < 2 }">
                 <button @click="prevSlide" @dblclick.prevent class="bg-gray-800 bg-opacity-50 text-white p-2 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -226,15 +226,16 @@
 
     <!-- Thumbnails -->
     @if ($thumb)
-    <div class="overflow-x-auto scrollbar-hide mt-4">
-        <div class="flex justify-center space-x-2" x-ref="thumbnailContainer">
+    <div class="w-full flex justify-center">
+        <div class="overflow-x-auto min-h-20 flex mt-4 m-auto" x-ref="thumbnailContainer">
             <template x-for="(photo, index) in photos" :key="index">
                 <img :src="photo.thumb" @click="setActiveSlide(index); centerThumbnail(index)" 
-                    :class="{'ring-2 ring-indigo-700': activeIndex === index}" 
-                    class="w-16 h-16 object-cover cursor-pointer rounded-lg m-2 hover:ring-indigo-400">
+                    :class="{'ring-2 ring-indigo-700': activeIndex === index, 'ring-1': activeIndex !== index}" 
+                    class="w-16 h-16 min-h-16 min-w-16 object-cover m-1 cursor-pointer rounded-lg ring-gray-200 hover:ring-indigo-400">
             </template>
         </div>
     </div>
+        
     @endif
 </div>
 
@@ -245,7 +246,6 @@
             activeIndex: 0,
             touchStartX: 0,
             touchEndX: 0,
-            sizes: '1px',
             nextSlide() {
                 this.activeIndex = (this.activeIndex + 1) % this.photos.length;
                 this.centerThumbnail(this.activeIndex);
@@ -268,14 +268,6 @@
                 } else if (this.touchEndX > this.touchStartX) {
                     this.prevSlide();
                 }
-            },
-            updateSize(element) {
-                window.requestAnimationFrame(() => {
-                    const size = element.getBoundingClientRect().width;
-                    if (size) {
-                        this.sizes = Math.ceil(size / window.innerWidth * 100) + 'vw';
-                    }
-                });
             },
             centerThumbnail(index) {
                 const thumbnailContainer = this.$refs.thumbnailContainer;
