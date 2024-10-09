@@ -47,32 +47,39 @@
 		</div>
 	</div>
 
-	<x-locale class="md:w-min w-full"/>
+	<div>
 
-	<div class="flex items-center space-x-3 md:hidden relative">
-		<div x-data="{ dropdownOpen: false }" class="relative">
-			<button @click="dropdownOpen = ! dropdownOpen" class="flex text-white hover:text-indigo-700">
-				<i class="fa-solid fa-bars"></i>
-			</button>
+	</div>
+	<div class="flex items-center space-x-2 w-min">
+		<x-locale class="md:w-min w-full"/>
 
-			<div x-cloak :class="dropdownOpen ? 'block' : 'hidden'" @click="dropdownOpen = false" class="fixed inset-0 z-40 transition-opacity  bg-black opacity-50"></div>
-
-			<div x-cloak x-show="dropdownOpen" class="absolute right-0 z-50 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border">
-				<x-profile-nav>
-					<hr>
-					<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
-						<span class="font-medium">{{ __('About us') }}</span>
-					</a>
-					<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
-						<span class="font-medium">{{ __('Privacy') }}</span>
-					</a>
-					<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
-						<span class="font-medium">{{ __('Contact') }}</span>
-					</a>
-				</x-profile-nav>
+		<div class="flex items-center md:hidden relative">
+			<div x-data="{ dropdownOpen: false }" class="relative">
+				<button @click="dropdownOpen = ! dropdownOpen" class="flex text-white hover:text-indigo-700">
+					<i class="fa-solid fa-bars"></i>
+				</button>
+	
+				<div x-cloak :class="dropdownOpen ? 'block' : 'hidden'" @click="dropdownOpen = false" class="fixed inset-0 z-40 transition-opacity  bg-black opacity-50"></div>
+	
+				<div x-cloak x-show="dropdownOpen" class="absolute right-0 z-50 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border">
+					<x-profile-nav>
+						<hr>
+						<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
+							<span class="font-medium">{{ __('About us') }}</span>
+						</a>
+						<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
+							<span class="font-medium">{{ __('Privacy') }}</span>
+						</a>
+						<a href="{{ route('profile.announcement.wishlist') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3 text-sm', 'text-indigo-600' => request()->routeIs('profile.announcement.wishlist')])>
+							<span class="font-medium">{{ __('Contact') }}</span>
+						</a>
+					</x-profile-nav>
+					
+				</div>
 				
 			</div>
-			
 		</div>
 	</div>
+
+	
 </header>

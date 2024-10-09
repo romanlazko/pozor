@@ -92,6 +92,8 @@
     :class="{
         'fixed inset-0 overflow-hidden z-50 bg-white h-[100dvh]': fullscreen === true,
     }"
+    x-on:close.stop="fullscreen = false"
+    x-on:keydown.escape.window="fullscreen = false"
     :style="!fullscreen ? { height: '{{ $height }}' } : null"
 >
     <div 
@@ -154,7 +156,7 @@
             @endif
 
             @if ($withDots)
-                <div class="w-full flex justify-center absolute bottom-3 z-20">
+                <div class="w-full flex justify-center absolute bottom-2 z-20">
                     <div class="overflow-x-auto h-5 flex m-auto scrollbar-hide" x-ref="thumbnailContainer">
                         @for ($index = 0; $index < $medias->count(); $index++)
                             <button
@@ -163,7 +165,7 @@
                                     'bg-indigo-700 border-4 ': activeIndex === {{ $index }}, 
                                     'bg-transparent': activeIndex !== {{ $index }}
                                 }" 
-                                class="w-3 h-3 min-h-3 min-w-3 transition duration-200 ease-in-out cursor-pointer rounded-full border border-white hover:bg-indigo-700 m-1 "
+                                class="w-3 h-3 min-h-3 min-w-3 transition duration-200 ease-in-out cursor-pointer rounded-full border border-white hover:bg-indigo-700 m-1 ring-1 ring-indigo-700"
                             >
                             </button>
                         @endfor

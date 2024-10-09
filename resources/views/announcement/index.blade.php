@@ -19,7 +19,7 @@
 
     <x-slot name="search">
         <div class="w-full py-1 md:py-2 p-2">
-            <x-search :category="$category" :search="$request->search ?? null" :filterButton="true" :location="$request->location ?? null"/>
+            <x-search :category="$category" :search="$request->search ?? null" :filterButton="true" :location="$request->location ?? null" :filtersCount="count($request->filters['attributes'] ?? [])"/>
         </div>
     </x-slot>
     
@@ -39,8 +39,8 @@
                 </h2>
                 <form action="{{ route('announcement.search', ['category' => $category?->slug]) }}">
                     <div class="w-full flex items-center space-x-2 ">
-                        <label for="sort" class="text-gray-500 text-sm">{{ __('Sort by:') }}</label>
-                        <select name="sort" class="border-none py-0 pl-0 shadow-none focus:ring-0 font-bold bg-transparent text-sm text-gray-900" onchange="this.form.submit()">
+                        <label for="sort" class="text-gray-500 text-sm whitespace-nowrap">{{ __('Sort by:') }}</label>
+                        <select name="sort" class="border-none py-0 pl-0 shadow-none focus:ring-0 font-bold bg-transparent text-sm text-gray-900 text-ellipsis w-full" onchange="this.form.submit()">
                             @foreach ($sortableAttributes as $attribute)
                                 <option value="{{ $attribute->name }}:desc" @selected($request->sort == $attribute->name.":desc")>{{ $attribute->label }} - {{ __('from high to low') }} </option>
                                 <option value="{{ $attribute->name }}:asc" @selected($request->sort == $attribute->name.":asc")>{{ $attribute->label }} - {{ __('from low to high') }} </option>
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="space-y-6 lg:p-2" x-ref="stickyBlock">
+    <div class="space-y-6 p-2" x-ref="stickyBlock">
         <x-announcement-list :announcements="$announcements" :cols="3" :paginator="$paginator"/>
     </div>
 

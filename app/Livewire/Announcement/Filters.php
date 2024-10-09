@@ -116,6 +116,7 @@ class Filters extends Component implements HasForms
 
     private function resetData()
     {
+        session()->forget('filters');
         $this->reset('filters');
         $this->form->fill($this->filters);
         $this->search();
