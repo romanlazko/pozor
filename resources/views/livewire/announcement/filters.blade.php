@@ -1,5 +1,5 @@
 <form wire:submit="search" class="w-full h-full rounded-2xl">
-    @dump($filters)
+    {{-- @dump($filters) --}}
     <div class="w-full rounded-2xl">
         {{ $this->form }}
     </div>
