@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="space-y-6 px-2 " x-ref="stickyBlock">
+    <div class="space-y-6 lg:p-2" x-ref="stickyBlock">
         <x-announcement-list :announcements="$announcements" :cols="3" :paginator="$paginator"/>
     </div>
 

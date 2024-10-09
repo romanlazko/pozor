@@ -9,11 +9,15 @@
 
     <div class="space-y-6 lg:py-12 lg:px-3">
         <section class="grid w-full grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 lg:gap-6">
-            <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2">
-                <x-slider :medias="$announcement->getMedia('announcements')" :h="500" />
+            <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2 lg:rounded-2xl overflow-hidden">
+                <x-slider
+                    :medias="$announcement->getMedia('announcements')" 
+                    height="500px"
+                    :withFullscreen="true"
+                    :withButtons="true"
+                    :withDots="true"
+                />
             </div>
-            
-            
 
             <div class="w-full overflow-hidden order-3 col-span-2 lg:col-span-3 xl:col-span-2 px-3">
                 <hr class="pb-6 lg:hidden lg:pb-0">
@@ -48,7 +52,6 @@
                             @endforeach
                         </div>
                     @endif
-
                 </div>
             </div>
 
