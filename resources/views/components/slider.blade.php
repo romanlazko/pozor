@@ -90,7 +90,7 @@
     }"
     class="w-full overflow-hidden flex flex-col sm:px-0 transition duration-200 ease-in-out"
     :class="{
-        'fixed inset-0 overflow-hidden z-50 bg-white h-[100vh]': fullscreen === true,
+        'fixed inset-0 overflow-hidden z-50 bg-white h-[100dvh]': fullscreen === true,
     }"
     :style="!fullscreen ? { height: '{{ $height }}' } : null"
 >
