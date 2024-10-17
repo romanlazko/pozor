@@ -113,8 +113,8 @@
                                     'object-contain h-full': fullscreen === true,
                                     'object-cover w-full h-full':fullscreen === false, 
                                 }"
-                                src="{{ $media->responsiveImages('responsive-images')->getPlaceholderSvg() ?? null }}"
-                                srcset="{{ $media->getSrcset('responsive-images') ?? null }}"
+                                src="{{ $media->responsiveImages('responsive-images')->getPlaceholderSvg() ?? $media->getUrl() }}"
+                                srcset="{{ $media->getSrcset('responsive-images') ?? $media->getUrl() }}"
                                 alt="Slide {{ $index }}"
                                 sizes="11px"
                                 onload="window.requestAnimationFrame(function(){if(!(size=getBoundingClientRect().width))return;onload=null;sizes=Math.ceil(size/window.innerWidth*100)+'vw';});"
@@ -157,15 +157,15 @@
 
             @if ($withDots)
                 <div class="w-full flex justify-center absolute bottom-2 z-20">
-                    <div class="overflow-x-auto h-5 flex m-auto scrollbar-hide" x-ref="thumbnailContainer">
+                    <div @class(['overflow-x-auto flex m-auto scrollbar-hide rounded-full space-x-2 p-1 hover:opacity-100', 'bg-gray-500 opacity-70' => $medias->count() > 1])x-ref="thumbnailContainer">
                         @for ($index = 0; $index < $medias->count(); $index++)
                             <button
                                 @click.prevent="setActiveSlide({{ $index }});" 
                                 :class="{
-                                    'bg-indigo-700 border-4 ': activeIndex === {{ $index }}, 
-                                    'bg-transparent': activeIndex !== {{ $index }}
+                                    'bg-white opacity-100': activeIndex === {{ $index }}, 
+                                    'bg-gray-300 hover:bg-gray-100': activeIndex !== {{ $index }}
                                 }" 
-                                class="w-3 h-3 min-h-3 min-w-3 transition duration-200 ease-in-out cursor-pointer rounded-full border border-white hover:bg-indigo-700 m-1 ring-1 ring-indigo-700"
+                                class="w-2 h-2 min-h-2 min-w-2 transition duration-200 ease-in-out cursor-pointer rounded-full"
                             >
                             </button>
                         @endfor

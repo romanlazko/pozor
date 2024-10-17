@@ -4,19 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
 use App\Models\Announcement;
-use App\View\Models\Announcement\SearchViewModel;
+use App\View\Models\Announcement\IndexViewModel;
+use App\View\Models\Announcement\ShowViewModel;
 
 class AnnouncementController extends Controller
 {
     public function index(SearchRequest $request)
     {
-        $viewModel = new SearchViewModel($request);
+        $viewModel = new IndexViewModel($request);
 
         return view('announcement.index', [
             'announcements' => $viewModel->getAnnouncements(),
             'categories' => $viewModel->getCategories(),
             'category' => $viewModel->getCategory(),
-            'sortableAttributes' => $viewModel->getSortableAttributes(),
+            'sortings' => $viewModel->getSortings(),
             'paginator' => $viewModel->getPaginator(),
             'request' => $request,
         ]);
@@ -32,47 +33,13 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
-        $announcement->load([
-            'user.media',
-            'userVotes',
-            'media',
-            'geo',
-            'features:announcement_id,attribute_id,attribute_option_id,translated_value', 
-            'features.attribute:id,name,alterlabels,is_feature,altersuffixes,show_layout,group_layout',
-            'features.attribute_option:id,alternames',
-            'features.attribute.showSection:id,alternames,order_number,slug',
-            'features.attribute.group:id,slug,separator',
-            'categories:id,slug,alternames',
+        $viewModel = new ShowViewModel($announcement);
+
+        return view('announcement.show', [
+            'announcement' => $viewModel->getAnnouncement(),
+            'similar_announcements' => $viewModel->getSimilarAnnouncements(),
+            'user_announcements' => $viewModel->getUserAnnouncements(),
         ]);
-
-        if (!$announcement->status->isPublished() AND $announcement->user?->id != auth()->id()) {
-            abort(404);
-        }
-
-        $similar_announcements = [];
-        $user_announcements = [];
-
-        // $announcement->user->isPartner()
-        // if (false) {
-        //     $user_announcements = Announcement::isPublished()
-        //         ->limit(12)
-        //         ->whereNot('id', $announcement->id)
-        //         ->where('user_id', $announcement->user?->id)
-        //         ->get();
-        // }
-        // else {
-        //     $similar_announcements = Announcement::select('announcements.*')
-        //         ->join('announcement_category', 'announcements.id', '=', 'announcement_category.announcement_id')
-        //         ->where('announcement_category.category_id', $announcement->categories?->last()->id)
-        //         ->isPublished()
-        //         ->with('media', 'features.attribute_option','user','user.media')
-        //         ->orderByDesc('created_at')
-        //         ->whereNot('announcements.id', $announcement->id)
-        //         ->limit(12)
-        //         ->get();
-        // }
-
-        return view('announcement.show', compact('announcement', 'similar_announcements', 'user_announcements'));
     }
 
     public function create()

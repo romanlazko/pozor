@@ -12,12 +12,13 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use App\Models\TelegramChat;
 use App\Models\Traits\AnnouncementSearch;
-use App\Models\Traits\AnnouncementStatus;
+use App\Models\Traits\AnnouncementModeration;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use App\Models\Traits\Statusable;
 
 class Announcement extends Model implements HasMedia, Auditable
 {
@@ -27,7 +28,8 @@ class Announcement extends Model implements HasMedia, Auditable
     use AuditingAuditable; 
     use HasSEO; 
     use AnnouncementSearch;
-    use AnnouncementStatus; 
+    use AnnouncementModeration; 
+    use Statusable;
 
     protected $guarded = [];
 
@@ -38,16 +40,8 @@ class Announcement extends Model implements HasMedia, Auditable
     protected static function booted(): void
     {
         static::created(function (Announcement $announcement) {
-            $announcement->statuses()->create(['status' => Status::created]);
+            $announcement->updateStatus(Status::created, ['message' => 'Announcement created']);
         });
-
-        // static::retrieved(function (Announcement $announcement) {
-        //     $features = $announcement->features;
-
-        //     foreach ($features as $feature) {
-        //         $announcement->setAttribute($feature->attribute->name, $feature);
-        //     }
-        // });
     }
 
     public function getSlugOptions() : SlugOptions
@@ -67,7 +61,8 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         $this
             ->addMediaConversion('responsive-images')
-            ->withResponsiveImages();
+            ->withResponsiveImages()
+            ->useFallbackUrl('/images/no-photo.jpg', 'responsive-images');
 
         $this
             ->addMediaConversion('thumb')
@@ -78,7 +73,8 @@ class Announcement extends Model implements HasMedia, Auditable
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('announcements');
+        $this->addMediaCollection('announcements')
+            ->useFallbackUrl('/images/no-photo.jpg');
     }
 
     public function chat()
@@ -118,7 +114,7 @@ class Announcement extends Model implements HasMedia, Auditable
 
     public function channels()
     {
-        return $this->hasMany(AnnouncementChannel::class, 'announcement_id', 'id');
+        return $this->hasMany(AnnouncementChannel::class);;
     }
 
     public function getFeatureByName(string $name)
@@ -133,6 +129,7 @@ class Announcement extends Model implements HasMedia, Auditable
             ?->sortBy('attribute.show_layout.order_number');
     }
 
+
     public function getGroupByName(string $name)
     {
         return $this->features->groupBy('attribute.group.slug')
@@ -142,24 +139,34 @@ class Announcement extends Model implements HasMedia, Auditable
 
     public function getTitleAttribute()
     {
-        return $this->getGroupByName('title')?->pluck('value')->implode(', ');
+        $group = $this->getGroupByName('title');
+        
+        return $group?->pluck('value')->implode($this->getGroupSeparator($group));
     }
-
     public function getPriceAttribute()
     {
-        return $this->getGroupByName('price')?->pluck('value')->implode(' ');
+        $group = $this->getGroupByName('price');
+
+        return $group?->pluck('value')->implode($this->getGroupSeparator($group));
     }
 
     public function getDescriptionAttribute()
     {
-        return $this->getGroupByName('description')?->pluck('value')->implode(' ');
+        $group = $this->getGroupByName('description');
+
+        return $group?->pluck('value')->implode($this->getGroupSeparator($group));
+    }
+
+    private function getGroupSeparator($group)
+    {
+        return $group->first()?->attribute?->group?->separator . ' ';
     }
 
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
-            title: $this->getFeatureByName('title')?->value,
-            description: $this->getFeatureByName('description')?->value,
+            title: $this->title,
+            description: $this->description,
             author: $this->user?->name,
             image: $this->getFirstMediaUrl('announcements'),
             url: url()->current(),

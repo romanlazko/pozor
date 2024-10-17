@@ -14,35 +14,90 @@
 
     <nav class="space-y-3 px-2">
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.telegram.bot.index') }}" :active="request()->routeIs('admin.telegram.*')">
-				{{ __('Telegram') }}
-			</x-responsive-nav-link>
+			<x-dropdown-nav-link :active="request()->routeIs('admin.announcement.*')">
+				<x-slot name="trigger">
+					{{ __('Announcements') }}
+				</x-slot>
+				<x-responsive-nav-link href="{{ route('admin.announcement.moderation') }}" :active="request()->routeIs('admin.announcement.moderation')">
+					{{ __('Moderation') }}
+				</x-responsive-nav-link>
+				<x-responsive-nav-link href="{{ route('admin.announcement.announcements') }}" :active="request()->routeIs('admin.announcement.announcements')">
+					{{ __('All announcements') }}
+				</x-responsive-nav-link>
+			</x-dropdown-nav-link>
 		@endhasrole
+
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.users') }}" :active="request()->routeIs('admin.users')">
-				{{ __('Users') }}
-			</x-responsive-nav-link>
+			<x-dropdown-nav-link :active="request()->routeIs('admin.telegram.*')">
+				<x-slot name="trigger">
+					{{ __('Telegram') }}
+				</x-slot>
+				<x-responsive-nav-link href="{{ route('admin.telegram.bots') }}" :active="request()->routeIs('admin.telegram.bots')">
+					{{ __('Bots') }}
+				</x-responsive-nav-link>
+				@foreach (\App\Models\TelegramBot::select('first_name', 'id')->get() as $bot)
+					<x-dropdown-nav-link :active="request()->routeIs('admin.telegram.chats', $bot->id) || request()->routeIs('admin.telegram.logs', $bot->id) || request()->routeIs('admin.telegram.channels', $bot->id)">
+						<x-slot name="trigger">
+							{{ $bot->first_name }}
+						</x-slot>
+						<x-responsive-nav-link href="{{ route('admin.telegram.chats', $bot->id) }}" :active="request()->routeIs('admin.telegram.chats', $bot->id)">
+							{{ __('Ctats') }}
+						</x-responsive-nav-link>
+						<x-responsive-nav-link href="{{ route('admin.telegram.channels', $bot->id) }}" :active="request()->routeIs('admin.telegram.channels', $bot->id)">
+							{{ __('Channels') }}
+						</x-responsive-nav-link>
+						<x-responsive-nav-link href="{{ route('admin.telegram.logs', $bot->id) }}" :active="request()->routeIs('admin.telegram.logs', $bot->id)">
+							{{ __('Logs') }}
+						</x-responsive-nav-link>
+					</x-dropdown-nav-link>
+				@endforeach
+			</x-dropdown-nav-link>
 		@endhasrole
+
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.announcements.index') }}" :active="request()->routeIs('admin.announcements.index')">
-				{{ __('Announcements') }}
-			</x-responsive-nav-link>
+			<x-dropdown-nav-link :active="request()->routeIs('admin.users.*')">
+				<x-slot name="trigger">
+					{{ __('Users') }}
+				</x-slot>
+				<x-responsive-nav-link href="{{ route('admin.users.users') }}" :active="request()->routeIs('admin.users.users')">
+					{{ __('Users') }}
+				</x-responsive-nav-link>
+				{{-- <x-responsive-nav-link href="{{ route('admin.users') }}" :active="request()->routeIs('admin.users')">
+					{{ __('Rolles') }}
+				</x-responsive-nav-link>
+				<x-responsive-nav-link href="{{ route('admin.users') }}" :active="request()->routeIs('admin.users')">
+					{{ __('Permissions') }}
+				</x-responsive-nav-link> --}}
+			</x-dropdown-nav-link>
 		@endhasrole
+
 		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.categories') }}" :active="request()->routeIs('admin.categories')">
-				{{ __('Category') }}
-			</x-responsive-nav-link>
+			<x-dropdown-nav-link :active="request()->routeIs('admin.setting.*')">
+				<x-slot name="trigger">
+					{{ __('Settings') }}
+				</x-slot>
+
+				<x-responsive-nav-link href="{{ route('admin.setting.categories') }}" :active="request()->routeIs('admin.setting.categories')">
+					{{ __('Category') }}
+				</x-responsive-nav-link>
+				<x-responsive-nav-link href="{{ route('admin.setting.attributes') }}" :active="request()->routeIs('admin.setting.attributes')">
+					{{ __('Attribute') }}
+				</x-responsive-nav-link>
+				<x-responsive-nav-link href="{{ route('admin.setting.sections') }}" :active="request()->routeIs('admin.setting.sections')">
+					{{ __('Sections') }}
+				</x-responsive-nav-link>
+				<x-responsive-nav-link href="{{ route('admin.setting.sortings') }}" :active="request()->routeIs('admin.setting.sortings')">
+					{{ __('Sortings') }}
+				</x-responsive-nav-link>
+			</x-dropdown-nav-link>
 		@endhasrole
-		@hasrole('super-duper-admin')
-			<x-responsive-nav-link href="{{ route('admin.attributes') }}" :active="request()->routeIs('admin.attributes')">
-				{{ __('Attribute') }}
-			</x-responsive-nav-link>
-		@endhasrole
+
 		@hasrole('super-duper-admin')
 			<x-responsive-nav-link href="{{ route('admin.logs') }}" :active="request()->routeIs('admin.logs')">
 				{{ __('Logs') }}
 			</x-responsive-nav-link>
 		@endhasrole
+
 		<hr>
 		@hasrole('super-duper-admin')
 			<x-responsive-nav-link href="{{ route('home') }}">

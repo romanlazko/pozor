@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Akuechler\Geoly;
+use App\Enums\Status;
 use Romanlazko\Telegram\Models\TelegramChat as Model;
 use Romanlazko\Telegram\Models\TelegramMessage;
 use Spatie\MediaLibrary\HasMedia;
@@ -12,6 +13,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class TelegramChat extends Model implements HasMedia
 {
     use InteractsWithMedia, Geoly;
+
+    // protected $casts = [
+    //     'status' => Status::class,
+    // ];
 
     public function registerMediaCollections(): void
     {

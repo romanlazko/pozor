@@ -13,9 +13,9 @@ use Filament\Forms\Components\Select as ComponentsSelect;
 
 class MonthYear extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
-        return (new Between($this->attribute, $this->data))->getSearchQuery($query);
+        return (new Between($this->attribute, $this->data))->getFilterQuery($query);
     }
 
     public function getValueByFeature(Feature $feature = null) : ?string
@@ -89,7 +89,7 @@ class MonthYear extends BaseAttributeType
                     '12' => 'December',
                 ])
                 ->placeholder(__('filament.placeholders.month'))
-                ->required($this->attribute->required),
+                ->required($this->attribute->is_required),
 
             ComponentsSelect::make("attributes.{$this->attribute->name}.year")
                 ->options(function () {
@@ -105,7 +105,7 @@ class MonthYear extends BaseAttributeType
                     return $years;
                 })
                 ->placeholder(__('filament.placeholders.year'))
-                ->required($this->attribute->required)
+                ->required($this->attribute->is_required)
         ])
         ->label($this->attribute->label)
         ->columns(['default' => 2]);

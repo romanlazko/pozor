@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ToggleButtons extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
         if ($attribute_option = $this->attribute->attribute_options?->where('id', $this->data[$this->attribute->name] ?? null)->first() AND $attribute_option?->is_null) {
             return $query;
@@ -39,9 +39,8 @@ class ToggleButtons extends BaseAttributeType
         return ComponentsToggleButtons::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->options($this->attribute->attribute_options->where('is_null', false)->pluck('name', 'id'))
-            ->inline($this->attribute->is_grouped ?? true)
-            ->live()
             ->inline()
-            ->required($this->attribute->required);
+            ->live()
+            ->required($this->attribute->is_required);
     }
 }

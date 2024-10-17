@@ -23,17 +23,6 @@ class Location extends BaseAttributeType
         parent::__construct($attribute, $data);
     }
 
-    protected function getSearchQuery(Builder $query) : Builder
-    {
-        $query->whereHas('geo', function ($query) {
-            $query->when($location = Geo::find($this->data['geo_id']), fn ($query) => 
-                $query->radius($location->latitude, $location->longitude, (integer) $this->data['radius'] == 0 ? 30 : (integer) $this->data['radius'])
-            );
-        });
-
-        return $query;
-    }
-
     protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent
     {
         return Grid::make(2)

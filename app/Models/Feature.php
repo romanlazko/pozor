@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\AttributeType\AttributeFactory;
-use App\Facades\Deepl;
+use App\Services\Actions\CategoryAttributeService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class Feature extends Model
 {
@@ -52,8 +54,28 @@ class Feature extends Model
         return $this->attribute->suffix;
     }
 
-    public function scopeFilter($query)
+    public function scopeForAnnouncementCard($query)
     {
-        return $query;
+        $title_price_attributes = Cache::remember('title_price_attributes', config('cache.ttl'), function () {
+            return Attribute::whereHas('group', fn ($query) => 
+                $query->whereIn('slug', ['title', 'price'])
+            )
+            ->pluck('id');
+        });
+
+        $query->with('attribute_option:id,alternames')
+            ->whereIn('attribute_id', $title_price_attributes);
+    }
+
+    public function scopeForModerationCard($query)
+    {
+        $title_price_attributes = Cache::remember('moderation_attributes', config('cache.ttl'), function () {
+            return Attribute::whereHas('group', fn ($query) => 
+                $query->whereIn('slug', ['title', 'description'])
+            )
+            ->pluck('id');
+        });
+
+        $query->whereIn('attribute_id', $title_price_attributes);
     }
 }

@@ -11,25 +11,21 @@
 }}</b>
 
 <b>{{ 
-    $announcement->getSectionByName('title')
-        ->pluck('value')
-        ->implode(' ')
+    $announcement->title
 }}</b>
 
 Стоимость: {{ 
-    $announcement->getSectionByName('price')
-        ->pluck('value')
-        ->implode(' ')
+    $announcement->price
 }}
 
 <b>{{ 
     $announcement->categories
-        ->pluck('name')
-        ->map(fn ($value) => str()
+        ?->pluck('name')
+        ?->map(fn ($value) => str()
             ->of($value)
             ->lower()
             ->replace(' ', '_')
             ->prepend('#')
         )
-        ->implode(' ')
+        ?->implode(' ')
 }}</b>

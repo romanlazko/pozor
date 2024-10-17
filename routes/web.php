@@ -3,9 +3,6 @@
 use App\Facades\RapidApiTranslator;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Profile\ProfileController;
-use App\Livewire\Admin\Attributes;
-use App\Livewire\Admin\Categories;
-use App\Livewire\Profile\Announcements;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use NlpTools\Classifiers\MultinomialNBClassifier;
@@ -17,16 +14,18 @@ use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
 use App\Http\Requests\SearchRequest;
-
-use App\Livewire\Admin\Announcement\Announcements as AnnouncementIndex;
-use App\Livewire\Admin\Announcement\Audits as AnnouncementAudits;
-
-use App\Livewire\Admin\Telegram\Bots as TelegramIndex;
-use App\Livewire\Admin\Telegram\Chats as TelegramChats;
-use App\Livewire\Admin\Telegram\Logs as TelegramLogs;
-
-use App\Livewire\Admin\Users;
-use App\View\Models\Announcement\IndexViewModel;
+use App\Livewire\Pages\Admin\Announcement\Announcements;
+use App\Livewire\Pages\Admin\Announcement\Moderation;
+use App\Livewire\Pages\Admin\Settings\Attributes;
+use App\Livewire\Pages\Admin\Settings\Categories;
+use App\Livewire\Pages\Admin\Settings\Sections;
+use App\Livewire\Pages\Admin\Settings\Sortings;
+use App\Livewire\Pages\Admin\Telegram\Bots;
+use App\Livewire\Pages\Admin\Telegram\Channels;
+use App\Livewire\Pages\Admin\Telegram\Chats;
+use App\Livewire\Pages\Admin\Telegram\Logs;
+use App\Livewire\Pages\Admin\User\Users;
+use App\View\Models\HomeViewModel;
 use Illuminate\Http\Request;
 
 /*
@@ -57,11 +56,11 @@ Route::get('/', function (SearchRequest $request) {
     session()->forget('search');
     session()->forget('sort');
 
-    $viewModel = new IndexViewModel();
+    $viewModel = new HomeViewModel();
 
     return view('home', [
-        'announcements' => $viewModel->announcements(),
-        'categories' => $viewModel->categories(),
+        'announcements' => $viewModel->getAnnouncements(),
+        'categories' => $viewModel->getCategories(),
         'request' => $request,
     ]);
 })->name('home');
@@ -69,20 +68,34 @@ Route::get('/', function (SearchRequest $request) {
 
 
 Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('admin')->group(function () {
-    Route::name('telegram.bot.')->prefix('telegram/bot')->group(function () {
-        Route::get('/', TelegramIndex::class)->name('index');
-        Route::get('{telegram_bot}/chat', TelegramChats::class)->name('chat.index');
-        Route::get('{telegram_bot}/logs', TelegramLogs::class)->name('logs.index');
+    Route::name('telegram.')->prefix('telegram')->group(function () {
+        Route::get('bots', Bots::class)->name('bots');
+        Route::get('{telegram_bot}/chats', Chats::class)->name('chats');
+        Route::get('{telegram_bot}/channels', Channels::class)->name('channels');
+        Route::get('{telegram_bot}/logs', Logs::class)->name('logs');
     });
 
-    Route::name('announcements.')->prefix('announcements')->group(function () {
-        Route::get('/', AnnouncementIndex::class)->name('index');
-        Route::get('audit/{announcement}', AnnouncementAudits::class)->name('audit');
+    Route::name('announcement.')->prefix('announcement')->group(function () {
+        Route::get('announcements', Announcements::class)->name('announcements');
+        Route::get('moderation', Moderation::class)->name('moderation');
     });
+
+    Route::name('setting.')->prefix('setting')->group(function () {
+        Route::get('categories/{category?}', Categories::class)->name('categories');
+        Route::get('attributes', Attributes::class)->name('attributes');
+        Route::get('sections', Sections::class)->name('sections');
+        Route::get('sortings', Sortings::class)->name('sortings');
+    });
+
+    Route::name('users.')->prefix('users')->group(function () {
+        Route::get('users', Users::class)->name('users');
+    });
+
+    // Route::name('attributes.')->prefix('attributes')->group(function () {
+    //     Route::get('section/', AttributeSections::class)->name('section');
+    //     Route::get('sorting/', AttributeSorting::class)->name('sorting');
+    // });
     
-    Route::get('users', Users::class)->name('users');
-    Route::get('category/{category?}', Categories::class)->name('categories');
-    Route::get('attribute', Attributes::class)->name('attributes');
     Route::get('logs', fn () => redirect('admin/logs'))->name('logs');
 });
 
@@ -100,7 +113,7 @@ Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function
     Route::get('/announcement/wishlist', [AnnouncementController::class, 'wishlist'])->name('announcement.wishlist');
 
     Route::middleware(['verified', 'profile_filled'])->group(function () {
-        Route::get('/announcement', Announcements::class)->name('announcement.index');
+        // Route::get('/announcement', Announcements::class)->name('announcement.index');
         Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
     });
 

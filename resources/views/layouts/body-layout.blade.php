@@ -99,31 +99,31 @@
         @endif
 
         @if (isset($header))
-            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100 px-2">
-                <div class="w-full max-w-7xl m-auto py-6">
+            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100">
+                <div class="w-full max-w-7xl m-auto py-6 px-3">
                     {{ $header }}
                 </div>
             </div>
         @endif
     
-        <div class="w-full h-full relative flex flex-1 flex-col">
-            <div class='flex flex-1 flex-col relative h-full max-w-7xl m-auto w-full'>
+        <div {{ $attributes->merge(['class' => 'w-full h-full relative flex flex-1 flex-col']) }}>
+            <div class='flex flex-1 flex-col relative h-full m-auto w-full '>
                 @if (isset($sidebar))
-                    <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[18rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
+                    <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
                         <x-sidebar class="h-full lg:h-min">
                             {{ $sidebar }}
                         </x-sidebar>
                     </aside>
                 @endif
     
-                <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6', 'lg:pl-[19rem] xl:pl-[25rem]' => isset($sidebar)])>
+                <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6', 'lg:pl-[20rem] xl:pl-[24rem]' => isset($sidebar)])>
     
                     <main id="main-block" class="w-full space-y-4 flex-1 flex-col flex" >
                         {{ $slot }}
                     </main>
     
                     @if (isset($footer))
-                        <div class="flex w-full px-2 items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg border">
+                        <div class="flex w-full items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg border">
                             {{ $footer }}
                         </div>
                     @endif

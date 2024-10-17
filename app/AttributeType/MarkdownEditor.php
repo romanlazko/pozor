@@ -13,7 +13,7 @@ class MarkdownEditor extends BaseAttributeType
     {
         return ComponentsMarkdownEditor::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
-            ->required($this->attribute->required)
+            ->required($this->attribute->is_required)
             ->toolbarButtons([
                 'bold',
                 'bulletList',

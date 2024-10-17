@@ -10,15 +10,16 @@ class BaseAttributeType extends AbstractAttributeType
 {
     protected function getSortQuery(Builder $query, $direction = 'asc') : Builder
     {
-        return $query->rightJoin('features as announcement_features', function($join) {
-            $join->on('announcements.id', '=', 'announcement_features.announcement_id')
-                ->where('announcement_features.attribute_id', $this->attribute->id);
-        })
-        ->orderByRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(announcement_features.translated_value, "$.original")) AS UNSIGNED) ' . $direction);
+        return $query->select('sort.translated_value', 'announcements.*')->rightJoin('features as sort', function($join) {
+                $join->on('announcements.id', '=', 'sort.announcement_id')
+                    ->where('sort.attribute_id', $this->attribute->id);
+            })
+            ->orderByRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(sort.translated_value, "$.original")) AS UNSIGNED) ' . $direction);
+
+        return $query;
     }
 
-
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
         return $query;
     }

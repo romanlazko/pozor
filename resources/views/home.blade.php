@@ -23,19 +23,14 @@
         </div>
     </x-slot>
 
-    <div class="w-full items-center justify-between flex space-x-3 lg:space-x-0 lg:relative p-2 border-b lg:border-none bg-white md:bg-inherit">
-        <div class="w-full text-start">
-            <div class="w-full justify-between">
-                <h2 class="text-xl lg:text-3xl font-bold ">
-                    {{ __("All announcements:") }} <span class="text-gray-500">{{ $announcements->total() }}</span>
-                </h2>
-            </div>
-        </div>
-    </div>
+    <x-announcement-list :announcements="$announcements" :cols="5">
+        <x-slot name="header">
+            <h2 class="text-xl lg:text-3xl font-bold">
+                {{ __("All announcements:") }} <span class="text-gray-500">{{ $announcements->total() }}</span>
+            </h2>
+        </x-slot>
+    </x-announcement-list>
 
-    <div class="space-y-6 px-2">
-        <x-announcement-list :announcements="$announcements" :cols="5"/>
-    </div>
 
     <x-slot name="footerNavigation">
         @include('layouts.footer')

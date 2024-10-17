@@ -14,7 +14,7 @@ class TextInput extends BaseAttributeType
                 ->label($this->attribute->label)
                 ->rules($this->attribute->create_layout['rules'] ?? [])
                 ->suffix($this->attribute->suffix)
-                ->required($this->attribute->required);
+                ->required($this->attribute->is_required);
     }
 
     protected function getFilamentFilterComponent(Get $get = null): ?ViewComponent

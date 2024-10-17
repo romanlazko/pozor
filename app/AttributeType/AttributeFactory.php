@@ -44,6 +44,17 @@ class AttributeFactory
      * @param Builder|null $query
      * @return ?Builder
      */
+    public static function applyFilterQuery(Attribute $attribute, ?array $data = [], Builder $query = null) : ?Builder
+    {
+        return self::getFilterClass($attribute, $data)?->filter($query);
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @param array|null $data
+     * @param Builder|null $query
+     * @return ?Builder
+     */
     public static function applySearchQuery(Attribute $attribute, ?array $data = [], Builder $query = null) : ?Builder
     {
         return self::getFilterClass($attribute, $data)?->search($query) ?? $query;
@@ -66,9 +77,9 @@ class AttributeFactory
      * @param Builder|null $query
      * @return ?Builder
      */
-    public static function applySortQuery(Attribute $attribute, string $direction, Builder $query = null) : ?Builder
+    public static function applySortQuery(Attribute $attribute, Builder $query = null, string $direction = 'asc') : ?Builder
     {
-        return self::getFilterClass($attribute)?->sort($query, $direction) ?? $query;
+        return self::getCreateClass($attribute)?->sort($query, $direction) ?? $query;
     }
 
     /**

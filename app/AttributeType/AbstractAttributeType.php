@@ -14,43 +14,34 @@ abstract class AbstractAttributeType
     {
     }
 
-    public function sort(Builder $query, $direction = 'asc') : Builder
-    {
-        if ($this->attribute->is_sortable) {
-            return $this->getSortQuery($query, $direction);
-        }
-
-        return $query;
-    }
-
-    public function search(Builder $query) : Builder
+    public function filter(Builder $query)
     {
         if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
             $query->whereHas('features', function ($query) {
-                return $this->getSearchQuery($query);
+                return $this->getFilterQuery($query);
             });
         }
 
         return $query;
     }
 
-    public function alternativeSearch(Builder $query) : ?Builder
+    public function sort(Builder $query, $direction = 'asc') : Builder
     {
-        if ($this->isVisible() AND isset($this->data[$this->attribute->name]) AND !empty($this->data[$this->attribute->name]) AND $this->data[$this->attribute->name] != null) {
-            return $this->getSearchQuery($query);
-        }
+        // if ($this->attribute->is_sortable) {
+        return $this->getSortQuery($query, $direction);
+        // }
 
-        return null;
+        // return $query;
     }
 
     public function getValueByFeature(Feature $feature = null) : ?string
     {
-        return $feature->attribute_option?->name ?? $this->getTranslatedValue($feature->translated_value) . ' ' . $this->attribute->suffix;
+        return $feature->attribute_option?->name ?? ($this->getTranslatedValue($feature->translated_value) . ' ' . $this->attribute->suffix);
     }
 
     private function getTranslatedValue($translated_value)
     {
-        return $this->getFeatureValue($translated_value[app()->getLocale()] ?? $translated_value['original'] ?? null);
+        return $this->getFeatureValue($translated_value[app()->getLocale()] ?? $translated_value['original'] ?? 1);
     }
 
     public function getCreateSchema(): array
@@ -146,8 +137,6 @@ abstract class AbstractAttributeType
     }
 
     protected abstract function getSortQuery(Builder $query, $direction = 'asc') : Builder;
-
-    protected abstract function getSearchQuery(Builder $query) : Builder;
 
     protected abstract function getFeatureValue(null|string|array $translated_value = null): ?string;
 

@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Select extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
-        return $query->where('attribute_id', $this->attribute->id)->when($this->attribute->attribute_options->count() > 0, fn ($query) =>
+        return $query->where('attribute_id', $this->attribute->id)
+            ->when($this->attribute->attribute_options->isNotEmpty(), fn ($query) =>
                 $query->where('attribute_option_id', $this->data[$this->attribute->name])
             )
-            ->when($this->attribute->attribute_options->count() == 0, fn ($query) =>
+            ->when($this->attribute->attribute_options->isEmpty(), fn ($query) =>
                 $query->where('translated_value->original', $this->data[$this->attribute->name])
             );
     }
@@ -33,6 +34,6 @@ class Select extends BaseAttributeType
             ->label($this->attribute->label)
             ->live()
             ->options($this->attribute->attribute_options->pluck('name', 'id'))
-            ->required($this->attribute->required);
+            ->required($this->attribute->is_required);
     }
 }

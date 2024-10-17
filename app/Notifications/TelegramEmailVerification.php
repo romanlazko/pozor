@@ -29,23 +29,37 @@ class TelegramEmailVerification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        $token = Password::createToken($notifiable);
-
-        $url = URL::temporarySignedRoute(
-            'telegram.email-verification',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'email' => $notifiable->getEmailForVerification(),
-                'telegram_chat_id' => $notifiable->telegram_chat_id,
-                'telegram_token' => $notifiable->telegram_token,
-                'token' => $token,
-                'hash' => sha1($notifiable->getEmailForVerification()),
-            ]);
+        $url = $this->prepareUrl($notifiable);
 
         return (new MailMessage)
             ->subject(Lang::get('Verify Email Account'))
             ->line(Lang::get('Please click the button below to verify your email.'))
             ->action(Lang::get('Verify Email'), $url)
             ->line(Lang::get('If you did not create an account, no further action is required.'));
+    }
+
+    protected function prepareUrl($notifiable)
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify-telegram', 
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)), 
+            $this->prepareParameters($notifiable)
+        );
+    }
+
+    protected function prepareParameters($notifiable)
+    {
+        return [
+            'email' => $notifiable->getEmailForVerification(),
+            'telegram_chat_id' => $notifiable->telegram_chat_id,
+            'telegram_token' => $notifiable->telegram_token,
+            'token' => $this->getToken($notifiable),
+            'hash' => sha1($notifiable->getEmailForVerification()),
+        ];
+    }
+
+    protected function getToken($notifiable)
+    {
+        return Password::createToken($this->notifiable);
     }
 }

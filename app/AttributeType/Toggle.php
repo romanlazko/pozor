@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Toggle extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
         return $query->where('attribute_id', $this->attribute->id)
             ->where('translated_value->original', $this->data[$this->attribute->name]);
@@ -32,6 +32,6 @@ class Toggle extends BaseAttributeType
         return ComponentsToggle::make('attributes.'.$this->attribute->name)
             ->label($this->attribute->label)
             ->live()
-            ->required($this->attribute->required);
+            ->required($this->attribute->is_required);
     }
 }

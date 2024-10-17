@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CheckboxList extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
-        return $query->where('attribute_id', $this->attribute->id)->when($this->attribute->attribute_options->count() > 0, fn ($query) =>
+        return $query->where('attribute_id', $this->attribute->id)
+            ->when($this->attribute->attribute_options->isNotEmpty(), fn ($query) =>
                 $query->whereIn('attribute_option_id', $this->data[$this->attribute->name])
             )
-            ->when($this->attribute->attribute_options->count() == 0, fn ($query) =>
+            ->when($this->attribute->attribute_options->isEmpty(), fn ($query) =>
                 $query->whereIn('translated_value->original', $this->data[$this->attribute->name])
             );
     }

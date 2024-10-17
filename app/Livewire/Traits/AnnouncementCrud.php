@@ -8,6 +8,7 @@ use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\TelegramChat;
 use Illuminate\Support\Facades\DB;
+use App\Services\Actions\CategoryAttributeService;
 
 trait AnnouncementCrud
 {
@@ -42,12 +43,18 @@ trait AnnouncementCrud
             return [];
         }
 
-        return Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))
-            ->get()
+        // return Attribute::whereHas('categories', fn (Builder $query) => $query->whereIn('category_id', $categories))
+        //     ->get()
+        //     ->map(function ($attribute) use ($attributes) {
+        //         return empty($attributes[$attribute->name]) 
+        //             ? null 
+        //             : AttributeFactory::getCreateSchema($attribute, $attributes);
+        //     })
+        //     ->filter()
+        //     ->all();
+        return CategoryAttributeService::forCreate($categories)
             ->map(function ($attribute) use ($attributes) {
-                return empty($attributes[$attribute->name]) 
-                    ? null 
-                    : AttributeFactory::getCreateSchema($attribute, $attributes);
+                return isset($attributes[$attribute->name]) ? AttributeFactory::getCreateSchema($attribute, $attributes) : null;
             })
             ->filter()
             ->all();
@@ -55,57 +62,17 @@ trait AnnouncementCrud
 
     private function getChannels($announcement) : array
     {
-        $categoryChannelIds = $announcement->categories->pluck('channels')->flatten()->pluck('id');
-
-        $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)
-            ->whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
+        $locationChannels = TelegramChat::whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
+            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $announcement->categories->pluck('id')))
             ->get();
 
         if ($locationChannels->isEmpty()) {
-            $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)->get();
+            $locationChannels = TelegramChat::whereHas('categories', fn ($query) => 
+                $query->whereIn('category_id', $announcement->categories->pluck('id'))
+            )
+            ->get();
         }
 
         return $locationChannels->map(fn ($channel) => ['telegram_chat_id' => $channel->id])->all();
     }
 }
-
-// public function updateAnnouncement(object $data)
-    // {
-    //     $location = Geo::find($data->geo_id)?->toArray() ?? [];
-
-    //     $announcement = auth()->user()->announcements()->find($data->id);
-
-    //     $announcement->update([
-    //         'title'             => $data->title,
-    //         'description'       => $data->description,
-    //         'current_price'     => $data->current_price,
-    //         'currency_id'       => $data->currency_id,
-    //         'geo_id'            => $data->geo_id,
-    //         'latitude'          => $location['lat'] ?? null,
-    //         'longitude'         => $location['long'] ?? null,
-        
-    //         'should_be_published_in_telegram' => true,
-    //         'status'            => Status::created,
-    //     ]);
-
-    //     $announcement->categories()->sync($data->categories);
-    //     $announcement->attributes()->sync($this->setAttributes($data->categories, $data->attributes));
-
-    //     $announcement->getMedia('announcements')->each(function ($attachment) use ($data) {
-    //         if (!in_array($attachment->uuid, $data->attachments)) {
-    //             $attachment->delete();
-    //         }
-    //     });
-
-    //     foreach ($data->attachments ?? [] as $attachment) {
-    //         if ($attachment instanceof \Illuminate\Http\UploadedFile) {
-    //             $announcement->addMedia($attachment)->toMediaCollection('announcements', 's3');
-    //         }
-    //     }
-
-    //     if ($announcement) {
-    //         $announcement->moderate();
-    //     }
-
-    //     return $announcement;
-    // }

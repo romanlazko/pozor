@@ -17,14 +17,17 @@ class AnnouncementController extends Controller
 {
     public function create(Request $request)
     {
-        $user = User::where('email', $request->email)->where('telegram_chat_id', $request->telegram_chat_id)->first();
+        $user = User::where([
+            'email' => $request->email,
+            'telegram_chat_id' => $request->telegram_chat_id
+        ])->first();
 
         if (!$user) {
-            dd('User not found');
+            abort(403, 'Invalid credentials. User not found.');
         }
 
         Auth::login($user);
 
-        return view('pozorbottestbot::announcement.create');
+        return view('inzerko_bot::announcement.create');
     }
 }

@@ -22,5 +22,5 @@
         </button>
     </form>
     
-    <livewire:location-form :location="$location" :category="$category"/>
+    <livewire:components.location-form :location="$location" :category="$category"/>
 </div>

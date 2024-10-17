@@ -25,9 +25,14 @@ return new class extends Migration
             $table->json('create_layout')->nullable();
             $table->json('filter_layout')->nullable();
             $table->json('show_layout')->nullable();
-            $table->boolean('translatable')->default(false);
+            $table->json('group_layout')->nullable();
+            $table->string('default')->nullable();
+            $table->boolean('is_translatable')->default(false);
             $table->boolean('is_feature')->default(false);
-            $table->boolean('required')->default(false);
+            $table->boolean('is_required')->default(false);
+            $table->boolean('is_always_required')->default(false);
+            $table->boolean('is_readonly')->default(false);
+            $table->boolean('is_sortable')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

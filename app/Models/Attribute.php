@@ -101,4 +101,14 @@ class Attribute extends Model
     {
         return $this->belongsTo(AttributeGroup::class, 'group_layout->group_id');
     }
+
+    public function getGroupAttribute()
+    {
+        return $this->cacheRelation('group');
+    }
+
+    public function sortings()
+    {
+        return $this->hasMany(Sorting::class);
+    }
 }

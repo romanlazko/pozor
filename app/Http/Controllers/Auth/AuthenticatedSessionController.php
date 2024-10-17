@@ -17,38 +17,15 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    // public function create(): View
-    // {
-    //     return view('auth.login');
-    // }
-
-    public function login()
-    {
-        return view('auth.email');
-    }
-
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
         ]);
-
-        if (User::firstWhere('email', $request->email)?->password == null) {
-            $status = Password::sendResetLink(
-                $request->only('email')
-            );
-    
-            return $status == Password::RESET_LINK_SENT
-                        ? back()->with([
-                            'ok' => true,
-                            'description' => __($status),
-                            'status'      => __($status),
-                        ])
-                        : back()->withInput($request->only('email'))
-                                ->withErrors(['email' => __($status)]);
-        }
-
-        return view('auth.login', ['request' => $request]);
+        
+        return view('auth.authenticate', [
+            'email' => $request->email,
+        ]);
     }
 
     /**

@@ -20,6 +20,8 @@ enum Status: int implements HasLabel
     case publishing_failed = 11;
     case published = 12;
     case sold = 13;
+    case await_telegram_publication = 14;
+    case published_on_telegram = 15;
 
     public function isCreated(): bool
     {
@@ -81,6 +83,16 @@ enum Status: int implements HasLabel
         return $this === static::await_publication;
     }
 
+    public function isAwaitTelegramPublication(): bool
+    {
+        return $this === static::await_telegram_publication;
+    }
+
+    public function isPublishedOnTelegram(): bool
+    {
+        return $this === static::published_on_telegram;
+    }
+
     public function isPublishingFailed(): bool
     {
         return $this === static::publishing_failed;
@@ -111,6 +123,8 @@ enum Status: int implements HasLabel
             self::translation_failed => 'red',
             self::translated => 'green',
             self::await_publication => 'orange',
+            self::await_telegram_publication => 'orange',
+            self::published_on_telegram => 'green',
             self::publishing_failed => 'red',
             self::published => 'green',
             self::sold => 'green',
@@ -133,6 +147,8 @@ enum Status: int implements HasLabel
             self::translation_failed => 'danger',
             self::translated => 'success',
             self::await_publication => 'warning',
+            self::await_telegram_publication => 'warning',
+            self::published_on_telegram => 'success',
             self::publishing_failed => 'danger',
             self::published => 'success',
             self::sold => 'info',
@@ -220,6 +236,18 @@ enum Status: int implements HasLabel
                 'en' => 'Await publication',
                 'cs' => 'Ceka na publikaci',
                 default => 'Await publication',
+            },
+            self::await_telegram_publication => match (App::getLocale()) {
+                'ru' => 'Ожидает публикации в телеграм',
+                'en' => 'Await telegram publication',
+                'cs' => 'Ceka na publikaci v telegramu',
+                default => 'Await telegram publication',
+            },
+            self::published_on_telegram => match (App::getLocale()) {
+                'ru' => 'Опубликовано в телеграм',
+                'en' => 'Published on telegram',
+                'cs' => 'Publikovano v telegramu',
+                default => 'Published on telegram',
             },
             self::publishing_failed => match (App::getLocale()) {
                 'ru' => 'Публикация не прошла',

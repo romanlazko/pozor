@@ -34,12 +34,12 @@ class Price extends Between
                 ComponentsTextInput::make('attributes.'.$this->attribute->name.'.amount')
                     ->label($this->attribute->label)
                     ->numeric()
-                    ->required($this->attribute->required)
+                    ->required($this->attribute->is_required)
                     ->columnSpan(['default' => 'full', 'md' => 2]),
                 ComponentsSelect::make('attributes.'.$this->attribute->name.'.currency')
                     ->label(__('filament.labels.currency'))
                     ->options($this->attribute->attribute_options->pluck('name', 'id'))
-                    ->required($this->attribute->required)
+                    ->required($this->attribute->is_required)
                     ->columnSpan(['default' => 'full', 'md' => 1]),
             ])
             ->columns(3);

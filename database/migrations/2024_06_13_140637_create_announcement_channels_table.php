@@ -1,12 +1,10 @@
 <?php
 
-
-use App\Enums\Status;
-use App\Models\Announcement;
-use App\Models\TelegramChat;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Announcement;
+use App\Models\TelegramChat;
 
 return new class extends Migration
 {
@@ -19,8 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Announcement::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(TelegramChat::class)->constrained()->onDelete('cascade');
-            $table->integer('status')->nullable();
-            $table->json('info')->nullable();
+            $table->integer('current_status')->nullable();
             $table->timestamps();
         });
     }

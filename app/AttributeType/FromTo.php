@@ -10,25 +10,21 @@ use Illuminate\Database\Eloquent\Builder;
 
 class FromTo extends Between
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
         $from = $this->data[$this->attribute->name]['from'] ?? null;
         $to = $this->data[$this->attribute->name]['to'] ?? null;
 
-        $query->when(!empty($from), fn ($query) => 
-            $query->whereHas('features', fn ($query) =>
+        return $query->when(!empty($from), fn ($query) =>
                 $query->where('attribute_id', $this->attribute->id)
-                    ->where('translated_value->original->to', '>=', (integer)$from)
-                    ->orWhere('translated_value->original->from', '>=', (integer)$from)
-        ))
-        ->when(!empty($to), fn ($query) => 
-            $query->whereHas('features', fn ($query) =>
+                    ->where('translated_value->original->to', '>=', (integer) $from)
+                    ->orWhere('translated_value->original->from', '>=', (integer) $from)
+            )
+            ->when(!empty($to), fn ($query) => 
                 $query->where('attribute_id', $this->attribute->id)
-                    ->where('translated_value->original->to', '<=', (integer)$to)
-                    ->orWhere('translated_value->original->from', '<=', (integer)$to)
-        ));
-
-        return $query;
+                    ->where('translated_value->original->to', '<=', (integer) $to)
+                    ->orWhere('translated_value->original->from', '<=', (integer) $to)
+            );
     }
 
     protected function getFeatureValue(null|string|array $translated_value = null): ?string
@@ -46,12 +42,12 @@ class FromTo extends Between
                 ->placeholder(__('filament.placeholders.from'))
                 ->numeric()
                 ->default('')
-                ->required($this->attribute->required),
+                ->required($this->attribute->is_required),
             ComponentsTextInput::make('attributes.'.$this->attribute->name.'.to')
                 ->placeholder(__('filament.placeholders.to'))
                 ->numeric()
                 ->default('')
-                ->required($this->attribute->required),
+                ->required($this->attribute->is_required),
             ])
             ->label($this->attribute->label)
             ->columns(['default' => 2]);

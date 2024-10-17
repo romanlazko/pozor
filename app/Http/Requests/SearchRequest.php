@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Enums\Sort;
+use App\Models\Sorting;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 class SearchRequest extends FormRequest
@@ -25,7 +27,7 @@ class SearchRequest extends FormRequest
     {
         return [
             'filters' => 'array|nullable',
-            'sort' => 'string|nullable',
+            'sort' => 'integer|nullable',
             'search' => 'string|nullable',
             'location' => 'array|nullable',
         ];
@@ -36,10 +38,10 @@ class SearchRequest extends FormRequest
         $data = $this->unserializeData($this->input('data'));
 
         $this->merge([
-            'filters' => $this->recursive_array_filter($this->input('filters', $data['filters'] ?? session('filters'))),
-            'sort' => $this->input('sort', $data['sort'] ?? session('sort')),
-            'search' => $this->input('search', $data['search'] ?? session('search')),
-            'location' => $this->recursive_array_filter($this->input('location', $data['location'] ?? session('location'))),
+            'filters' => $this->getFilters($data),
+            'sort' => $this->getSorting($data),
+            'search' => $this->getSearch($data),
+            'location' => $this->getLocation($data),
         ]);
     }
 
@@ -70,5 +72,33 @@ class SearchRequest extends FormRequest
         }
 
         return $array;
+    }
+
+    private function getSorting($data) 
+    {
+        $sort = $data['sort'] ?? session('sort') ?? Sorting::default()->id;
+
+        return $this->input('sort', $sort);
+    }
+
+    private function getFilters($data)
+    {
+        $filters = $data['filters'] ?? session('filters') ?? [];
+
+        return $this->recursive_array_filter($this->input('filters', $filters));
+    }
+
+    private function getSearch($data)
+    {
+        $search = $data['search'] ?? session('search');
+
+        return $this->input('search', $search);
+    }
+
+    private function getLocation($data)
+    {
+        $location = $data['location'] ?? session('location');
+
+        return $this->recursive_array_filter($this->input('location', $location));
     }
 }

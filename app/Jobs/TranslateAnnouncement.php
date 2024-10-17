@@ -33,7 +33,7 @@ class TranslateAnnouncement implements ShouldQueue
     {
         if ($this->announcement->status->isAwaitTranslation()) {
 
-            foreach ($this->announcement->features->where('attribute.translatable', true) as $feature) {
+            foreach ($this->announcement->features->where('attribute.is_translatable', true) as $feature) {
                 $feature->update([
                     'translated_value' => [
                         'original' => $feature->translated_value['original'],

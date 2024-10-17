@@ -14,7 +14,7 @@ class TextArea extends BaseAttributeType
             ->label($this->attribute->label)
             ->autosize()
             ->rows(6)
-            ->required($this->attribute->required)
+            ->required($this->attribute->is_required)
             ->rules($this->attribute->create_layout['rules'] ?? []);
     }
 }

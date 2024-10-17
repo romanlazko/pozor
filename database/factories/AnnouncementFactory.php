@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\Status;
+use App\Livewire\Actions\Concerns\HasTypeOptions;
 use App\Models\Announcement;
 use App\Models\Attribute;
 use App\Models\Category;
@@ -10,13 +11,16 @@ use App\Models\Geo;
 use App\Models\TelegramChat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\Actions\CategoryAttributeService;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Announcement>
  */
 class AnnouncementFactory extends Factory
 {
+    use HasTypeOptions;
     /**
      * Define the model's default state.
      *
@@ -35,44 +39,27 @@ class AnnouncementFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Announcement $announcement) {
-            $announcement->features()->createMany($this->getFeatures($announcement->categories->pluck('id')->toArray()));
-            $announcement->channels()->createMany($this->getChannels($announcement));
-            $announcement->addMediaFromUrl(fake()->imageUrl(100, 100, $announcement->slug))->toMediaCollection('announcements', 's3');
-            $announcement->publish();
+            try {
+                DB::transaction(function () use ($announcement) {
+                    $announcement->addMedia(storage_path('images/no-photo.jpg'))->preservingOriginal()->toMediaCollection('announcements', 's3');
+                    $announcement->features()->createMany($this->getFeatures($announcement->categories->pluck('id')->toArray()));
+                    $announcement->channels()->createMany($this->getChannels($announcement));
+                    $announcement->publish();
+                });
+            }
+
+            catch (\Throwable $exception) {
+                $announcement->delete();
+
+                throw $exception;
+            }
         });
     }
 
     private function getFeatures(array $categories) : array
     {
-        $type_options = [
-            'fields_with_options' => [
-                'select' => 'SELECT (выбор одного элемента из списка)',
-                'multiple_select' => 'MULTIPLE SELECT (выбор нескольких элементов из списка)',
-                'toggle_buttons' => 'TOGGLE BUTTONS (выбор переключателей)',
-                'checkbox_list'   => 'CHECKBOX LIST (список чекбоксов)',
-                'price' => 'PRICE (цена)',
-            ],
-            'text_fields' => [
-                'text_input' => 'Текстовое поле',
-                'text_area' => 'Текстовый блок',
-                'between'   => 'Между',
-                'from_to'   => 'From-To',
-                'markdown_editor' => 'Markdown Editor',
-            ],
-            'other' => [
-                'location'  => 'Местоположение',
-                'hidden'    => 'Скрытое поле',
-            ],
-            'date' => [
-                'date' => 'Date',
-                'date_time' => 'Date Time',
-                'month_year' => 'Month Year',
-            ]
-        ];
-
-        return Attribute::whereHas('categories', fn ($query) => $query->whereIn('category_id', $categories))
-            ->get()
-            ->map(function ($attribute) use ($type_options) {
+        return CategoryAttributeService::forCreate($categories)
+            ->map(function ($attribute) {
                 if ($attribute->create_layout['type'] == 'from_to') {
                     return [
                         'attribute_id' => $attribute->id,
@@ -85,7 +72,7 @@ class AnnouncementFactory extends Factory
                     ];
                 }
 
-                if (in_array($attribute->create_layout['type'], array_keys($type_options['text_fields']))) {
+                if (in_array($attribute->create_layout['type'], array_keys(self::$type_options['text_fields']))) {
                     return [
                         'attribute_id' => $attribute->id,
                         'translated_value' => [
@@ -107,21 +94,30 @@ class AnnouncementFactory extends Factory
                     ];
                 }
 
-                if (in_array($attribute->create_layout['type'], array_keys($type_options['fields_with_options']))) {
+                if (in_array($attribute->create_layout['type'], array_keys(self::$type_options['fields_with_options']))) {
                     return [
                         'attribute_id' => $attribute->id,
                         'attribute_option_id' => $attribute->attribute_options->where('is_null', '!=' ,true)->random()->id,
                     ];
                 }
 
-                if (in_array($attribute->create_layout['type'], array_keys($type_options['date']))) {
+                if (in_array($attribute->create_layout['type'], array_keys(self::$type_options['date']))) {
                     return [
                         'attribute_id' => $attribute->id,
                         'translated_value' => [
-                            'original' => fake()->date(),
+                            'original' => fake()->dateTime()->format('Y-m-d H:i:s'),
                         ],
                     ];
                 }
+
+                // if (in_array($attribute->create_layout['type'], array_keys(self::$type_options['date_time_picker']))) {
+                //     return [
+                //         'attribute_id' => $attribute->id,
+                //         'translated_value' => [
+                //             'original' => fake()->dateTime(),
+                //         ],
+                //     ];
+                // }
             })
             ->filter()
             ->all();
@@ -129,14 +125,15 @@ class AnnouncementFactory extends Factory
 
     private function getChannels($announcement) : array
     {
-        $categoryChannelIds = $announcement->categories->pluck('channels')->flatten()->pluck('id');
-
-        $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)
-            ->whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
+        $locationChannels = TelegramChat::whereHas('geo', fn ($query) => $query->radius($announcement->geo->latitude, $announcement->geo->longitude, 30))
+            ->whereHas('categories', fn ($query) => $query->whereIn('category_id', $announcement->categories->pluck('id')))
             ->get();
 
         if ($locationChannels->isEmpty()) {
-            $locationChannels = TelegramChat::whereIn('id', $categoryChannelIds)->get();
+            $locationChannels = TelegramChat::whereHas('categories', fn ($query) => 
+                $query->whereIn('category_id', $announcement->categories->pluck('id'))
+            )
+            ->get();
         }
 
         return $locationChannels->map(fn ($channel) => ['telegram_chat_id' => $channel->id])->all();

@@ -50,7 +50,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-select',
+                'fi-ta-text w-max',
                 'px-3 py-4' => ! $isInline(),
             ])
     }}

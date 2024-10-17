@@ -14,10 +14,17 @@ use Illuminate\Support\Facades\Password;
 
 class VerifyEmailController extends Controller
 {
+    public function notice(Request $request): RedirectResponse
+    {
+        return $request->user()->hasVerifiedEmail()
+                    ? redirect()->intended(RouteServiceProvider::HOME)
+                    : redirect()->route('profile.edit');
+    }
+
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function emailVerify(EmailVerificationRequest $request): RedirectResponse
+    public function veryfyEmail(EmailVerificationRequest $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
@@ -30,7 +37,7 @@ class VerifyEmailController extends Controller
         return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
     }
 
-    public function telegramEmailVerify(TelegramEmailVerificationRequest $request): RedirectResponse
+    public function veryfyEmailTelegram(TelegramEmailVerificationRequest $request): RedirectResponse
     {
         if (is_null($user = Password::getUser($request->only('email', 'telegram_token')))) {
             abort(403, 'Invalid credentials. User not found.');
@@ -52,5 +59,19 @@ class VerifyEmailController extends Controller
         }
 
         return redirect('tg://resolve?domain=pozorbottestbot');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return redirect()->intended(RouteServiceProvider::HOME);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with([
+            'ok' => true,
+            'description' => __("A new verification link has been sent to your email address.")
+        ]);
     }
 }

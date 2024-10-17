@@ -160,6 +160,7 @@ return [
          * Package Service Providers...
          */
         App\Bots\pozorbottestbot\Providers\PozorbottestbotProvider::class,
+        App\Bots\inzerko_bot\Providers\InzerkoBotProvider::class,
         Laravolt\Avatar\ServiceProvider::class,
         OwenIt\Auditing\AuditingServiceProvider::class,
         Orangehill\Iseed\IseedServiceProvider::class,

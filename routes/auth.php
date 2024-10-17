@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\VerifyTelegramController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -19,18 +20,18 @@ Route::middleware(['guest'])->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    // Route::get('login', [AuthenticatedSessionController::class, 'create'])
-    //             ->name('login');
-
-    Route::get('login', [AuthenticatedSessionController::class, 'login'])
+    Route::get('login', [LoginController::class, 'create'])
                 ->name('login');
 
-    Route::get('login/create', [AuthenticatedSessionController::class, 'create'])
-                ->name('login.create');
-
-    Route::post('login/store', [AuthenticatedSessionController::class, 'store'])
-                ->middleware(['honey-recaptcha'])
+    Route::post('login', [LoginController::class, 'store'])
                 ->name('login.store');
+
+    Route::get('auth', [AuthenticatedSessionController::class, 'create'])
+                ->name('auth');
+
+    Route::post('auth', [AuthenticatedSessionController::class, 'store'])
+                ->middleware(['honey-recaptcha'])
+                ->name('auth.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
                 ->name('password.request');
@@ -44,22 +45,25 @@ Route::middleware(['guest'])->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
 
-    Route::get('telegram-email-verification', [VerifyEmailController::class, 'telegramEmailVerify'])
+    Route::get('verify-email-telegram', [VerifyEmailController::class, 'veryfyEmailTelegram'])
                 ->middleware(['signed', 'throttle:6,1'])
-                ->name('telegram.email-verification');
+                ->name('verification.verify-telegram');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('verify-email', EmailVerificationPromptController::class)
-                ->name('verification.notice');
 
-    Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, 'emailVerify'])
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('verification.verify');
+    Route::name('verification.')->group(function () {
+        Route::get('verify-email', [VerifyEmailController::class, 'notice'])
+            ->name('notice');
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware('throttle:6,1')
-                ->name('verification.send');
+        Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, 'veryfyEmail'])
+            ->middleware(['signed', 'throttle:6,1'])
+            ->name('verify');
+
+        Route::post('email/verification-notification', [VerifyEmailController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('send');
+    });
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
                 ->name('password.confirm');

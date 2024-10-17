@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Between extends BaseAttributeType
 {
-    protected function getSearchQuery(Builder $query) : Builder
+    protected function getFilterQuery(Builder $query) : Builder
     {
         $from = $this->data[$this->attribute->name]['from'] ?? null;
         $to = $this->data[$this->attribute->name]['to'] ?? null;

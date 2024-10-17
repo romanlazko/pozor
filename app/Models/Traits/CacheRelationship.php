@@ -18,9 +18,9 @@ trait CacheRelationship
         }
     
         // Get the relation from the cache, or load it from the datasource and set to the cache
-        $relation = Cache::remember($this->getRelationCacheKey($relation_name), $ttl ?? config('cache.ttl'), fn () => 
-            $this->getRelationValue($relation_name)
-        );
+        $relation = Cache::remember($this->getRelationCacheKey($relation_name), $ttl ?? config('cache.ttl'), function () use ($relation_name) {
+            return $this->getRelationValue($relation_name);
+        });
     
         // Set the relation to the current instance of model
         $this->setRelation($relation_name, $relation);

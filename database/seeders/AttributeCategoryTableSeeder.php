@@ -715,6 +715,78 @@ class AttributeCategoryTableSeeder extends Seeder
                 'attribute_id' => 57,
                 'category_id' => 9,
             ),
+            116 => 
+            array (
+                'id' => 174,
+                'attribute_id' => 58,
+                'category_id' => 1,
+            ),
+            117 => 
+            array (
+                'id' => 175,
+                'attribute_id' => 58,
+                'category_id' => 3,
+            ),
+            118 => 
+            array (
+                'id' => 176,
+                'attribute_id' => 58,
+                'category_id' => 4,
+            ),
+            119 => 
+            array (
+                'id' => 177,
+                'attribute_id' => 58,
+                'category_id' => 9,
+            ),
+            120 => 
+            array (
+                'id' => 178,
+                'attribute_id' => 58,
+                'category_id' => 10,
+            ),
+            121 => 
+            array (
+                'id' => 179,
+                'attribute_id' => 58,
+                'category_id' => 11,
+            ),
+            122 => 
+            array (
+                'id' => 180,
+                'attribute_id' => 58,
+                'category_id' => 12,
+            ),
+            123 => 
+            array (
+                'id' => 181,
+                'attribute_id' => 58,
+                'category_id' => 13,
+            ),
+            124 => 
+            array (
+                'id' => 182,
+                'attribute_id' => 58,
+                'category_id' => 14,
+            ),
+            125 => 
+            array (
+                'id' => 183,
+                'attribute_id' => 58,
+                'category_id' => 15,
+            ),
+            126 => 
+            array (
+                'id' => 184,
+                'attribute_id' => 58,
+                'category_id' => 16,
+            ),
+            127 => 
+            array (
+                'id' => 185,
+                'attribute_id' => 58,
+                'category_id' => 17,
+            ),
         ));
         
         

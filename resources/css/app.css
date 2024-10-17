@@ -70,3 +70,19 @@
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+
+.bg-green-50 {
+    background-color: #f0fdf4;
+}
+
+.bg-red-50 {
+    background-color: #fef2f2;
+}
+
+.bg-blue-50 {
+    background-color: #f0f9ff;
+}
+
+.bg-orange-50 {
+    background-color: #fff7ed;
+}
