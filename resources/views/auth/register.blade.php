@@ -5,21 +5,21 @@
         <x-honey-recaptcha/> 
         <!-- Name -->
         <div>
-            <x-form.label for="name" :value="__('Name')" />
+            <x-form.label for="name" :value="__('auth.name')" />
             <x-form.input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-form.error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
         <div>
-            <x-form.label for="email" :value="__('Email')" />
+            <x-form.label for="email" :value="__('auth.email')" />
             <x-form.input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-form.error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div>
-            <x-form.label for="password" :value="__('Password')" />
+            <x-form.label for="password" :value="__('auth.password')" />
 
             <x-form.input id="password" class="block mt-1 w-full"
                             type="password"
@@ -31,7 +31,7 @@
 
         <!-- Confirm Password -->
         <div>
-            <x-form.label for="password_confirmation" :value="__('Confirm Password')" />
+            <x-form.label for="password_confirmation" :value="__('auth.confirm_password')" />
 
             <x-form.input id="password_confirmation" class="block mt-1 w-full"
                             type="password"
@@ -44,19 +44,19 @@
             
 
             <x-buttons.primary class="w-full text-center justify-center">
-                {{ __('Register') }}
+                {{ __('auth.register') }}
             </x-buttons.primary>
             <a class="block underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+                {{ __('auth.login') }}
             </a>
         </div>
 
         <hr>
 
         <div>
-            <small>This site is protected by reCAPTCHA and the Google 
-                <a href="https://policies.google.com/privacy" class="underline text-blue-500">Privacy Policy</a> and
-                <a href="https://policies.google.com/terms" class="underline text-blue-500">Terms of Service</a> apply.
+            <small>{{ __('auth.protected_of_google') }} 
+                <a href="https://policies.google.com/privacy" class="underline text-blue-500">{{ __('auth.google_privacy') }}</a> {{ __('auth.and') }}
+                <a href="https://policies.google.com/terms" class="underline text-blue-500">{{ __('auth.google_terms') }}</a> {{ __('auth.apply') }}.
             </small>
         </div>
     </form>

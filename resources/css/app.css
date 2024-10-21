@@ -6,6 +6,9 @@
     background-color: #e5e7eb;
     padding: 6px;
 } */
+.padding-0 .fi-modal-content {
+    padding: 0;
+}
 
 .fi-btn {
     border-radius: 0.75rem;

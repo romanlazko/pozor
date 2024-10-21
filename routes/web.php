@@ -13,6 +13,7 @@ use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Tokenizers\WhitespaceTokenizer;
 use Stevebauman\Location\Facades\Location;
 use App\Http\Controllers\Profile\MessageController;
+use App\Http\Controllers\Profile\Wishlist;
 use App\Http\Requests\SearchRequest;
 use App\Livewire\Pages\Admin\Announcement\Announcements;
 use App\Livewire\Pages\Admin\Announcement\Moderation;
@@ -25,6 +26,7 @@ use App\Livewire\Pages\Admin\Telegram\Channels;
 use App\Livewire\Pages\Admin\Telegram\Chats;
 use App\Livewire\Pages\Admin\Telegram\Logs;
 use App\Livewire\Pages\Admin\User\Users;
+use App\Livewire\Pages\User\Profile\Messages;
 use App\View\Models\HomeViewModel;
 use Illuminate\Http\Request;
 
@@ -90,11 +92,6 @@ Route::middleware(['auth', 'role:super-duper-admin'])->name('admin.')->prefix('a
     Route::name('users.')->prefix('users')->group(function () {
         Route::get('users', Users::class)->name('users');
     });
-
-    // Route::name('attributes.')->prefix('attributes')->group(function () {
-    //     Route::get('section/', AttributeSections::class)->name('section');
-    //     Route::get('sorting/', AttributeSorting::class)->name('sorting');
-    // });
     
     Route::get('logs', fn () => redirect('admin/logs'))->name('logs');
 });
@@ -103,6 +100,7 @@ Route::controller(AnnouncementController::class)->name('announcement.')->group(f
     Route::get('/all/{category:slug?}', 'index')->name('index');
     Route::get('/search/{category:slug?}', 'search')->name('search');
     Route::get('/show/{announcement:slug}', 'show')->name('show');
+    Route::get('/create', 'create')->middleware(['auth', 'verified', 'profile_filled'])->name('create');
 });
 
 Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function () {
@@ -110,19 +108,15 @@ Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function
     Route::patch('/update', [ProfileController::class, 'update'])->name('update');
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
     Route::patch('/updateAvatar', [ProfileController::class, 'updateAvatar'])->name('updateAvatar');
-    Route::get('/announcement/wishlist', [AnnouncementController::class, 'wishlist'])->name('announcement.wishlist');
+    Route::get('/wishlist', [Wishlist::class, 'index'])->name('wishlist');
+    Route::get('/messages', Messages::class)->name('message.index');
 
-    Route::middleware(['verified', 'profile_filled'])->group(function () {
-        // Route::get('/announcement', Announcements::class)->name('announcement.index');
-        Route::get('/announcement/create', [AnnouncementController::class, 'create'])->name('announcement.create');
-    });
-
-    Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');
-        Route::get('{thread}', 'show')->name('show');
-        Route::put('{thread}', 'update')->name('update');
-    });
+    // Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
+    //     Route::get('/', 'index')->name('index');
+    //     Route::post('/', 'store')->name('store');
+    //     Route::get('{thread}', 'show')->name('show');
+    //     Route::put('{thread}', 'update')->name('update');
+    // });
 
     // Route::patch('/updateLang', [ProfileController::class, 'updateLang'])->name('updateLang');
     

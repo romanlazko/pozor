@@ -79,7 +79,7 @@
                     <hr>
 
                     <div class="space-y-4 w-full">
-                        <x-user-card :user="$announcement->user" :announcement="$announcement"/>
+                        <x-user-card :user="$announcement->user"/>
                         <div class="w-full z-50 grid grid-cols-2 gap-2">
                             <livewire:actions.send-message :announcement_id="$announcement->id"/>
                             <livewire:actions.show-contact :user_id="$announcement->user->id"/>
@@ -89,17 +89,10 @@
             </div>
         </div>
 
-        <section class="lg:flex w-full mx-auto space-x-0 space-y-12 lg:space-x-6 lg:space-y-0 px-2 xl:px-0">
-            <div class="w-full lg:w-1/3 space-y-6 sticky top-0">
-                <div>
-                </div>
-            </div>
-        </section>
-
         <x-announcement-list class="bg-white" :announcements="$similar_announcements" :cols="5">
             <x-slot name="header">
                 <h2 class="text-xl lg:text-3xl font-bold">
-                    {{ __("Similar announcements") }}
+                    {{ __('announcement.similar') }}
                 </h2>
             </x-slot>
         </x-announcement-list>

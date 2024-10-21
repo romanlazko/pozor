@@ -9,6 +9,4 @@
         {{ $slot }}
     </p>
     <i class="fa-solid fa-plus"></i>
-    
-    
 </a>

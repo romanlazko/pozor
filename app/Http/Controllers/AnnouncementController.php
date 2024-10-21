@@ -46,12 +46,4 @@ class AnnouncementController extends Controller
     {
         return view('announcement.create');
     }
-
-    public function wishlist()
-    {
-        $announcements = auth()->user()->wishlist()->isPublished()->latest()
-            ->paginate(30)->withQueryString();
-
-        return view('announcement.wishlist', compact('announcements'));
-    }
 }

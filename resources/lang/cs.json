@@ -1,4 +1,9 @@
 {
+    "LAYOUTS-NAVIGATION": "NAVIGATION",
+        "Register": "Registrace",
+        "Login": "Přihlásit se",
+        "Create new": "Vytvořit inzerát",
+
     "LAYOUTS-PROFILE.BLADE": "LAYOUTS-PROFILE.BLADE",
 
         "My announcements": "Moje inzeráty",
@@ -144,7 +149,9 @@
         "Forgot your password?": "Zapomněli jste heslo?",
         "Already registered?": "Již jste registrováni?",
         "Reset Password": "Obnovit heslo",
-        "Resend Verification Email": "Znovu odeslat ověřovací e-mail"
+        "Resend Verification Email": "Znovu odeslat ověřovací e-mail",
 
-
+    "Home": "HOME",
+        "Buy, Sell, Discover": "Koupit, Prodat, Najít",
+        "Everything you need in one place": "Vše, co potřebujete, na jednom místě"
 }

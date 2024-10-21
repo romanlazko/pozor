@@ -1,4 +1,9 @@
 {
+    "LAYOUTS-NAVIGATION": "NAVIGATION",
+        "Register": "Регистрация",
+        "Login": "Войти",
+        "Create new": "Добавить объявление",
+
     "LAYOUTS-PROFILE.BLADE": "LAYOUTS-PROFILE.BLADE",
 
         "My announcements": "Мои объявления",
@@ -102,15 +107,6 @@
         "Category": "Категория",
         "Attribute": "Атрибут",
         "Back to user": "Назад к пользователю",
-
-    "LAYOUTS-HEADER.BLADE": "LAYOUTS-HEADER.BLADE",
-
-        "Register": "Регистрация",
-        "Login": "Войти",
-        "Create announcement": "Создать объявление",
-        "Profile": "Профиль",
-        "My announcements": "Мои объявления",
-        "Log Out": "Выйти",
 
     "LAYOUTS-FOOTER.BLADE": "LAYOUTS-FOOTER.BLADE",
 

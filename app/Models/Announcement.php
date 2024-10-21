@@ -61,8 +61,7 @@ class Announcement extends Model implements HasMedia, Auditable
     {
         $this
             ->addMediaConversion('responsive-images')
-            ->withResponsiveImages()
-            ->useFallbackUrl('/images/no-photo.jpg', 'responsive-images');
+            ->withResponsiveImages();
 
         $this
             ->addMediaConversion('thumb')
