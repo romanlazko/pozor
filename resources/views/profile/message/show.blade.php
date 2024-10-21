@@ -1,6 +1,6 @@
 
 
-    <div class="flex flex-col flex-1 overflow-hidden h-20" data="">
+    {{-- <div class="flex flex-col flex-1 overflow-hidden h-20" data=""> --}}
         {{-- <div class="w-full items-center justify-between flex space-x-3 sticky top-0 z-30 p-2 md:p-0 border-b lg:border-none">
             <a href="{{ route('profile.message.index') }}" class="my-0.5 inline-block p-1.5 bg-gray-800 rounded-lg text-white text-xs xl:text-sm hover:bg-gray-600 h-min">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -26,7 +26,7 @@
             </div>
         </div> --}}
     
-        <div id="messages" class=" grid grid-cols-1 gap-2 flex-1 h-full overflow-auto border-b p-2" x-init="document.getElementById('messages').scrollTo(0,document.body.scrollHeight)">
+        <div id="messages" class=" grid grid-cols-1 gap-2 flex-1 h-full overflow-auto p-2" x-init="document.getElementById('messages').scrollTo(0,document.body.scrollHeight)">
             @foreach ($messages as $message)
                 <div class="w-full">
                     <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>
@@ -49,7 +49,7 @@
                 </div>
             @endforeach
         </div>
-    </div>
+    {{-- </div> --}}
     
 
 
