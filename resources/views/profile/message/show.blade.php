@@ -26,7 +26,7 @@
             </div>
         </div> --}}
     
-        <div id="messages" class=" grid grid-cols-1 gap-2 flex-1 h-full overflow-auto p-2" x-init="document.getElementById('messages').scrollTo(0,document.body.scrollHeight)">
+        <div id="messages" class=" grid grid-cols-1 gap-2 p-2">
             @foreach ($messages as $message)
                 <div class="w-full">
                     <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>

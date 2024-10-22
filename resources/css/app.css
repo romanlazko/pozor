@@ -10,13 +10,13 @@
     padding: 0;
 }
 
-.fi-fo-component-ctn {
+/* .fi-fo-component-ctn {
     position: sticky;
     bottom: 0;
     background-color: white;
     padding-top: 1rem;
     border-top: rgb(225, 225, 225) 1px solid;
-}
+} */
 
 .fi-btn {
     border-radius: 0.75rem;

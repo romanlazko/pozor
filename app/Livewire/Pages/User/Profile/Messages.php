@@ -3,7 +3,9 @@
 namespace App\Livewire\Pages\User\Profile;
 
 use App\Enums\Status;
+use App\Livewire\ActionWithCustomModal;
 use App\Models\Announcement;
+use App\Notifications\NewMessage;
 use Filament\Actions\Action as ActionsAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ComponentsActionsAction;
@@ -16,6 +18,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Split;
@@ -44,9 +47,10 @@ class Messages extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->view('components.livewire.tables.index')
             ->query(
                 auth()->user()->threads()
-                    ?->with('announcement:id', 'announcement.media', 'announcement.features', 'announcement.features.attribute', 'users:name,id', 'users.media', 'lastMessageRelation.user')
+                    ?->with('announcement:id', 'announcement.media', 'announcement.features', 'announcement.features.attribute', 'users', 'users.media', 'lastMessageRelation.user')
                     ->whereHas('announcement')
                     ->withCount(['messages as uread_messages_count' => function ($query) {
                         $query->where('read_at', null)->where('user_id', '!=', auth()->id());
@@ -61,24 +65,35 @@ class Messages extends Component implements HasForms, HasTable
                 TextColumn::make('lastMessageRelation.user.name')->limit(50)->sortable(),
             ])
             ->actions([
+                // ActionWithCustomModal::make('show')
                 Action::make('show')
+                    ->modalHeading(fn ($record) => new HtmlString(view('components.user-card', ['user' => $record->recipient])))
                     ->modalContent(fn ($record) => view('profile.message.show', ['messages' => $record->messages]))
                     ->form([
                         Textarea::make('message')
                             ->required()
-                            ->rows(3)
+                            ->rows(1)
                             ->autosize()
-                            ->label('Message')
+                            ->placeholder('Message...')
                             ->hiddenLabel()
                             ->extraFieldWrapperAttributes(['class' => 'px-4']),
-                        Actions::make([
-                            ComponentsActionsAction::make('send')
-                        ])
-                        ->extraAttributes(['class' => 'px-4 pb-4']),
                     ])
-                    ->extraModalWindowAttributes(['class' => 'padding-0'])
+                    ->action(function ($data, $record, $form, $action) {
+                        $record->messages()->create([
+                            'user_id' => auth()->id(),
+                            'message' => $data['message'],
+                        ]);
+
+                        $record->recipient->notify((new NewMessage($record))->delay(now()->addMinutes(3)));
+
+                        $this->dispatch('scroll-to-bottom');
+
+                        $form->fill();
+
+                        $action->halt();
+                    })
+                    // ->after(fn () => )
                     ->modalCancelAction(false)
-                    ->modalSubmitAction(false)
                     ->slideOver()
             ]);
     }
