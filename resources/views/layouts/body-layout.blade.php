@@ -80,7 +80,12 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''">
+    <body class="font-roboto bg-gray-50 min-h-dvh flex flex-col flex-1" 
+        x-on:open-modal.window="document.body.style.position = 'fixed'"
+        x-on:close-modal.window="document.body.style.position = ''" 
+
+        x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''"
+    >
         <livewire:components.empty-component/>
 
         <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
