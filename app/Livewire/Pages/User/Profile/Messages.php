@@ -51,6 +51,7 @@ class Messages extends Component implements HasForms, HasTable
                         ->label(false)
                         ->grow(false)
                         ->circular()
+                        ->limit(1)
                         ->extraAttributes(['class' => 'border rounded-full']),
                     TextColumn::make('user')
                         ->state(fn ($record) => "{$record->recipient->name} - {$record->announcement->title}")
