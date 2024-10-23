@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- <title>{{ ($title ? $title." | ": null) . config('app.name') }}</title> --}}
@@ -80,7 +80,7 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-gray-50 h-dvh flex flex-col flex-1" 
+    <body class="font-roboto bg-gray-50 relative" 
         x-on:open-modal.window="document.body.style.position = 'fixed'"
         x-on:close-modal.window="document.body.style.position = ''" 
 
@@ -88,7 +88,7 @@
     >
         <livewire:components.empty-component/>
 
-        <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
+        {{-- <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div> --}}
 
         @if (isset($navigation))
             <div class="w-full bg-gray-900 block h-12 px-3">
@@ -97,22 +97,22 @@
         @endif
 
         @if (isset($search))
-            <div class="bg-white sticky top-0 z-30 ">
+            <div class="bg-white top-0 z-30 relative">
                 {{ $search }}
                 <hr>
             </div>
         @endif
 
         @if (isset($header))
-            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100">
+            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100 relative">
                 <div class="w-full max-w-7xl m-auto py-6 px-3">
                     {{ $header }}
                 </div>
             </div>
         @endif
     
-        <div {{ $attributes->merge(['class' => 'w-full h-full relative flex flex-1 flex-col']) }}>
-            <div class='flex flex-1 flex-col relative h-full m-auto w-full '>
+        <div {{ $attributes->merge(['class' => 'w-full relative']) }}>
+            <div class='flex flex-1 flex-col relative m-auto w-full '>
                 @if (isset($sidebar))
                     <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
                         <x-sidebar class="h-full lg:h-min">
