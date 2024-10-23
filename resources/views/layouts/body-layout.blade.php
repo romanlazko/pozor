@@ -81,10 +81,33 @@
     </head>
     
     <body class="font-roboto bg-gray-50 relative" 
-        x-on:open-modal.window="document.body.style.position = 'fixed'"
+        
         x-on:close-modal.window="document.body.style.position = ''" 
 
-        x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''"
+        x-data="{ 
+            sidebarOpen: false,
+            resizeElement() {
+                const windowHeight = window.innerHeight;
+                const windowWidth = window.innerWidth;
+                
+                const element = document.getElementById('resizable-element');
+                
+                // Применение размеров окна к элементу
+                element.style.height = `${windowHeight}px`;
+                element.style.width = `${windowWidth}px`;
+
+                alert('ok');
+            },
+            setListeners() {
+                document.querySelectorAll('input, textarea').forEach((input) => {
+
+                    {{-- input.addEventListener('blur', alert('ok')); // срабатывает при потере фокуса --}}
+                });
+            },
+            
+        }" 
+        x-on:open-modal.window="setListeners()"
+        :class="sidebarOpen ? 'overflow-hidden' : ''"
     >
         <livewire:components.empty-component/>
 

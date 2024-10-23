@@ -7,6 +7,20 @@
 // window.addEventListener('orientationchange', setWindowHeight);
 // setWindowHeight();
 
-window.addEventListener('resize', () => {
-    document.body.style.height = `${window.innerHeight}px`;
-});
+function resizeElement() {
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    
+    const element = document.getElementById('resizable-element');
+    
+    // Применение размеров окна к элементу
+    element.style.height = `${windowHeight}px`;
+    element.style.width = `${windowWidth}px`;
+
+    alert('ok');
+  }
+
+  function setListeners()
+  {
+     
+  }

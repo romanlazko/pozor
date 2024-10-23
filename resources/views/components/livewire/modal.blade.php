@@ -115,6 +115,7 @@
         ></div> --}}
 
         <div
+            id="resizable-element"
             @class([
                 'fixed inset-0 z-40',
                 'overflow-y-auto' => ! ($slideOver || ($width === MaxWidth::Screen)),
