@@ -1285,7 +1285,7 @@
                 :icon-color="$action?->getModalIconColor()"
                 :id="$this->getId() . '-table-action'"
                 :slide-over="$action?->isModalSlideOver()"
-                :sticky-footer="$action?->isModalFooterSticky()"
+                {{-- :sticky-footer="$action?->isModalFooterSticky()" --}}
                 :sticky-header="$action?->isModalHeaderSticky()"
                 {{-- :visible="filled($action)" --}}
                 :width="$action?->getModalWidth()"
