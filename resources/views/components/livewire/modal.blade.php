@@ -89,30 +89,30 @@
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"
-    @class([
+    {{-- @class([
         'fi-modal',
         'fi-width-screen' => $width === MaxWidth::Screen,
         $displayClasses,
-    ])
+    ]) --}}
 >
-    @if ($trigger)
+    {{-- @if ($trigger)
         <div
             x-on:click="open"
             {{ $trigger->attributes->class(['fi-modal-trigger flex cursor-pointer']) }}
         >
             {{ $trigger }}
         </div>
-    @endif
+    @endif --}}
 
     <div x-cloak x-show="isOpen">
-        <div
+        {{-- <div
             aria-hidden="true"
             x-show="isOpen"
             x-transition.duration.300ms.opacity
             @class([
                 'fi-modal-close-overlay inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75',
             ])
-        ></div>
+        ></div> --}}
 
         <div
             @class([

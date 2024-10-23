@@ -1318,6 +1318,9 @@
                         </div>
                         
                     </div>
+                    @if ($this->mountedTableActionHasForm(mountedAction: $action))
+                                    {{ $this->getMountedTableActionForm() }}
+                            @endif
 
                     <x-slot name="footerActions">
                         <div class="w-full flex items-end justify-end space-x-4">
