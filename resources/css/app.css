@@ -10,9 +10,9 @@
     padding: 0;
 }
 
-.fi-modal-window {
-    height: calc(var(--vh, 1vh) * 100);
-}
+/* .fi-modal {
+    height: minvh;
+} */
 
 /* .fi-fo-component-ctn {
     position: sticky;
