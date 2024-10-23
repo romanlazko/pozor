@@ -1320,14 +1320,14 @@
                         {{ $action->getModalContent() }}
                     </div>
 
+                    <input type="text" class="sticky bottom-0">
                     {{-- @if ($action->getModalContentFooter()) --}}
-                        <x-slot name="footerActions">
+                        {{-- <x-slot name="footerActions">
                             <div class="w-full flex items-end justify-end space-x-4">
                                 <div class="w-full">
-                                    {{-- @if ($this->mountedTableActionHasForm(mountedAction: $action))
+                                    @if ($this->mountedTableActionHasForm(mountedAction: $action))
                                         {{ $this->getMountedTableActionForm() }}
-                                    @endif --}}
-                                    <input type="text">
+                                    @endif
                                 </div>
                                 
                                 <div>
@@ -1336,7 +1336,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                        </x-slot>
+                        </x-slot> --}}
                     {{-- @endif --}}
                 @endif
             </x-filament::modal>
