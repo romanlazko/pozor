@@ -1313,7 +1313,7 @@
 
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
 
-                style="position: sticky; top: 0;"
+                style="position: relative; "
             >
                 @if ($action)
                     <div class="p-4">
