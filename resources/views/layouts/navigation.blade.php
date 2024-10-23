@@ -59,9 +59,9 @@
 					<x-heroicon-c-bars-3-bottom-right class="size-5"/>
 				</button>
 	
-				<div x-cloak :class="dropdownOpen ? 'block' : 'hidden'" @click="dropdownOpen = false" class="fixed inset-0 z-40 transition-opacity  bg-black opacity-50"></div>
+				<div x-cloak :class="dropdownOpen ? 'block' : 'hidden'" @click="dropdownOpen = false" class="fixed inset-0 z-[35] transition-opacity  bg-black opacity-50"></div>
 	
-				<div x-cloak x-show="dropdownOpen" class="absolute right-0 z-50 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border">
+				<div x-cloak x-show="dropdownOpen" class="absolute right-0 z-40 mt-2 p-0 overflow-hidden bg-white rounded-md shadow-xl border">
 					<x-profile-nav>
 						<hr>
 						<a href="{{ route('profile.wishlist') }}" 

@@ -10,7 +10,7 @@
         <button @click="sidebarOpen = true" type="button"
             @class(['text-gray-900 hover:text-indigo-700 text-xl lg:hidden p-1 md:p-2 relative', 'hidden' => !$filterButton])
         >
-            <i class="fa-solid fa-sliders"></i>
+            <x-heroicon-o-adjustments-horizontal class="size-6"/>
 
             {{-- <span @class(['absolute bottom-0 right-0 text-xs max-w-4 max-h-4 w-4 h-4 bg-blue-500 text-white rounded-full px-1 text-center content-center items-center', 'bg-red-500' => $filtersCount > 0])>
                 {{ $filtersCount }}

@@ -148,9 +148,9 @@
             </x-slot>
             @livewire('pages.user.profile.messages')
         </x-filament::modal> --}}
-        @auth
+        {{-- @auth --}}
             @livewire('actions.open-chat')
-        @endauth
+        {{-- @endauth --}}
         
     </body>
 

@@ -7,7 +7,7 @@
 			
 		</a>
 		<button @click="sidebarOpen = false" class="text-gray-200 focus:outline-none lg:hidden">
-			<i class="fa-solid fa-xmark text-2xl hover:text-gray-100"></i>
+			<x-heroicon-s-x-mark class="size-5"/>
 		</button>
 	</div>
 
