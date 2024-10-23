@@ -10,7 +10,7 @@
     padding: 0;
 }
 
-html, body {
+.fi-modal-window {
     height: calc(var(--vh, 1vh) * 100);
 }
 
