@@ -1285,9 +1285,9 @@
                 :icon-color="$action?->getModalIconColor()"
                 :id="$this->getId() . '-table-action'"
                 :slide-over="$action?->isModalSlideOver()"
-                {{-- :sticky-footer="$action?->isModalFooterSticky()" --}}
+                :sticky-footer="$action?->isModalFooterSticky()"
                 :sticky-header="$action?->isModalHeaderSticky()"
-                {{-- :visible="filled($action)" --}}
+                :visible="filled($action)"
                 :width="$action?->getModalWidth()"
                 :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
                 x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
@@ -1312,6 +1312,8 @@
                 x-on:open-modal.window.debounce.300="scrollToBottom($event.target)"
 
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
+
+                style="position: sticky; top: 0;"
             >
                 @if ($action)
                     <div class="p-4">
