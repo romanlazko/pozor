@@ -1269,7 +1269,7 @@
                 $action = $this->getMountedTableAction();
             @endphp
 
-            <x-filament::modal
+            <<x-livewire.modal
                 :alignment="$action?->getModalAlignment()"
                 :autofocus="$action?->isModalAutofocused()"
                 :close-button="$action?->hasModalCloseButton()"
@@ -1278,15 +1278,13 @@
                 :description="$action?->getModalDescription()"
                 display-classes="block"
                 :extra-modal-window-attribute-bag="$action?->getExtraModalWindowAttributeBag()"
-                {{-- :footer-actions="$action?->getVisibleModalFooterActions()"
-                :footer-actions-alignment="$action?->getModalFooterActionsAlignment()" --}}
-                {{-- :heading="$action?->getModalHeading()" --}}
+                :heading="$action?->getModalHeading()"
                 :icon="$action?->getModalIcon()"
                 :icon-color="$action?->getModalIconColor()"
                 :id="$this->getId() . '-table-action'"
                 :slide-over="$action?->isModalSlideOver()"
-                {{-- :sticky-footer="$action?->isModalFooterSticky()"
-                :sticky-header="$action?->isModalHeaderSticky()" --}}
+                :sticky-footer="$action?->isModalFooterSticky()"
+                :sticky-header="$action?->isModalHeaderSticky()"
                 :visible="filled($action)"
                 :width="$action?->getModalWidth()"
                 :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
@@ -1312,34 +1310,29 @@
                 x-on:open-modal.window.debounce.300="scrollToBottom($event.target)"
 
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
-
-                style="position: relative; "
             >
                 @if ($action)
                     <div class="p-4">
                         {{ $action->getModalContent() }}
                     </div>
 
-                    <input type="text" class="">
-                    {{-- @if ($action->getModalContentFooter()) --}}
-                        {{-- <x-slot name="footerActions">
-                            <div class="w-full flex items-end justify-end space-x-4">
-                                <div class="w-full">
-                                    @if ($this->mountedTableActionHasForm(mountedAction: $action))
-                                        {{ $this->getMountedTableActionForm() }}
-                                    @endif
-                                </div>
-                                
-                                <div>
-                                    @foreach ($action?->getVisibleModalFooterActions() as $action)
-                                        {{ $action }}
-                                    @endforeach
-                                </div>
+                    <x-slot name="footerActions">
+                        <div class="w-full flex items-end justify-end space-x-4">
+                            <div class="w-full">
+                                @if ($this->mountedTableActionHasForm(mountedAction: $action))
+                                    {{ $this->getMountedTableActionForm() }}
+                                @endif
                             </div>
-                        </x-slot> --}}
-                    {{-- @endif --}}
+                            
+                            <div>
+                                @foreach ($action?->getVisibleModalFooterActions() as $action)
+                                    {{ $action }}
+                                @endforeach
+                            </div>
+                        </div>
+                    </x-slot>
                 @endif
-            </x-filament::modal>
+            </x-livewire.modal>
         </form>
 
         @php
