@@ -92,7 +92,10 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 
     public function threads()
     {
-        return $this->belongsToMany(Thread::class);
+        return $this->belongsToMany(Thread::class)->withCount(['messages' => function ($query) {
+            $query->where('read_at', null)
+                ->where('user_id', '!=', $this->id);
+        }]);
     }
 
     public function getUnreadMessagesCountAttribute()
