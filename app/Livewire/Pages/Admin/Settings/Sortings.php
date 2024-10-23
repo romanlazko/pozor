@@ -100,10 +100,10 @@ class Sortings extends AdminLayout implements HasForms, HasTable
                     ->label('#Order'),
                 TextColumn::make('name')
                     ->description(fn (Sorting $record): string =>  $record?->direction),
-                ToggleColumn::make('default')
+                ToggleColumn::make('is_default')
                     ->beforeStateUpdated(function ($record, $state) {
                         if ($state) {
-                            Sorting::query()->where('default', 1)->update(['default' => 0]);
+                            Sorting::query()->where('is_default', 1)->update(['is_default' => 0]);
                         }
                     }),
                 TextColumn::make('attribute.label')

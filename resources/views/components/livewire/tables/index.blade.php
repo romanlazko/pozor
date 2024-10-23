@@ -120,7 +120,7 @@
     ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
-        'fi-ta',
+        // 'fi-ta',
         'animate-pulse' => $records === null,
     ])
 >
@@ -168,14 +168,14 @@
                 </div>
             @endif
 
-            {{-- <div
+            <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
                 class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
-                <div class="flex shrink-0 items-center gap-x-4">
+                {{-- <div class="flex shrink-0 items-center gap-x-4">
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
                     @if ($isReorderable)
@@ -206,10 +206,10 @@
                     @endif
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
-                </div>
+                </div> --}}
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
-                    <div class="ms-auto flex items-center gap-x-4">
+                    <div class="w-full">
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
@@ -252,10 +252,10 @@
                 @endif
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
-            </div> --}}
+            </div>
         </div>
 
-        {{-- @if ($isReordering)
+        @if ($isReordering)
             <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection.indicator
@@ -266,7 +266,7 @@
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
             />
-        @endif --}}
+        @endif
 
         @if (count($filterIndicators))
             <x-filament-tables::filters.indicators
@@ -412,7 +412,7 @@
                             $previousRecordGroupTitle = null;
                         @endphp
 
-                        {{-- @foreach ($records as $record)
+                        @foreach ($records as $record)
                             @php
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
@@ -488,7 +488,7 @@
                                     'fi-ta-record relative h-full bg-white transition duration-75 dark:bg-gray-900',
                                     'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
                                     'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
-                                    'rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $contentGrid,
+                                    'shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $contentGrid,
                                     ...$getRecordClasses($record),
                                 ])
                                 x-bind:class="{
@@ -653,7 +653,7 @@
                                 $previousRecordGroupTitle = $recordGroupTitle;
                                 $previousRecord = $record;
                             @endphp
-                        @endforeach --}}
+                        @endforeach
 
                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
                             <x-filament-tables::table class="col-span-full">
@@ -819,7 +819,7 @@
                             @endif
                         @endif
 
-                        {{-- @foreach ($columns as $column)
+                        @foreach ($columns as $column)
                             @php
                                 $columnWidth = $column->getWidth();
                             @endphp
@@ -846,7 +846,7 @@
                             >
                                 {{ $column->getLabel() }}
                             </x-filament-tables::header-cell>
-                        @endforeach --}}
+                        @endforeach
 
                         @if (! $isReordering)
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
@@ -899,7 +899,7 @@
                         @endif
                     </x-slot>
 
-                    {{-- @if ($isColumnSearchVisible)
+                    @if ($isColumnSearchVisible)
                         <x-filament-tables::row>
                             @if ($isReordering)
                                 <td></td>
@@ -940,7 +940,7 @@
                                 @endif
                             @endif
                         </x-filament-tables::row>
-                    @endif --}}
+                    @endif
 
                     @if (($records !== null) && count($records))
                         @php
@@ -1235,7 +1235,7 @@
             @endif
         </div>
 
-        {{-- @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
+        @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <x-filament::pagination
                 :extreme-links="$hasExtremePaginationLinks()"
@@ -1251,13 +1251,18 @@
                 :form="$getFiltersForm()"
                 class="fi-ta-filters-below-content p-4 sm:px-6"
             />
-        @endif --}}
+        @endif
     </x-filament-tables::container>
 
     @if ($this instanceof \Filament\Tables\Contracts\HasTable && (! $this->hasTableModalRendered))
-        <form wire:submit.prevent="callMountedTableAction" x-data="{
-            scrollToBottom() {
-                $nextTick(() => { document.getElementsByClassName('fi-modal-window')[0].scrollTo(0,document.getElementsByClassName('fi-modal-window')[0].scrollHeight); });
+        <form wire:submit.prevent="callMountedTableAction" id="show-chat-form" x-data="{
+            scrollToBottom(el) {
+                $nextTick(() => { 
+                    const modalWindow = el.querySelector('#show-chat-form .fi-modal-window');
+                    if (modalWindow) {
+                        modalWindow.scrollTo(0, modalWindow.scrollHeight);
+                    }
+                });
             }
         }">
             @php
@@ -1282,7 +1287,7 @@
                 :slide-over="$action?->isModalSlideOver()"
                 :sticky-footer="$action?->isModalFooterSticky()"
                 :sticky-header="$action?->isModalHeaderSticky()"
-                :visible="filled($action)"
+                {{-- :visible="filled($action)" --}}
                 :width="$action?->getModalWidth()"
                 :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
                 x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
@@ -1304,20 +1309,18 @@
                         close();
                     }
                 "
-                x-on:open-modal.window.debounce.300="scrollToBottom()"
+                x-on:open-modal.window.debounce.300="scrollToBottom($event.target)"
 
-                x-on:scroll-to-bottom.window="scrollToBottom()"
+                x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
             >
                 @if ($action)
-                    {{ $action->getModalContent() }}
-
-                    @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
-                        {{ $infolist }}
-                    @endif
+                    <div class="p-4">
+                        {{ $action->getModalContent() }}
+                    </div>
 
                     {{-- @if ($action->getModalContentFooter()) --}}
                         <x-slot name="footerActions">
-                            <div class="w-full flex items-end justify-end">
+                            <div class="w-full flex items-end justify-end space-x-4">
                                 <div class="w-full">
                                     @if ($this->mountedTableActionHasForm(mountedAction: $action))
                                         {{ $this->getMountedTableActionForm() }}
@@ -1336,8 +1339,8 @@
             </x-filament::modal>
         </form>
 
-        @php
+        {{-- @php
             $this->hasTableModalRendered = true;
-        @endphp
+        @endphp --}}
     @endif
 </div>

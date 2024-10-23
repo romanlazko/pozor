@@ -30,16 +30,12 @@
             @foreach ($messages as $message)
                 <div class="w-full">
                     <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>
-                        <div @class(['p-2 shadow-sm rounded-lg space-y-2', 'bg-blue-100' => auth()->user()->id == $message->user_id, 'bg-gray-100' => auth()->user()->id != $message->user_id])>
-                            <div class="h-6 flex items-center space-x-2">
-                                <img src="{{ $message->user->getFirstMediaUrl('avatar', 'thumb') }}" alt="" class="min-w-6 min-h-6 w-6 h-6 rounded-full object-cover">
-                                <p class="text-xs text-gray-500">{{ $message->user->name }}</p>
-                            </div>
+                        <div @class(['p-2 shadow-sm rounded-lg space-y-1', 'bg-blue-100 ml-2' => auth()->user()->id == $message->user_id, 'bg-gray-100 mr-2' => auth()->user()->id != $message->user_id])>
                             
-                            <p class="max-w-lg whitespace-pre-wrap">{{ $message->message }}</p>
+                            <p class="text-sm break-all">{{ $message->message }}</p>
 
-                            <p class="text-xs text-gray-500">
-                                {{ $message->created_at->diffForHumans() }} 
+                            <p class="text-[9px] text-gray-500">
+                                {{ $message->created_at->format('H:i') }} 
                                 @if (auth()->user()->id == $message->user_id AND $message->read_at)
                                     ✓
                                 @endif

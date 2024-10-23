@@ -31,15 +31,20 @@ class Thread extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function lastMessageRelation()
+    // public function lastMessageRelation()
+    // {
+    //     return $this->messages()->latestOfMany();
+    // }
+
+    public function latestMessage()
     {
-        return $this->messages()->latest();
+        return $this->hasOne(Message::class)->latestOfMany();
     }
 
-    public function getLastMessageAttribute()
-    {
-        return $this->lastMessageRelation->first();
-    }
+    // public function getLastMessageAttribute()
+    // {
+    //     return $this->lastMessageRelation->first();
+    // }
 
     public function getRecipientAttribute()
     {

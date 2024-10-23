@@ -147,10 +147,11 @@
             @if ($withFullscreen)
                 <div class="absolute top-3 right-3 z-20">
                     <button 
-                        class="transition duration-200 ease-in-out flex text-gray-100 text-2xl hover:scale-110 hover:text-white opacity-70 hover:opacity-100 p-1 w-10 h-10 min-h-10 min-w-10 rounded-full bg-gray-800 items-center justify-center bg-opacity-50 hover:bg-opacity-100" 
+                        class="flex text-gray-100 text-2xl hover:text-white opacity-70 hover:opacity-100 p-1 w-10 h-10 min-h-10 min-w-10 rounded-full bg-gray-800 items-center justify-center bg-opacity-50 hover:bg-opacity-100" 
                         @click="fullscreen = ! fullscreen"
                     >
-                        <i class="fa-solid" :class="{ 'fa-compress': fullscreen, 'fa-expand': ! fullscreen}"></i>
+                        <x-heroicon-o-arrows-pointing-in x-show="fullscreen" class="size-6"/>
+                        <x-heroicon-o-arrows-pointing-out x-show="! fullscreen" class="size-6"/>
                     </button>
                 </div>
             @endif

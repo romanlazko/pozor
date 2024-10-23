@@ -23,18 +23,18 @@
 		<div class="flex items-center space-x-6 text-white">
 			@auth
 				<a href="{{ route('profile.wishlist') }}" class="text-white hover:text-indigo-700 relative">
-					<i class="fa-solid fa-heart"></i>
+					<x-heroicon-s-heart class="size-5"/>
 				</a>
-				<a href="{{ route('profile.message.index') }}" class="text-white hover:text-indigo-700 relative">
+				<button @click="$dispatch('open-chat')" class="text-white hover:text-indigo-700 relative">
+					<x-heroicon-s-chat-bubble-left-right class="size-5"/>
 					<div class="relative leading-3">
 						@if ($unreadMessagesCount > 0)
 							<p class="absolute text-[8px] text-white w-3 h-3 rounded-full bg-red-500 top-3 text-center content-center items-center">{{ $unreadMessagesCount }}</p>
 						@endif
-						<i class="fa-solid fa-comments w-4"></i>
 					</div>
-				</a>
+				</button>
 				<a href="{{ route('profile.edit') }}" class="text-white hover:text-indigo-700 relative">
-					<i class="fa-solid fa-user"></i> 
+					<x-heroicon-s-user class="size-5"/>
 				</a>
 			@else
 				<a href="{{ route('register') }}" class="hover:text-indigo-700">{{ __("navigation.register") }}</a>
@@ -56,7 +56,7 @@
 		<div class="flex items-center md:hidden relative">
 			<div x-data="{ dropdownOpen: false }" class="relative">
 				<button @click="dropdownOpen = ! dropdownOpen" class="flex text-white hover:text-indigo-700">
-					<i class="fa-solid fa-bars"></i>
+					<x-heroicon-c-bars-3-bottom-right class="size-5"/>
 				</button>
 	
 				<div x-cloak :class="dropdownOpen ? 'block' : 'hidden'" @click="dropdownOpen = false" class="fixed inset-0 z-40 transition-opacity  bg-black opacity-50"></div>

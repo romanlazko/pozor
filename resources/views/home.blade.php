@@ -21,6 +21,9 @@
                 <x-categories :categories="$categories"/>
             </div>
         </div>
+
+
+    
     </x-slot>
 
     <x-announcement-list :announcements="$announcements" :cols="5">

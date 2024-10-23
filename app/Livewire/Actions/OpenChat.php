@@ -1,22 +1,27 @@
 <?php
 
-namespace App\Livewire\Pages\User\Profile;
+namespace App\Livewire\Actions;
 
+use App\Livewire\Pages\User\Profile\Messages;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Livewire;
+use Livewire\Attributes\On;
 use App\Enums\Status;
 use App\Livewire\ActionWithCustomModal;
 use App\Models\Announcement;
 use App\Notifications\NewMessage;
 use Filament\Actions\Action as ActionsAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ComponentsActionsAction;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -35,15 +40,24 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Grouping\Group;
 
-class Messages extends Component implements HasForms, HasTable
+class OpenChat extends Component implements HasForms, HasActions, HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithActions;
     use InteractsWithForms;
+    use InteractsWithTable;
     
-    #[Layout('layouts.profile')]
-
-    #[Title('Messages')]
+    public function openChatAction()
+    {
+        return Action::make('openChat')
+            ->modalContent($this->table)
+            ->slideOver()
+            ->modalWidth('md')
+            ->modalCancelAction(false);
+    }
 
     public function table(Table $table): Table
     {
@@ -79,7 +93,7 @@ class Messages extends Component implements HasForms, HasTable
             ])
             ->recordAction('answer')
             ->actions([
-                Action::make('answer')
+                TableAction::make('answer')
                     ->modalHeading(fn ($record) => new HtmlString(view('components.user-card', ['user' => $record->recipient])))
                     ->modalContent(function ($record) {
                         $record->messages()->where('user_id', '!=', auth()->id())->update(['read_at' => now()]);
@@ -94,13 +108,18 @@ class Messages extends Component implements HasForms, HasTable
                             ->placeholder('Message...')
                             ->hiddenLabel(),
                     ])
+                    
+                    ->modalCancelAction(false)
+                    ->slideOver()
+                    ->modalWidth('sm')
+                    ->color('danger')
                     ->action(function ($data, $record, $form, $action) {
                         $record->messages()->create([
                             'user_id' => auth()->id(),
                             'message' => $data['message'],
                         ]);
 
-                        // $record->recipient->notify((new NewMessage($record))->delay(now()->addMinutes(3)));
+                        $record->recipient->notify((new NewMessage($record))->delay(now()->addMinutes(3)));
 
                         $this->dispatch('scroll-to-bottom');
 
@@ -108,19 +127,22 @@ class Messages extends Component implements HasForms, HasTable
 
                         $action->halt();
                     })
-                    ->modalCancelAction(false)
-                    ->slideOver()
-                    ->modalWidth('sm')
-                    ->color('danger')
-                    ->modalSubmitAction(fn ($action) => $action->color('primary'))
+                    ->modalSubmitAction(fn ($action) => 
+                        $action->color('primary')
+                    )
                     ->label(fn ($record) => $record->uread_messages_count)
                     ->badge(),
-            ])
-            ;
+            ]);
+    }
+
+    #[On('open-chat')]
+    public function listenForOpenChat()
+    {
+        $this->mountAction('openChat');
     }
 
     public function render()
     {
-        return view('profile.message.index');
+        return view('livewire.actions.open-chat');
     }
 }

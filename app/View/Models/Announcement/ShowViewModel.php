@@ -18,8 +18,8 @@ class ShowViewModel
     public function __construct(Announcement $announcement)
     {
         $this->announcement = $this->announcement($announcement);
-        $this->similar_announcements = $this->similar_announcements();
-        $this->user_announcements = $this->user_announcements();
+        // $this->similar_announcements = $this->similar_announcements();
+        // $this->user_announcements = $this->user_announcements();
     }
 
     private function announcement($announcement)

@@ -142,6 +142,16 @@
         @elseif (session('ok') === false)
             <x-notifications.small class="bg-red-600 z-50" :title="session('description')"/>
         @endif
+        {{-- <x-filament::modal slide-over class="px-0" id="chat" class="padding-0" sticky-header>
+            <x-slot name="heading">
+                Modal heading
+            </x-slot>
+            @livewire('pages.user.profile.messages')
+        </x-filament::modal> --}}
+        @auth
+            @livewire('actions.open-chat')
+        @endauth
+        
     </body>
 
     @livewireScripts

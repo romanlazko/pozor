@@ -17,8 +17,8 @@
             </span> --}}
         </button>
         
-        <button class="p-1 md:p-2 rounded-full aspect-square min-w-10 min-h-10 max-w-10 max-h-10 hover:bg-indigo-500 text-xl bg-indigo-600 text-center items-center">
-            <i class="fa-solid fa-magnifying-glass text-white m-auto"></i>
+        <button class="p-2 rounded-full aspect-square min-w-10 min-h-10 max-w-10 max-h-10 hover:bg-indigo-500 text-xl bg-indigo-600 text-center items-center">
+            <x-heroicon-o-magnifying-glass class="text-white"/>
         </button>
     </form>
     
