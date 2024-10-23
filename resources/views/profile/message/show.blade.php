@@ -28,9 +28,9 @@
     
         <div id="messages" class=" grid grid-cols-1 gap-2 p-2">
             @foreach ($messages as $message)
-                <div class="w-full">
-                    <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>
-                        <div @class(['p-2 shadow-sm rounded-lg space-y-1', 'bg-blue-100 ml-2' => auth()->user()->id == $message->user_id, 'bg-gray-100 mr-2' => auth()->user()->id != $message->user_id])>
+                {{-- <div class="w-full"> --}}
+                    {{-- <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])> --}}
+                        <div @class(['p-2 shadow-sm rounded-lg space-y-1 w-max', 'bg-blue-100 ml-2 loat-right right-0' => auth()->user()->id == $message->user_id, 'bg-gray-100 mr-2' => auth()->user()->id != $message->user_id])>
                             
                             <p class="text-sm break-all">{{ $message->message }}</p>
 
@@ -41,8 +41,8 @@
                                 @endif
                             </p>
                         </div>
-                    </div>
-                </div>
+                    {{-- </div> --}}
+                {{-- </div> --}}
             @endforeach
         </div>
     {{-- </div> --}}

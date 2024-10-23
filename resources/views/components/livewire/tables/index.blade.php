@@ -1312,8 +1312,11 @@
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
             >
                 @if ($action)
-                    <div class="p-4">
-                        {{ $action->getModalContent() }}
+                    <div class="flex flex-col flex-1 overflow-hidden h-20" data="">
+                        <div class="flex-1 h-full overflow-auto">
+                            {{ $action->getModalContent() }}
+                        </div>
+                        
                     </div>
 
                     <x-slot name="footerActions">
