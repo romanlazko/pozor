@@ -1280,13 +1280,13 @@
                 :extra-modal-window-attribute-bag="$action?->getExtraModalWindowAttributeBag()"
                 {{-- :footer-actions="$action?->getVisibleModalFooterActions()"
                 :footer-actions-alignment="$action?->getModalFooterActionsAlignment()" --}}
-                :heading="$action?->getModalHeading()"
+                {{-- :heading="$action?->getModalHeading()" --}}
                 :icon="$action?->getModalIcon()"
                 :icon-color="$action?->getModalIconColor()"
                 :id="$this->getId() . '-table-action'"
                 :slide-over="$action?->isModalSlideOver()"
-                :sticky-footer="$action?->isModalFooterSticky()"
-                :sticky-header="$action?->isModalHeaderSticky()"
+                {{-- :sticky-footer="$action?->isModalFooterSticky()"
+                :sticky-header="$action?->isModalHeaderSticky()" --}}
                 :visible="filled($action)"
                 :width="$action?->getModalWidth()"
                 :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
