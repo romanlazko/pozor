@@ -116,7 +116,7 @@
 
         <div
             @class([
-                'absolute inset-0 z-40',
+                'relative inset-0 z-40',
                 'overflow-y-auto' => ! ($slideOver || ($width === MaxWidth::Screen)),
                 'cursor-pointer' => $closeByClickingAway,
             ])
