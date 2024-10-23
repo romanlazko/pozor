@@ -1320,7 +1320,7 @@
                         {{ $action->getModalContent() }}
                     </div>
 
-                    <input type="text" class="sticky bottom-0">
+                    <input type="text" class="">
                     {{-- @if ($action->getModalContentFooter()) --}}
                         {{-- <x-slot name="footerActions">
                             <div class="w-full flex items-end justify-end space-x-4">
