@@ -1324,9 +1324,10 @@
                         <x-slot name="footerActions">
                             <div class="w-full flex items-end justify-end space-x-4">
                                 <div class="w-full">
-                                    @if ($this->mountedTableActionHasForm(mountedAction: $action))
+                                    {{-- @if ($this->mountedTableActionHasForm(mountedAction: $action))
                                         {{ $this->getMountedTableActionForm() }}
-                                    @endif
+                                    @endif --}}
+                                    <input type="text">
                                 </div>
                                 
                                 <div>
