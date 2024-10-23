@@ -1339,8 +1339,8 @@
             </x-filament::modal>
         </form>
 
-        {{-- @php
+        @php
             $this->hasTableModalRendered = true;
-        @endphp --}}
+        @endphp
     @endif
 </div>
