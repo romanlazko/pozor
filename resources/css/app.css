@@ -10,6 +10,13 @@
     padding: 0;
 }
 
+html, body {
+    height: 100%;
+    position: relative;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 /* .fi-fo-component-ctn {
     position: sticky;
     bottom: 0;
