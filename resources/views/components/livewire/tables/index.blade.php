@@ -1312,15 +1312,16 @@
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
             >
                 @if ($action)
+                @if ($this->mountedTableActionHasForm(mountedAction: $action))
+                                    {{ $this->getMountedTableActionForm() }}
+                            @endif
                     <div class="flex flex-col flex-1 overflow-hidden h-20" data="">
                         <div class="flex-1 h-full overflow-auto">
                             {{ $action->getModalContent() }}
                         </div>
                         
                     </div>
-                    @if ($this->mountedTableActionHasForm(mountedAction: $action))
-                                    {{ $this->getMountedTableActionForm() }}
-                            @endif
+                    
 
                     <x-slot name="footerActions">
                         <div class="w-full flex items-end justify-end space-x-4">
