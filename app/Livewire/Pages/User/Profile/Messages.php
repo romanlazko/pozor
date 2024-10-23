@@ -79,13 +79,15 @@ class Messages extends Component implements HasForms, HasTable
 
                         return view('profile.message.show', ['messages' => $record->messages->load('user.media')]);
                     })
+                    ->modalAutofocus(true)
                     ->form([
                         Textarea::make('message')
                             ->required()
                             ->rows(1)
                             ->autosize()
                             ->placeholder('Message...')
-                            ->hiddenLabel(),
+                            ->hiddenLabel()
+                            ->autofocus(),
                     ])
                     ->modalCancelAction(false)
                     ->slideOver()
