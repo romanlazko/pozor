@@ -3,14 +3,10 @@
         {!! seo($announcement->getDynamicSEOData()) !!}
     </x-slot>
 
-    <x-slot name="navigation">
-        @include('layouts.navigation')
-    </x-slot>
-
     <div class="space-y-6 lg:py-12">
         <div class="grid w-full grid-cols-1 lg:grid-cols-5 xl:grid-cols-3 lg:gap-6 max-w-7xl m-auto px-0 lg:px-3">
             <div class="order-1 col-span-2 lg:col-span-3 xl:col-span-2 lg:rounded-2xl overflow-hidden">
-                <x-slider
+                <x-ux.slider
                     :medias="$announcement->getMedia('announcements')" 
                     height="500px"
                     :withFullscreen="true"
@@ -97,9 +93,5 @@
             </x-announcement.list>
         @endif
     </div>
-
-    <x-slot name="footerNavigation">
-        @include('layouts.footer')
-    </x-slot>
 </x-body-layout>
 

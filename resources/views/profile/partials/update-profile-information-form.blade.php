@@ -11,11 +11,11 @@
         </form>
         <div>
             <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Profile Information') }}
+                {{ __('profile.update_profile_information_form.title') }}
             </h2>
     
             <p class="mt-1 text-sm text-gray-600">
-                {{ __("Update your account's profile information.") }}
+                {{ __('profile.update_profile_information_form.description') }}
             </p>
         </div>
     </header>
@@ -25,45 +25,42 @@
         @method('patch')
 
         <div>
-            <x-form.label for="name" :value="__('Name')" :required="true"/>
+            <x-form.label for="name" :value="__('profile.update_profile_information_form.name')" :required="true"/>
             <x-form.input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-form.error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
-            <x-form.label for="email" :value="__('Email')" :required="true"/>
+            <x-form.label for="email" :value="__('profile.update_profile_information_form.email')" :required="true"/>
             <x-form.input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-form.error class="mt-2" :messages="$errors->get('email')" />
         </div>
 
         <div>
-            <x-form.label for="phone" :value="__('Phone')" :required="true"/>
+            <x-form.label for="phone" :value="__('profile.update_profile_information_form.phone')" :required="true"/>
             <x-form.input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" autofocus autocomplete="phone" />
             <x-form.error class="mt-2" :messages="$errors->get('phone')" />
         </div>
 
         <div>
-            {{-- <p class="mt-1 text-sm text-gray-600">
-                {{ __('Select languages you speak') }}
-            </p> --}}
-            <x-form.label :value="__('Select languages you speak')" :required="true"/>
+            <x-form.label :value="__('profile.update_profile_information_form.languages')" :required="true"/>
             <div class="w-full items-center p-3 border rounded-md mt-1">
                 <x-form.label for="en" class="items-center flex space-x-2">
                     <x-form.checkbox id="en" name="lang[]" value="en" :checked="in_array('en', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
-                        {{ __("English") }}
+                        {{ __('profile.update_profile_information_form.english') }}
                     </span>
                 </x-form.label>
                 <x-form.label for="ru" class="items-center flex space-x-2">
                     <x-form.checkbox id="ru" name="lang[]" value="ru" :checked="in_array('ru', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
-                        {{ __("Русский") }}
+                        {{ __('profile.update_profile_information_form.russian') }}
                     </span>
                 </x-form.label>
                 <x-form.label for="cz" class="items-center flex space-x-2">
                     <x-form.checkbox id="cz" name="lang[]" value="cz" :checked="in_array('cz', auth()?->user()?->lang ?? [])"/>
                     <span class="text-indigo-700">
-                        {{ __("Czech") }}
+                        {{ __('profile.update_profile_information_form.czech') }}
                     </span>
                 </x-form.label>
             </div>
@@ -72,7 +69,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-buttons.primary>{{ __('Save') }}</x-buttons.primary>
+            <x-buttons.primary>{{ __('profile.save') }}</x-buttons.primary>
         </div>
     </form>
 </section>

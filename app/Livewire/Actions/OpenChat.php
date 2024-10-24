@@ -22,7 +22,7 @@ class OpenChat extends Component implements HasForms, HasActions
         $action = Action::make('openChat')
             ->modalSubmitAction(false)
             ->modalCancelAction(false)
-            ->label(__('Open chat'))
+            ->label(__('components.navigation.messages'))
             ->modalWidth('md');
 
         if (! auth()->user()) {

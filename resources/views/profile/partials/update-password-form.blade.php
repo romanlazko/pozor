@@ -1,11 +1,11 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
+            {{ __('profile.update_passport_form.title') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+            {{ __('profile.update_passport_form.description') }}
         </p>
     </header>
 
@@ -14,25 +14,25 @@
         @method('put')
 
         <div>
-            <x-form.label for="update_password_current_password" :value="__('Current Password')" />
+            <x-form.label for="update_password_current_password" :value="__('profile.update_passport_form.current_password')" />
             <x-form.input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
             <x-form.error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
         </div>
 
         <div>
-            <x-form.label for="update_password_password" :value="__('New Password')" />
+            <x-form.label for="update_password_password" :value="__('profile.update_passport_form.new_password')" />
             <x-form.input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
             <x-form.error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 
         <div>
-            <x-form.label for="update_password_password_confirmation" :value="__('Confirm Password')" />
+            <x-form.label for="update_password_password_confirmation" :value="__('profile.update_passport_form.new_password_confirmation')" />
             <x-form.input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
             <x-form.error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
         </div>
 
         <div class="flex items-center gap-4">
-            <x-buttons.primary>{{ __('Save') }}</x-buttons.primary>
+            <x-buttons.primary>{{ __('profile.save') }}</x-buttons.primary>
 
             @if (session('status') === 'password-updated')
                 <p
@@ -41,7 +41,7 @@
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                >{{ __('profile.saved.') }}</p>
             @endif
         </div>
     </form>

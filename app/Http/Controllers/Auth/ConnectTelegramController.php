@@ -33,7 +33,7 @@ class ConnectTelegramController extends Controller
 
         return redirect()->intended(RouteServiceProvider::HOME)->with([
             'ok' => true,
-            'description' => "Telegram account verified"
+            'description' => __('auth.telegram.verified'),
         ]);
     }
 }

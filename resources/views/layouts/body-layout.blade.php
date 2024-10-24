@@ -21,7 +21,6 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet" />
-        <script src="https://kit.fontawesome.com/f4c6764ec6.js" crossorigin="anonymous"></script>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-VBMJ48R8BK"></script>
         <script>
@@ -86,7 +85,7 @@
         <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
 
         <header class="w-full bg-gray-900 block h-12 px-3">
-            @include('layouts.navigation')
+            <x-nav.header/>
         </header>
     
         <main class="w-full h-full flex-1 md:block">
@@ -108,9 +107,9 @@
             <div {{ $attributes->merge(['class' => 'flex h-full m-auto w-full relative']) }}>
                 @if (isset($sidebar))
                     <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
-                        <x-sidebar class="h-full lg:h-min">
+                        <x-nav.sidebar class="h-full lg:h-min">
                             {{ $sidebar }}
-                        </x-sidebar>
+                        </x-nav.sidebar>
                     </aside>
                 @endif
     
@@ -125,7 +124,7 @@
         @livewire('actions.open-chat')
 
         <div class="w-full lg:hidden block sticky bottom-0 h-12 z-20 border-t ">
-            @include('layouts.footer')
+            <x-nav.footer/>
         </div>
         
         @if (session('ok') === true)
@@ -133,15 +132,6 @@
         @elseif (session('ok') === false)
             <x-notifications.small class="bg-red-600 z-50" :title="session('description')"/>
         @endif
-        {{-- <x-filament::modal slide-over class="px-0" id="chat" class="padding-0" sticky-header>
-            <x-slot name="heading">
-                Modal heading
-            </x-slot>
-            @livewire('pages.user.profile.messages')
-        </x-filament::modal> --}}
-        {{-- @auth --}}
-        {{-- @endauth --}}
-        
     </body>
 
     @livewireScripts

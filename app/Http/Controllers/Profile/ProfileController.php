@@ -39,7 +39,7 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit')->with([
             'ok' => true, 
-            'description' => 'Your profile has been updated!'
+            'description' => __('profile.update_profile_information_form.success')
         ]);
     }
 
@@ -55,7 +55,7 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit')->with([
             'ok' => true,
-            'description' => 'Your avatar has been updated!'
+            'description' => 'profile.update_profile_information_form.success',
         ]);
     }
 
@@ -79,16 +79,4 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-
-    // public function dashboard()
-    // {
-    //     return view('profile.dashboard');
-    // }
-
-    // public function announcements()
-    // {
-    //     $announcements = auth()->user()->announcements()->with('currency')->paginate(30);
-
-    //     return view('profile.announcement', compact('announcements'));
-    // }
 }

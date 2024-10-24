@@ -6,7 +6,7 @@
     </x-slot>
 
     <x-slot name="sidebar">
-        <x-profile-nav/>
+        <x-nav.profile/>
     </x-slot>
 
     <livewire:components.announcement.create/>

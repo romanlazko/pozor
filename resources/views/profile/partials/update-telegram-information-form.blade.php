@@ -1,18 +1,18 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Telegram') }}
+            {{ __('profile.update_telegram_information_form.title') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your telegram information.") }}
+            {{ __('profile.update_telegram_information_form.description') }}
         </p>
     </header>
 
     @if (! auth()->user()->chat)
     <form action="{{ route('telegram.connect') }}" method="post">
         @csrf
-        <button class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('Connect Telegram') }}</button>
+        <button class="mt-6 text-sm text-blue-500 hover:text-blue-700 hover:underline">{{ __('profile.update_telegram_information_form.connect_telegram') }}</button>
     </form>
         {{-- <a href="https://t.me/pozorbottestbot?start=connect-{{ auth()->user()->id }}" </a> --}}
     @else

@@ -27,4 +27,10 @@ return [
     // TITLES
     'confirm_password_title' => 'This is a secure area of the application. Please confirm your password before continuing.',
     'forgot_password_title' => 'Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.',
+
+    'telegram' => [
+        'verified' => 'Telegram account verified'
+    ],
+
+    'verify_email_link_sent' => 'A new verification link has been sent to your email address.',
 ];

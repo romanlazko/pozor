@@ -21,7 +21,7 @@
     
     <x-slot name="header">
         <div class="w-full space-y-6">
-            <x-breadcrumbs :category="$category"/>
+            <x-nav.breadcrumbs :category="$category"/>
             
             <x-categories :categories="$categories" :category="$category"/>
         </div>

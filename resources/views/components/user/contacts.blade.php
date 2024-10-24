@@ -6,7 +6,7 @@
             <label class="text-gray-500 flex text-sm items-center space-x-1">
                 <x-heroicon-o-phone class="size-5"/>
                 <span>
-                    {{ __("Phone:") }}
+                    {{ __('components.user.phone') }}
                 </span>
                 <a href="tel:{{ $user?->phone }}" class="inline-block w-full h-full text-blue-600 hover:underline cursor-pointer">{{ $user?->phone }}</a>
             </label>
@@ -16,7 +16,7 @@
             <label class="text-gray-500 flex text-sm items-center space-x-1">
                 <x-heroicon-o-at-symbol class="size-5"/>
                 <span>
-                    {{ __("Email:") }}
+                    {{ __('components.user.email') }}
                 </span>
                 <a href="mailto:{{ $user?->email }}" class="inline-block w-full h-full text-blue-600 hover:underline cursor-pointer">{{ $user?->email }}</a>
             </label>
@@ -26,7 +26,7 @@
             <label class="text-gray-500 flex text-sm items-center space-x-1">
                 <x-heroicon-o-paper-airplane class="size-5"/>
                 <span>
-                    {{ __("Telegram:") }}
+                    {{ __('components.user.telegram') }}
                 </span>
                 <a href="https://t.me/{{ $user?->chat?->username }}" class="inline-block w-full h-full text-blue-600 hover:underline cursor-pointer">{{ $user?->chat?->username }}</a>
             </label>

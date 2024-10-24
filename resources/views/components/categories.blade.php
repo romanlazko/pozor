@@ -13,12 +13,10 @@
                 <div class="w-12 h-12 min-h-12 min-w-12">
                     <img src="{{ $child->getFirstMediaUrl('categories', 'thumb') }}" alt="" class="float-right">
                 </div>
+
                 <div class="grid">
                     <span class="w-full font-semibold">
                         {{ $child->name }}
-                    </span>
-                    <span class="w-full text-xs text-gray-500">
-                        {{ $child->announcements_count }}
                     </span>
                 </div>
             </div>

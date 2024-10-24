@@ -71,7 +71,7 @@ class VerifyEmailController extends Controller
 
         return back()->with([
             'ok' => true,
-            'description' => __("A new verification link has been sent to your email address.")
+            'description' => __('auth.verify_email_link_sent')
         ]);
     }
 }

@@ -1,6 +1,6 @@
 
-<div class="flex flex-col flex-1 overflow-hidden h-20 w-full" data="">
-    <div id="messages" class="grid grid-cols-1 gap-2 p-2 flex-1 h-full overflow-auto w-full">
+<div class="flex flex-col flex-1 overflow-hidden h-20 w-full " data="">
+    <div id="messages" class="grid grid-cols-1 gap-2 p-2 flex-1 h-full overflow-auto w-full py-6">
         @foreach ($messages as $message)
             <div class="w-full">
                 <div @class(['flex space-x-2', 'float-right right-0' => auth()->user()->id == $message->user_id])>

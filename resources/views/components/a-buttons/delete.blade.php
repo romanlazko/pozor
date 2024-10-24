@@ -9,7 +9,7 @@
     
     onclick="return confirm('{{ __($confirm)}}')"
 >
-    <i class="fa-solid fa-trash sm:mr-1"></i>
+    <x-heroicon-s-trash class="size-7"/>
     <p class="hidden sm:block">
         {{ $slot }}
     </p>

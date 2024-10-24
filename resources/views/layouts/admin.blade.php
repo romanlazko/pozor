@@ -5,62 +5,56 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <meta http-equiv="cleartype" content="on">
+        <meta data-rh="true" property="og:type" content="website">
+        <meta data-rh="true" property="og:site_name" content="{{ config('app.name') }}">
+        <meta data-rh="true" property="og:locale" content="{{ app()->getLocale() }}">
+
+        @if (isset($meta))
+            {{ $meta }}
+        @else
+            {!! seo() !!}
+        @endif
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <script src="https://kit.fontawesome.com/f4c6764ec6.js" crossorigin="anonymous"></script>
-        <script async src="https://www.google.com/recaptcha/api.js"></script>
-
+        <link href="https://fonts.bunny.net/css?family=roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet" />
         @livewireStyles
         @filamentStyles
-        
         @vite(['resources/css/app.css'])
     </head>
     
-    <body>
+    <body class="font-roboto bg-white min-h-dvh w-full flex flex-col" x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''">
         <livewire:components.empty-component/>
-        <div x-data="{ sidebarOpen: false }" class="flex h-dvh bg-gray-200 font-roboto">
-            @include('layouts.sidebar')
-            
-            <div class="flex-1 flex flex-col overflow-hidden">
-                <div class="flex w-full px-2 min-h-[50px] items-center py-1 space-x-2 justify-between" x-data="{ headerOpen: false }">
-                    <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none lg:hidden">
-                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 6H20M4 12H20M4 18H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    @if (isset($header))
-                        {{ $header }}
-                    @else
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                            {{ $title ?? __('Admin') }}
+
+        <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
+    
+        <main class="w-full h-full flex-1 md:block">
+            <div {{ $attributes->merge(['class' => 'flex h-full m-auto w-full relative']) }}>
+                <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0 min-h-dvh" aria-label="Sidebar">
+                    <x-nav.sidebar class="h-full lg:h-min">
+                        <x-nav.admin/>
+                    </x-nav.sidebar>
+                </aside>
+    
+                <div @class(['w-full h-full relative', 'lg:pl-[20rem] xl:pl-[24rem]' => true])>
+                    <div class="flex items-center space-x-2 bg-gray-100 sticky top-0 z-40 w-full justify-between p-3">
+                        <h2 class="w-full font-semibold text-xl">
+                            {{ $title ?? "Admin" }}
                         </h2>
-                    @endif
-                </div>
-                
-                <main class="flex-1 overflow-y-auto bg-gray-200">
-                    <div class="mx-auto p-1">
+                        <button @click="sidebarOpen = true" type="button" class="lg:hidden">
+                            <x-heroicon-c-bars-3-bottom-right class="size-5"/>
+                        </button>
+                    </div>
+
+                    <div id="content" class="w-full space-y-4 flex-1 flex-col flex p-3" >
                         {{ $slot }}
                     </div>
-                </main>
-
-                @if (isset($footer))
-                    <div class="bg-white">
-                        <div class="flex w-full m-auto px-4 sm:px-6 lg:px-8 items-center justify-between">
-                            {{ $footer }}
-                        </div>
-                    </div>
-                @endif
+                </div>
             </div>
-        </div>
-        @if (session('ok') === true)
-            <x-notifications.small class="bg-green-400 z-50" :title="session('description')"/>
-        @elseif (session('ok') === false)
-            <x-notifications.small class="bg-red-400 z-50" :title="session('description')"/>
-        @endif
+        </main>
     </body>
+
     @livewireScripts
     @filamentScripts
     @vite(['resources/js/app.js'])

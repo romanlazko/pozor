@@ -1,9 +1,10 @@
 @props(['active' => false])
 
 <div class="space-y-2 h-min" x-data="{ open: {{ $active ? 'true' : 'false' }} }">
-    <x-responsive-nav-link @click="open = !open" class="cursor-pointer">
+    <x-nav.responsive-link @click="open = !open" class="cursor-pointer">
         {{ $trigger }}
-    </x-responsive-nav-link>
+    </x-nav.responsive-link>
+
     <div class="transition duration-200 ease-in-out space-y-2 pl-6" x-show="open"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95"

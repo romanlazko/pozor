@@ -1,4 +1,4 @@
-<x-profile-layout>
+<x-body-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Profile') }}
@@ -36,4 +36,4 @@
             </form>
         </div>
     </x-white-block>
-</x-profile-layout>
+</x-body-layout>
