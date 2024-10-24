@@ -1,4 +1,4 @@
-<header class="flex items-center justify-between bg-gray-900 space-x-6 h-12 max-w-7xl m-auto z-50">
+<nav class="flex items-center justify-between bg-gray-900 space-x-6 h-12 max-w-7xl m-auto z-50">
 	<div class="flex items-center justify-start space-x-6 text-sm">
 		<a href="{{ route('home') }}">
 			<x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
@@ -99,4 +99,4 @@
 			</div>
 		</div>
 	</div>
-</header>
+</nav>

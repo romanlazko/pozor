@@ -1262,8 +1262,6 @@
                     if (modalWindow) {
                         modalWindow.scrollTo(0, modalWindow.scrollHeight);
                     }
-
-                    {{-- document.querySelector('.main').classList.add('hidden'); --}}
                 });
             }
         }">
@@ -1317,12 +1315,11 @@
                 {{-- @if ($this->mountedTableActionHasForm(mountedAction: $action))
                                     {{ $this->getMountedTableActionForm() }}
                             @endif --}}
-                    <input type="text" x-blur="scrollToBottom($event.target)">
+                    {{-- <input type="text" x-blur="scrollToBottom($event.target)"> --}}
                     <div class="flex flex-col flex-1 overflow-hidden h-20" data="">
                         <div class="flex-1 h-full overflow-auto">
                             {{ $action->getModalContent() }}
                         </div>
-                        
                     </div>
                     
 

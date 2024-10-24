@@ -1,7 +1,4 @@
 <x-body-layout>
-    <x-slot name="navigation">
-        @include('layouts.navigation')
-    </x-slot>
     
     <x-slot name="header">
         <div class="w-full space-y-24 py-12">
@@ -21,9 +18,6 @@
                 <x-categories :categories="$categories"/>
             </div>
         </div>
-
-
-    
     </x-slot>
 
     <x-announcement-list :announcements="$announcements" :cols="5">

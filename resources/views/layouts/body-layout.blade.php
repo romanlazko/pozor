@@ -80,62 +80,32 @@
         @vite(['resources/css/app.css'])
     </head>
     
-    <body class="font-roboto bg-gray-50 relative" 
-        
-        x-on:close-modal.window="document.body.style.position = ''" 
-
-        x-data="{ 
-            sidebarOpen: false,
-            resizeElement() {
-                const windowHeight = window.innerHeight;
-                const windowWidth = window.innerWidth;
-                
-                const element = document.getElementById('resizable-element');
-                
-                // Применение размеров окна к элементу
-                element.style.height = `${windowHeight}px`;
-                element.style.width = `${windowWidth}px`;
-
-                alert('ok');
-            },
-            setListeners() {
-                document.querySelectorAll('input, textarea').forEach((input) => {
-
-                    {{-- input.addEventListener('blur', alert('ok')); // срабатывает при потере фокуса --}}
-                });
-            },
-            
-        }" 
-        x-on:open-modal.window="setListeners()"
-        :class="sidebarOpen ? 'overflow-hidden' : ''"
-    >
+    <body class="font-roboto bg-gray-50 min-h-dvh w-full" x-data="{ sidebarOpen: false}" :class="sidebarOpen ? 'overflow-hidden' : ''" x-on:open-modal.window="document.querySelector('main').classList.add('hidden');">
         <livewire:components.empty-component/>
 
-        {{-- <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div> --}}
+        <div x-cloak :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed inset-0 z-30 transition-opacity  bg-black opacity-50 lg:hidden"></div>
 
-        @if (isset($navigation))
-            <div class="w-full bg-gray-900 block h-12 px-3">
-                {{ $navigation }}
-            </div>
-        @endif
-
-        @if (isset($search))
-            <div class="bg-white top-0 z-30 relative">
-                {{ $search }}
-                <hr>
-            </div>
-        @endif
-
-        @if (isset($header))
-            <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100 relative">
-                <div class="w-full max-w-7xl m-auto py-6 px-3">
-                    {{ $header }}
-                </div>
-            </div>
-        @endif
+        <header class="w-full bg-gray-900 block h-12 px-3">
+            @include('layouts.navigation')
+        </header>
     
-        <div {{ $attributes->merge(['class' => 'w-full relative main']) }}>
-            <div class='flex flex-1 flex-col relative m-auto w-full '>
+        <main class="w-full h-full">
+            @if (isset($search))
+                <div class="bg-white sticky top-0 z-30  w-full ">
+                    {{ $search }}
+                    <hr>
+                </div>
+            @endif
+
+            @if (isset($header))
+                <div class="flex w-full min-h-10 items-center space-x-2 bg-gray-100">
+                    <div class="w-full m-auto py-6 px-3 max-w-7xl">
+                        {{ $header }}
+                    </div>
+                </div>
+            @endif
+
+            <div {{ $attributes->merge(['class' => 'flex h-full m-auto w-full relative']) }}>
                 @if (isset($sidebar))
                     <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">
                         <x-sidebar class="h-full lg:h-min">
@@ -144,20 +114,13 @@
                     </aside>
                 @endif
     
-                <div @class(['w-full h-full flex-1 flex flex-col relative space-y-6', 'lg:pl-[20rem] xl:pl-[24rem]' => isset($sidebar)])>
-    
-                    <main id="main-block" class="w-full space-y-4 flex-1 flex-col flex" >
+                <div @class(['w-full h-full relative space-y-6', 'lg:pl-[20rem] xl:pl-[24rem]' => isset($sidebar)])>
+                    <div id="content" class="w-full space-y-4 flex-1 flex-col flex" >
                         {{ $slot }}
-                    </main>
-    
-                    @if (isset($footer))
-                        <div class="flex w-full items-center py-1 space-x-2 justify-between bg-white sticky bottom-0 lg:rounded-lg shadow-lg border">
-                            {{ $footer }}
-                        </div>
-                    @endif
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
 
         @if (isset($footerNavigation))
             <div class="w-full lg:hidden block sticky bottom-0 h-12 z-20 border-t ">

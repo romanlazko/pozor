@@ -1,8 +1,7 @@
-<x-profile-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+<x-body-layout :title="__('Profile')" class="w-full max-w-7xl m-auto">
+
+    <x-slot name="sidebar">
+        <x-profile-nav/>
     </x-slot>
 
     @include('profile.partials.verify-email')
@@ -35,4 +34,4 @@
             </x-white-block>
         </div>
     </div>
-</x-profile-layout>
+</x-body-layout>

@@ -8,10 +8,6 @@
             {!! seo()->for($category) !!}
         </x-slot>
     @endif
-    
-    <x-slot name="navigation">
-        @include('layouts.navigation')
-    </x-slot>
 
     <x-slot name="sidebar">
         <livewire:components.filters :filters="$request->filters ?? null" :category="$category"/>
