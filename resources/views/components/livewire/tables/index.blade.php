@@ -1310,6 +1310,18 @@
                 x-on:open-modal.window.debounce.300="scrollToBottom($event.target)"
 
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
+
+                x-on:open-modal.window="
+                    if ($event.detail.id === '{{ $this->getId().'-table-action' }}'){ 
+                        document.querySelector('main').classList.add('hidden');
+                    }
+                "
+
+                x-on:close-modal.window="
+                    if ($event.detail.id === '{{ $this->getId().'-table-action' }}'){ 
+                        document.querySelector('main').classList.remove('hidden');
+                    }
+                "
             >
                 @if ($action)
                     

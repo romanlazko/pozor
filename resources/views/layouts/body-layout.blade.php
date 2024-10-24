@@ -89,7 +89,7 @@
             @include('layouts.navigation')
         </header>
     
-        <main class="w-full h-full flex-1">
+        <main class="w-full h-full flex-1 md:block">
             @if (isset($search))
                 <div class="bg-white sticky top-0 z-30  w-full ">
                     {{ $search }}
