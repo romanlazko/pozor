@@ -134,7 +134,7 @@
             </div>
         @endif
     
-        <div {{ $attributes->merge(['class' => 'w-full relative']) }}>
+        <div {{ $attributes->merge(['class' => 'w-full relative main']) }}>
             <div class='flex flex-1 flex-col relative m-auto w-full '>
                 @if (isset($sidebar))
                     <aside x-cloak :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'" class="bg-gray-50 fixed lg:absolute inset-y-0 left-0 z-50 lg:z-10 w-full lg:w-[20rem] xl:w-[24rem] transition duration-300 transform lg:translate-x-0 lg:inset-0" aria-label="Sidebar">

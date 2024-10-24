@@ -1262,6 +1262,8 @@
                     if (modalWindow) {
                         modalWindow.scrollTo(0, modalWindow.scrollHeight);
                     }
+
+                    document.querySelector('.main').classList.add('hidden md:block');
                 });
             }
         }">
