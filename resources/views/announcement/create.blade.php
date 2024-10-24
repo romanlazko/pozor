@@ -1,8 +1,13 @@
-<x-profile-layout>
+<x-body-layout class="w-full max-w-7xl m-auto">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('announcement.create') }}
         </h2>
     </x-slot>
-    <livewire:pages.user.announcement.create/>
-</x-profile-layout>
+
+    <x-slot name="sidebar">
+        <x-profile-nav/>
+    </x-slot>
+
+    <livewire:components.announcement.create/>
+</x-body-layout>

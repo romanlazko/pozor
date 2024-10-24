@@ -10,7 +10,7 @@
     @endif
 
     <x-slot name="sidebar">
-        <livewire:components.filters :filters="$request->filters ?? null" :category="$category"/>
+        <livewire:components.announcement.filters :filters="$request->filters ?? null" :category="$category"/>
     </x-slot>
 
     <x-slot name="search">
@@ -27,7 +27,7 @@
         </div>
     </x-slot>
 
-    <x-announcement-list :announcements="$announcements" :cols="3" :paginator="true">
+    <x-announcement.list :announcements="$announcements" :cols="3" :paginator="true">
         <x-slot name="header">
             <div class="w-full md:flex justify-between items-center space-y-2 md:space-y-0">
                 <h2 class="text-xl lg:text-3xl font-bold">
@@ -47,9 +47,5 @@
                 </form>
             </div>
         </x-slot>
-    </x-announcement-list>
-
-    <x-slot name="footerNavigation">
-        @include('layouts.footer')
-    </x-slot>
+    </x-announcement.list>
 </x-body-layout>

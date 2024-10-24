@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Livewire\Components;
+namespace App\Livewire\Actions;
 
 use App\Models\Announcement;
 use App\Models\Vote;
-use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class LikeDislike extends Component
@@ -43,7 +42,7 @@ class LikeDislike extends Component
 
     public function render()
     {
-        return view('components.livewire.like-dislike');
+        return view('livewire.actions.like-dislike');
     }
 
     private function hasVoted(int $val): bool

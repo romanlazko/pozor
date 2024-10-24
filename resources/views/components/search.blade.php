@@ -11,10 +11,6 @@
             @class(['text-gray-900 hover:text-indigo-700 text-xl lg:hidden p-1 md:p-2 relative', 'hidden' => !$filterButton])
         >
             <x-heroicon-o-adjustments-horizontal class="size-6"/>
-
-            {{-- <span @class(['absolute bottom-0 right-0 text-xs max-w-4 max-h-4 w-4 h-4 bg-blue-500 text-white rounded-full px-1 text-center content-center items-center', 'bg-red-500' => $filtersCount > 0])>
-                {{ $filtersCount }}
-            </span> --}}
         </button>
         
         <button class="p-2 rounded-full aspect-square min-w-10 min-h-10 max-w-10 max-h-10 hover:bg-indigo-500 text-xl bg-indigo-600 text-center items-center">
@@ -22,5 +18,5 @@
         </button>
     </form>
     
-    <livewire:components.location-form :location="$location" :category="$category"/>
+    <livewire:actions.location-form :location="$location" :category="$category"/>
 </div>

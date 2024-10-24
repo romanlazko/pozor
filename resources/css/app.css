@@ -23,7 +23,7 @@
 } */
 
 .fi-btn {
-    border-radius: 0.75rem;
+    border-radius: 1rem;
 }
 
 .parent:focus * {

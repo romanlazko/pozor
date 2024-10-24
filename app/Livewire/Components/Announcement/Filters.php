@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Components;
+namespace App\Livewire\Components\Announcement;
 
 use App\AttributeType\AttributeFactory;
 use App\Models\Attribute;
@@ -57,7 +57,7 @@ class Filters extends Component implements HasForms
 
     public function render()
     {
-        return view('livewire.announcement.filters');
+        return view('components.livewire.announcement.filters');
     }
 
     public function search()

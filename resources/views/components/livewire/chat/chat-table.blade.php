@@ -562,7 +562,7 @@
 
                                     <div
                                         @class([
-                                            'flex w-full flex-col gap-y-3 py-4',
+                                            'flex w-full flex-col gap-y-3 py-2',
                                             'md:flex-row md:items-center' => ! $contentGrid,
                                         ])
                                     >
@@ -677,18 +677,6 @@
                             'records' => $records,
                         ])
                     }}
-                @endif
-
-                @if ($hasSummary && (! $isReordering))
-                    <x-filament-tables::table>
-                        <x-filament-tables::summary
-                            :columns="$columns"
-                            extra-heading-column
-                            :placeholder-columns="false"
-                            :plural-model-label="$pluralModelLabel"
-                            :records="$records"
-                        />
-                    </x-filament-tables::table>
                 @endif
             @elseif (($records !== null) && count($records))
                 <x-filament-tables::table
@@ -1269,7 +1257,7 @@
                 $action = $this->getMountedTableAction();
             @endphp
 
-            <x-livewire.modal
+            <x-livewire.chat.chat-modal
                 :alignment="$action?->getModalAlignment()"
                 :autofocus="$action?->isModalAutofocused()"
                 :close-button="$action?->hasModalCloseButton()"
@@ -1343,7 +1331,7 @@
                         </div>
                     </x-slot>
                 @endif
-            </x-livewire.modal>
+            </x-livewire.chat.chat-modal>
         </form>
 
         @php

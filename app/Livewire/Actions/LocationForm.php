@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Components;
+namespace App\Livewire\Actions;
 
 use App\Models\Geo;
 use Dotswan\MapPicker\Fields\Map;
@@ -132,7 +132,11 @@ class LocationForm extends Component implements HasForms, HasActions
 
     public function render()
     {
-        return view('livewire.location-form');
+        $actions = [
+            'location',
+        ];
+
+        return view('livewire.actions.actions', compact('actions'));
     }
 
     public function resetData()

@@ -1,11 +1,10 @@
-<div class="w-full space-y-6">
-    <x-user-card :user="$user"/>
-    
+@props(['user' => null])
 
+<div class="w-full space-y-6">
     <div class="w-full space-y-4">
         @if ($user?->phone)
             <label class="text-gray-500 flex text-sm items-center space-x-1">
-                <i class="fa-solid fa-phone"></i>
+                <x-heroicon-o-phone class="size-5"/>
                 <span>
                     {{ __("Phone:") }}
                 </span>
@@ -15,7 +14,7 @@
     
         @if ($user?->email)
             <label class="text-gray-500 flex text-sm items-center space-x-1">
-                <i class="fa-solid fa-at"></i>
+                <x-heroicon-o-at-symbol class="size-5"/>
                 <span>
                     {{ __("Email:") }}
                 </span>
@@ -25,7 +24,7 @@
     
         @if ($user?->chat?->username)
             <label class="text-gray-500 flex text-sm items-center space-x-1">
-                <i class="fa-brands fa-telegram"></i>
+                <x-heroicon-o-paper-airplane class="size-5"/>
                 <span>
                     {{ __("Telegram:") }}
                 </span>

@@ -3,6 +3,7 @@
 namespace App\Livewire\Actions;
 
 use App\Models\Announcement;
+use App\Models\User;
 use App\Notifications\NewMessage;
 use Livewire\Component;
 use Filament\Actions\Action;
@@ -11,6 +12,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Support\HtmlString;
 
 class SendMessage extends Component implements HasForms, HasActions
 {
@@ -18,6 +20,25 @@ class SendMessage extends Component implements HasForms, HasActions
     use InteractsWithForms;
 
     public $announcement_id;
+
+    public $user_id;
+
+    public function showContact()
+    {
+        $user = User::findOrFail($this->user_id);
+
+        return Action::make('showContact')
+            ->modalHeading(fn () => new HtmlString(view('components.user.card', ['user' => $user])))
+            ->icon('heroicon-s-phone')
+            ->extraAttributes(['class' => 'w-full'])
+            ->button()
+            ->color('primary')
+            ->modalWidth('xl')
+            ->stickyModalHeader(true)
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false)
+            ->modalContent(view('components.user.contacts', ['user' => $user]));
+    }
 
     public function sendMessage()
     {
@@ -81,6 +102,11 @@ class SendMessage extends Component implements HasForms, HasActions
 
     public function render()
     {
-        return view('livewire.send-message');
+        $actions = [
+            'sendMessage',
+            'showContact',
+        ];
+
+        return view('livewire.actions.actions', compact('actions'));
     }
 }

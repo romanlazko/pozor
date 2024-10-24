@@ -63,7 +63,7 @@
                                 {{ $announcement->geo?->name }} - {{ $announcement->created_at->diffForHumans() }}
                             </span>
                             
-                            <livewire:components.like-dislike :announcement="$announcement"/>
+                            <livewire:actions.like-dislike :announcement="$announcement"/>
                         </div>
         
                         <div class="w-full space-y-4">
@@ -79,23 +79,23 @@
                     <hr>
 
                     <div class="space-y-4 w-full">
-                        <x-user-card :user="$announcement->user"/>
-                        <div class="w-full z-50 grid grid-cols-2 gap-2">
-                            <livewire:actions.send-message :announcement_id="$announcement->id"/>
-                            <livewire:actions.show-contact :user_id="$announcement->user->id"/>
-                        </div>
+                        <x-user.card :user="$announcement->user"/>
+                        
+                        <livewire:actions.send-message :announcement_id="$announcement->id" :user_id="$announcement->user->id"/>
                     </div>
                 </div>
             </div>
         </div>
 
-        <x-announcement-list class="bg-white" :announcements="$similar_announcements" :cols="5">
-            <x-slot name="header">
-                <h2 class="text-xl lg:text-3xl font-bold">
-                    {{ __('announcement.similar') }}
-                </h2>
-            </x-slot>
-        </x-announcement-list>
+        @if ($similar_announcements)
+            <x-announcement.list class="bg-white" :announcements="$similar_announcements" :cols="5">
+                <x-slot name="header">
+                    <h2 class="text-xl lg:text-3xl font-bold">
+                        {{ __('announcement.similar') }}
+                    </h2>
+                </x-slot>
+            </x-announcement.list>
+        @endif
     </div>
 
     <x-slot name="footerNavigation">

@@ -19,12 +19,12 @@
         ])
     >
         @foreach ($announcements as $index => $announcement)
-            <x-announcement-card :announcement="$announcement" :layout="$layout" />
+            <x-announcement.card :announcement="$announcement" :layout="$layout" />
         @endforeach
     </div>
 
     @if ($paginator)
-        <div class="p-4">
+        <div class="p-3">
             {{ $announcements?->onEachSide(1)->links() }}
         </div>
     @endif

@@ -1,13 +1,17 @@
 <x-body-layout :title="__('Profile')" class="w-full max-w-7xl m-auto">
-
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Profile') }}
+        </h2>
+    </x-slot>
     <x-slot name="sidebar">
         <x-profile-nav/>
     </x-slot>
 
     @include('profile.partials.verify-email')
 
-    <div class="tab-wrapper" x-data="{ activeTab:  0 }">
-        <div class="flex space-x-1 px-2">
+    <div class="tab-wrapper px-3 py-5" x-data="{ activeTab:  0 }">
+        <div class="flex space-x-1 px-3">
             <x-buttons.button @click="activeTab = 0" class="rounded-b-none" x-bind:class="{ 'bg-indigo-700 hover:bg-indigo-500 text-white': activeTab === 0 }">
                 {{ __("Profile")}}
             </x-buttons.button>

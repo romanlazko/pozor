@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\User\Announcement;
+namespace App\Livewire\Components\Announcement;
 
 class TelegramCreate extends Create
 {

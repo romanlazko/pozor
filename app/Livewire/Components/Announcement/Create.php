@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\User\Announcement;
+namespace App\Livewire\Components\Announcement;
 
 use App\AttributeType\AttributeFactory;
 use App\Livewire\Components\Forms\Components\Wizard;
@@ -118,7 +118,7 @@ class Create extends Component implements HasForms
     {
         session()->put('data', array_diff_key($this->data, ['attachments' => ""]));
 
-        return view('livewire.announcement.create');
+        return view('components.livewire.announcement.create');
     }
 
     public function getFormSchema(): array

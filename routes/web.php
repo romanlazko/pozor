@@ -109,7 +109,6 @@ Route::middleware(['auth'])->name('profile.')->prefix('profile')->group(function
     Route::delete('/destroy', [ProfileController::class, 'destroy'])->name('destroy');
     Route::patch('/updateAvatar', [ProfileController::class, 'updateAvatar'])->name('updateAvatar');
     Route::get('/wishlist', [Wishlist::class, 'index'])->name('wishlist');
-    Route::get('/messages', Messages::class)->name('message.index');
 
     // Route::controller(MessageController::class)->prefix('message')->name('message.')->group(function () {
     //     Route::get('/', 'index')->name('index');

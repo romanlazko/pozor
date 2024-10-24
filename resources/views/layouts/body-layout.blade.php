@@ -122,11 +122,11 @@
             </div>
         </main>
 
-        @if (isset($footerNavigation))
-            <div class="w-full lg:hidden block sticky bottom-0 h-12 z-20 border-t ">
-                {{ $footerNavigation }}
-            </div>
-        @endif
+        @livewire('actions.open-chat')
+
+        <div class="w-full lg:hidden block sticky bottom-0 h-12 z-20 border-t ">
+            @include('layouts.footer')
+        </div>
         
         @if (session('ok') === true)
             <x-notifications.small class="bg-green-600 z-50" :title="session('description')"/>
@@ -140,7 +140,6 @@
             @livewire('pages.user.profile.messages')
         </x-filament::modal> --}}
         {{-- @auth --}}
-            @livewire('actions.open-chat')
         {{-- @endauth --}}
         
     </body>

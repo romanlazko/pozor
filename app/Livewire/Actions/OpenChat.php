@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Actions;
 
-use App\Livewire\Pages\User\Profile\Messages;
+use App\Livewire\Components\Chat\Chats;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -32,7 +32,7 @@ class OpenChat extends Component implements HasForms, HasActions
 
         return $action
             ->form([
-                Livewire::make(Messages::class)
+                Livewire::make(Chats::class)
             ])
             ->slideOver();
     }

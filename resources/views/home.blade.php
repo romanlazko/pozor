@@ -1,5 +1,4 @@
-<x-body-layout>
-    
+<x-body-layout :title="__('home.title')">
     <x-slot name="header">
         <div class="w-full space-y-24 py-12">
             <div class="max-w-2xl m-auto space-y-12">
@@ -20,16 +19,11 @@
         </div>
     </x-slot>
 
-    <x-announcement-list :announcements="$announcements" :cols="5">
+    <x-announcement.list :announcements="$announcements" :cols="5">
         <x-slot name="header">
             <h2 class="text-xl lg:text-3xl font-bold">
                 {{ __("home.all_announcements") }} <span class="text-gray-500">{{ $announcements->total() }}</span>
             </h2>
         </x-slot>
-    </x-announcement-list>
-
-
-    <x-slot name="footerNavigation">
-        @include('layouts.footer')
-    </x-slot>
+    </x-announcement.list>
 </x-body-layout>

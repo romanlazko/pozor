@@ -1,5 +1,4 @@
-<nav {{ $attributes->merge(['class' => 'p-4 space-y-6']) }}>
-
+<nav {{ $attributes->merge(['class' => 'space-y-6 p-4 lg:p-0']) }}>
     <a href="{{ route('profile.edit') }}" @class(['flex text-gray-700 hover:text-indigo-600 whitespace-nowrap items-center space-x-3', 'text-indigo-600' => request()->routeIs('profile.edit')])>
         <x-heroicon-s-user class="size-5"/>
         <span class="font-medium text-sm">{{ __("Profile") }}</span>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\User\Profile;
+namespace App\Livewire\Components\Chat;
 
 use App\Models\Messanger\Message;
 use App\Notifications\NewMessage;
@@ -19,7 +19,7 @@ use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
-class Messages extends Component implements HasForms, HasTable
+class Chats extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
@@ -27,7 +27,7 @@ class Messages extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->view('components.livewire.tables.index')
+            ->view('components.livewire.chat.chat-table')
             ->query(
                 auth()->user()->threads()
                     ?->with(['announcement.media', 'announcement.features' => fn ($query) => $query->forAnnouncementCard(), 'users', 'latestMessage'])
@@ -54,7 +54,7 @@ class Messages extends Component implements HasForms, HasTable
                         ->limit(1)
                         ->extraAttributes(['class' => 'border rounded-full']),
                     TextColumn::make('user')
-                        ->state(fn ($record) => "{$record->recipient->name} - {$record->announcement->title}")
+                        ->state(fn ($record) => "{$record->recipient?->name} - {$record->announcement->title}")
                         ->description(fn ($record) => Str::limit($record->latestMessage->message, 30))
                         ->label(false)
                         ->lineClamp(2)
@@ -73,11 +73,11 @@ class Messages extends Component implements HasForms, HasTable
             ->recordAction('answer')
             ->actions([
                 Action::make('answer')
-                    ->modalHeading(fn ($record) => new HtmlString(view('components.user-card', ['user' => $record->recipient])))
+                    ->modalHeading(fn ($record) => new HtmlString(view('components.user.card', ['user' => $record->recipient])))
                     ->modalContent(function ($record) {
                         $record->messages()->where('user_id', '!=', auth()->id())->update(['read_at' => now()]);
 
-                        return view('profile.message.show', ['messages' => $record->messages->load('user.media')]);
+                        return view('components.livewire.chat.show', ['messages' => $record->messages]);
                     })
                     ->modalAutofocus(true)
                     ->form([
@@ -117,6 +117,6 @@ class Messages extends Component implements HasForms, HasTable
 
     public function render()
     {
-        return view('profile.message.index');
+        return view('components.livewire.chat.index');
     }
 }
