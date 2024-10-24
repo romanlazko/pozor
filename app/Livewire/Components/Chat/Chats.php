@@ -34,6 +34,8 @@ class Chats extends Component implements HasForms, HasTable
                     ->withCount(['messages as uread_messages_count' => function ($query) {
                         $query->where('read_at', null)->where('user_id', '!=', auth()->id());
                     }])
+                    ->whereHas('announcement')
+                    ->whereHas('users')
                     ->orderBy(
                         Message::select('created_at')
                             ->whereColumn('thread_id', 'threads.id')
