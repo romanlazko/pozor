@@ -1269,7 +1269,7 @@
                 $action = $this->getMountedTableAction();
             @endphp
 
-            <<x-livewire.modal
+            <x-livewire.modal
                 :alignment="$action?->getModalAlignment()"
                 :autofocus="$action?->isModalAutofocused()"
                 :close-button="$action?->hasModalCloseButton()"
