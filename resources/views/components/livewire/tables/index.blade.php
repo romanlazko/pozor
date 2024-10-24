@@ -1258,7 +1258,7 @@
         <form wire:submit.prevent="callMountedTableAction" id="show-chat-form" x-data="{
             scrollToBottom(el) {
                 $nextTick(() => { 
-                    const modalWindow = el.querySelector('#show-chat-form .fi-modal-window');
+                    const modalWindow = el.querySelector('#messages');
                     if (modalWindow) {
                         modalWindow.scrollTo(0, modalWindow.scrollHeight);
                     }
@@ -1312,16 +1312,8 @@
                 x-on:scroll-to-bottom.window="scrollToBottom($event.target)"
             >
                 @if ($action)
-                {{-- @if ($this->mountedTableActionHasForm(mountedAction: $action))
-                                    {{ $this->getMountedTableActionForm() }}
-                            @endif --}}
-                    {{-- <input type="text" x-blur="scrollToBottom($event.target)"> --}}
-                    <div class="flex flex-col flex-1 overflow-hidden h-20" data="">
-                        <div class="flex-1 h-full overflow-auto">
-                            {{ $action->getModalContent() }}
-                        </div>
-                    </div>
                     
+                    {{ $action->getModalContent() }}
 
                     <x-slot name="footerActions">
                         <div class="w-full flex items-end justify-end space-x-4">
